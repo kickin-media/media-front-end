@@ -1,0 +1,37 @@
+.logo {
+  height: 3rem;
+
+  margin-right: 1rem;
+}
+
+.mobile .logo {
+  position: absolute;
+  right: 50%;
+
+  transform: translateX(50%);
+}
+
+.account-wrapper {
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: flex-end;
+}
+
+.nav-button {
+  margin-right: 0.5rem;
+}
+
+.header {
+  transition: background 300ms ease;
+  &:not(.scrolled) {
+    background: none;
+
+    box-shadow: none;
+    text-shadow: 0 0 0.25px black;
+
+    img.logo {
+      filter: drop-shadow(0 0 0.25px black);
+    }
+  }
+}
