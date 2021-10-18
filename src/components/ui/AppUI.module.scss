@@ -23,7 +23,8 @@
 }
 
 .header {
-  transition: background 300ms ease;
+  transition: background 300ms ease, box-shadow 300ms ease, text-shadow 300ms ease !important;
+
   &:not(.scrolled) {
     background: none;
 

@@ -1,10 +1,16 @@
 import {combineReducers, Reducer} from "@reduxjs/toolkit";
 
-const reducer = combineReducers({
+import auth, { AuthStateType } from './auth';
 
+export interface StateType {
+  auth: AuthStateType;
+}
+
+const reducer: Reducer<StateType> = combineReducers({
+  auth
 });
 
-const rootReducer: Reducer = (state, action) => {
+const rootReducer: Reducer<StateType> = (state, action) => {
   return reducer(state, action);
 }
 

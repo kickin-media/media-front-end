@@ -5,7 +5,6 @@ import AppUI from './components/ui/AppUI';
 
 // Import other routing files
 import admin from './admin/routes';
-import auth from './auth/routes';
 import gallery from './gallery/routes';
 import home from './home/routes';
 
@@ -16,7 +15,6 @@ const routes = () => {
       <AppUI>
         <Switch>
           <Route path="/admin/" component={admin}/>
-          <Route path="/auth/" component={auth}/>
           <Route path="/gallery/" component={gallery}/>
 
           <Route component={home}/>

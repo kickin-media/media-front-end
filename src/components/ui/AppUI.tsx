@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
 import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { Link as RouterLink, RouteComponentProps, withRouter } from 'react-router-dom';
 
 import {useTheme} from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import AppBar from '@mui/material/AppBar';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
@@ -19,6 +21,7 @@ import ListItemText from '@mui/material/ListItemText';
 import MUILink from '@mui/material/Link';
 import Portal from '@mui/material/Portal';
 import Toolbar from '@mui/material/Toolbar';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import AccountIcon from '@mui/icons-material/AccountCircle';
@@ -29,6 +32,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import classes from './AppUI.module.scss';
 import logo from '../../res/images/logo-white.png';
+import { login } from "../../redux/actions/auth";
+import { UserType } from "../../redux/reducers/auth";
+import { StateType } from "../../redux/reducers/reducers";
 
 const menu: { label: string, target?: string | (() => void), icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -59,7 +65,7 @@ const Link = ((props: any) => <MUILink {...props} component={RouterLink} />) as 
 // ##
 // # APPLICATION UI
 // ##
-const AppUI: React.FC<RouteComponentProps & Props> = ({children, history}) => {
+const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, history, login, user}) => {
   const hero = useRef();
 
   // Save the component's state
@@ -113,12 +119,25 @@ const AppUI: React.FC<RouteComponentProps & Props> = ({children, history}) => {
                     {item.label}
                   </Button>
                 ))}
-                <IconButton
-                  size="large"
-                  color="inherit"
-                >
-                  <AccountIcon/>
-                </IconButton>
+                {user ? (
+                  <Button
+                    color="inherit"
+                    variant="outlined"
+                    endIcon={<Avatar alt={user.name} src={user.picture} sx={{width: 24, height: 24}} />}
+                  >
+                    {user.name}
+                  </Button>
+                ) : (
+                  <Tooltip title="Log in">
+                    <IconButton
+                      size="large"
+                      color="inherit"
+                      onClick={() => login('http://localhost:3000/')}
+                    >
+                      <AccountIcon/>
+                    </IconButton>
+                  </Tooltip>
+                )}
               </Box>
             ) : null}
           </Toolbar>
@@ -158,6 +177,17 @@ interface Props {
   children?: React.ReactNode;
 }
 
+interface ReduxProps {
+  login: typeof login;
+
+  user?: UserType;
+}
+
 export default compose(
-  withRouter
-)(AppUI) as unknown as React.FC;
+  withRouter,
+  connect((state: StateType) => ({
+    user: state.auth.authenticated ? state.auth.user : undefined,
+  }), (dispatch) => ({
+    login: (redirectUri?: string) => dispatch(login(redirectUri)),
+  }))
+)(AppUI) as unknown as React.FC<Props>;
