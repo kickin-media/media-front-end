@@ -9,7 +9,7 @@ import hero from '../res/images/hero.jpg';
 const HomePage = () => (
   <>
     <Region name="hero">
-      <img src={hero} style={{ width: '100%' }} />
+      <img src={hero} style={{ width: '100%' }} alt="" />
     </Region>
 
     <Typography>

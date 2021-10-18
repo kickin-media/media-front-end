@@ -23,16 +23,15 @@
 }
 
 .header {
-  transition: background 300ms ease, box-shadow 300ms ease, text-shadow 300ms ease !important;
+  transition: background 300ms ease, box-shadow 300ms ease !important;
+}
 
-  &:not(.scrolled) {
-    background: none;
+div:not(:empty)~.header:not(.scrolled) {
+  background: none;
 
-    box-shadow: none;
-    text-shadow: 0 0 0.25px black;
+  box-shadow: none;
 
-    img.logo {
-      filter: drop-shadow(0 0 0.25px black);
-    }
+  img.logo {
+    filter: drop-shadow(0 0 0.25px black);
   }
 }

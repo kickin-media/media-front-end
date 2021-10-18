@@ -36,7 +36,7 @@ import { login } from "../../redux/actions/auth";
 import { UserType } from "../../redux/reducers/auth";
 import { StateType } from "../../redux/reducers/reducers";
 
-const menu: { label: string, target?: string | (() => void), icon?: React.ReactNode }[] = [
+const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
   {label: 'Foto\'s', target: '/albums/', icon: <AlbumIcon />},
   {label: 'Media Crew', target: '/media/', icon: <InfoIcon />},
@@ -90,6 +90,8 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
 
   return (
     <RegionContext.Provider value={{hero}}>
+      <Box ref={hero} sx={{ minHeight: theme.mixins.toolbar.minHeight, marginBottom: theme.spacing(2) }} />
+
       <AppBar position="fixed" classes={{ root: clsx(classes.header, { [classes.scrolled]: scrolled })}}>
         <Container maxWidth="xl" disableGutters>
           <Toolbar className={clsx({[classes.mobile]: !desktop})}>
@@ -115,6 +117,12 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
                     key={index}
                     className={classes['nav-button']}
                     color="inherit"
+                    component="a"
+                    href={item.target}
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      history.push(item.target);
+                    }}
                   >
                     {item.label}
                   </Button>
@@ -157,8 +165,6 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
           ))}
         </List>
       </Drawer>
-
-      <Box ref={hero} />
 
       <Container maxWidth="xl">
         <Breadcrumbs aria-label="breadcrumb">
