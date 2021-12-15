@@ -5,12 +5,16 @@ import Typography from '@mui/material/Typography';
 import {Region} from '../components/ui/AppUI';
 
 import hero from '../res/images/hero.jpg';
+import AlbumCarousel from "../components/album/AlbumCarousel";
 
 const HomePage = () => (
   <>
     <Region name="hero">
-      <img src={hero} style={{ width: '100%' }} alt="" />
+      <img src={hero} style={{ width: '100%' }} alt="Hero" />
     </Region>
+
+    <AlbumCarousel albums={[{}, {}, {}, {}, {}, {}]} title="Recente albums" />
+    <AlbumCarousel albums={null} title="Recente albums" />
 
     <Typography>
       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum feugiat tristique nisi quis molestie.

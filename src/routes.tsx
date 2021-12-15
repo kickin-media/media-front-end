@@ -5,6 +5,7 @@ import AppUI from './components/ui/AppUI';
 
 // Import other routing files
 import admin from './admin/routes';
+import album from './album/routes';
 import home from './home/routes';
 import upload from './upload/routes';
 
@@ -14,8 +15,9 @@ const routes = () => {
     <BrowserRouter>
       <AppUI>
         <Switch>
-          <Route path="/admin/" component={admin}/>
-          <Route path="/upload/" component={upload}/>
+          <Route path="/admin/" component={admin} />
+          <Route path="/album/" component={album} />
+          <Route path="/upload/" component={upload} />
 
           <Route component={home}/>
         </Switch>

@@ -1,0 +1,20 @@
+.header {
+  margin-top: 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+
+  .stepper {
+    padding: 0;
+
+    > button {
+      padding: 0;
+    }
+  }
+}
+
+.carousel {
+  margin-bottom: 2rem;
+}

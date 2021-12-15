@@ -35,6 +35,7 @@ import logo from '../../res/images/logo-white.png';
 import { login } from "../../redux/actions/auth";
 import { UserType } from "../../redux/reducers/auth";
 import { StateType } from "../../redux/reducers/reducers";
+import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -90,10 +91,12 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
 
   return (
     <RegionContext.Provider value={{hero}}>
-      <Box ref={hero} sx={{ minHeight: theme.mixins.toolbar.minHeight, marginBottom: theme.spacing(2) }} />
+      {/* Hero region */}
+      <Box className={classes.hero} ref={hero} sx={{ minHeight: theme.mixins.toolbar.minHeight, marginBottom: theme.spacing(2) }} />
 
+      {/* Header (menu/navigation) */}
       <AppBar position="fixed" classes={{ root: clsx(classes.header, { [classes.scrolled]: scrolled })}}>
-        <Container maxWidth="xl" disableGutters>
+        <Container maxWidth="lg" disableGutters>
           <Toolbar className={clsx({[classes.mobile]: !desktop})}>
             {desktop ? null : (
               <IconButton
@@ -152,6 +155,7 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
         </Container>
       </AppBar>
 
+      {/* Navigation drawer (for mobile) */}
       <Drawer anchor="left" open={drawer} onClose={() => setDrawer(false)}>
         <List>
           {menu.map((item, index) => (
@@ -166,7 +170,8 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
         </List>
       </Drawer>
 
-      <Container maxWidth="xl">
+      {/* Content */}
+      <Container maxWidth="lg">
         <Breadcrumbs aria-label="breadcrumb">
           <Link to="/">Home</Link>
           <Link to="/kick-in2022">Kick-In 2022</Link>
@@ -175,6 +180,9 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
 
         {children}
       </Container>
+
+      {/* Others */}
+      <DropEmLikeItsHot />
     </RegionContext.Provider>
   );
 };
