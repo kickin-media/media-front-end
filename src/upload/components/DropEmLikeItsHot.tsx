@@ -6,34 +6,37 @@ import uploadGraphic from '../../res/graphics/upload.svg';
 import Typography from "@mui/material/Typography";
 
 const DropEmLikeItsHot: React.FC = () => {
-  const [canDrop, setCanDrop] = useState(false);
+  const [canDrop, setCanDrop] = useState<NodeJS.Timeout | null>(null);
 
-  const onDragEnter = (e: DragEvent) => {
-    console.log('enter', e.target);
-    setCanDrop(true);
+  const onDrag = (e: DragEvent) => {
+    if (canDrop !== null) clearTimeout(canDrop);
+    setCanDrop(setTimeout(() => setCanDrop(null), 5000));
     e.stopPropagation();
   };
 
   const onDragEnd = (e: DragEvent) => {
-    console.log('leave', e.target);
-    setCanDrop(false);
+    if (canDrop !== null) clearTimeout(canDrop);
+    setCanDrop(null);
     e.stopPropagation();
   };
 
   const onDrop = (e: DragEvent) => {
-    console.log('drop');
-    setCanDrop(false);
+    if (canDrop !== null) clearTimeout(canDrop);
+    setCanDrop(null);
     e.stopPropagation();
+
+    console.log('drop', e);
   };
 
   useEffect(() => {
-    document.addEventListener('dragenter', onDragEnter);
+    document.addEventListener('drag', onDrag);
     document.addEventListener('dragend', onDragEnd);
     document.addEventListener('drop', onDrop);
 
     // Remove event listeners upon unmounting the component
     return () => {
-      document.removeEventListener('dragenter', onDragEnter);
+      if (canDrop !== null) clearTimeout(canDrop);
+      document.removeEventListener('drag', onDrag);
       document.removeEventListener('dragleave', onDragEnd);
       document.removeEventListener('drop', onDrop);
     };

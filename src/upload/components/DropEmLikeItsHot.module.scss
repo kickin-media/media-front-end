@@ -35,6 +35,7 @@
 
 .root.can-drop {
   opacity: 1;
+  pointer-events: unset;
 }
 
 .instructions {

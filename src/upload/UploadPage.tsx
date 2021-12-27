@@ -52,7 +52,7 @@ const UploadPage: React.FC = () => {
           </Card>
         ) : (
           <Card variant="outlined" className={classes['selected-status']}>
-            None selected
+            0 selected
             <IconButton
               onClick={() => {
                 const selected: any = {};
