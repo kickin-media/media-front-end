@@ -29,9 +29,16 @@ export interface UnauthenticatedType {
   authenticated: false;
 }
 
-const auth: Reducer<AuthStateType> = createReducer({
-  authenticated: false,
-} as AuthStateType, {
+const loadAuth: () => AuthStateType = () => {
+  const stored = window.localStorage.getItem('auth');
+  if (stored === null) return { authenticated: false };
+
+  return JSON.parse(stored);
+};
+
+const auth: Reducer<AuthStateType> = createReducer(loadAuth(), {
+
+  // AUTHENTICATE
   [actions.authenticate.toString()]: (state, action) => {
     state.authenticated = true;
     if (!state.authenticated) return;
@@ -50,7 +57,11 @@ const auth: Reducer<AuthStateType> = createReducer({
       picture: action.payload.idTokenPayload.picture,
       sub: action.payload.idTokenPayload.sub,
     };
+
+    // Finally, save the authentication information in LocalStorage
+    window.localStorage.setItem('auth', JSON.stringify(state));
   }
+
 });
 
 export default auth;
