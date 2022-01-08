@@ -4,12 +4,14 @@ import thunk from 'redux-thunk';
 
 import reducer from './reducers/reducers';
 import { authMiddleware } from "./middlewares/auth";
+import { apiMiddleware } from "./middlewares/api";
 
 const configureStore = (preloadedState: any) => configure({
   reducer,
   preloadedState,
   middleware: [
     authMiddleware,
+    apiMiddleware('http://localhost:8000'),
     ...(process.env.NODE_ENV === "production" ? [] : [createLogger({
       collapsed: true,
       diff: true,
