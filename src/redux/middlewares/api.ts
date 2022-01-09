@@ -1,4 +1,4 @@
-import { Middleware } from "@reduxjs/toolkit";
+import { AnyAction, Middleware } from "@reduxjs/toolkit";
 
 import { normalize, schema } from 'normalizr';
 import { StateType } from "../reducers/reducers";
@@ -20,6 +20,57 @@ export interface ApiCallType {
   injectResponse?: object;
   schema?: schema.Entity;
 }
+
+export interface ApiActionType extends AnyAction {
+  type: 'CALL_API';
+  payload: PayloadType;
+
+  [CALL_API]: ApiCallType;
+}
+
+type PayloadType = { [key: string]: any };
+export const createAPIAction: <PA extends (...args: any[]) => PayloadType | undefined = () => undefined>(
+  action: string,
+  method: string,
+  url: string | ((state: StateType) => string),
+  createPayload?: PA,
+  schema?: schema.Entity,
+  injectResponse?: object
+)  => ((...args: Parameters<PA>) => AnyAction) & { request: string, success: string, failure: string } = (
+  action, method, url, createPayload, schema, injectResponse
+) => {
+  const actionCreator = (...args: any[]) => {
+    const payload = createPayload ? createPayload(args) : undefined;
+
+    return {
+      type: CALL_API,
+      payload,
+
+      [CALL_API]: {
+        types: {
+          request: `${action.toUpperCase()}_REQUEST`,
+          success: `${action.toUpperCase()}_SUCCESS`,
+          failure: `${action.toUpperCase()}_FAILURE`,
+        },
+
+        url,
+        options: {
+          method,
+          body: payload && payload.body ? payload.body : undefined
+        },
+
+        injectResponse,
+        schema
+      }
+    } as ApiActionType;
+  };
+
+  actionCreator.request = `${action.toUpperCase()}_REQUEST`;
+  actionCreator.success = `${action.toUpperCase()}_SUCCESS`;
+  actionCreator.failure = `${action.toUpperCase()}_FAILURE`;
+
+  return actionCreator;
+};
 
 export const apiMiddleware: (endpoint: string) => Middleware = endpoint => api => next => {
   const injectHeaders: (options?: RequestInit) => RequestInit = options => {
