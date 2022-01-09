@@ -28,7 +28,7 @@ export const get = createAPIAction(
   (payload, state) => state.auth.authenticated
     ? `/album/${payload?.album_id}/authenticated`
     : `/album/${payload?.album_id}`,
-  (album_id: number) => ({ album_id }),
+  (album_id: string) => ({ album_id }),
   schemas.ALBUM
 );
 
@@ -52,14 +52,14 @@ export const remove = createAPIAction(
   'ALBUM_DELETE',
   'DELETE',
   payload => `/album/${payload?.album_id}`,
-  (album_id: number) => ({ album_id })
+  (album_id: string) => ({ album_id })
 );
 
 export const updateHiddenStatus = createAPIAction(
   'ALBUM_HIDDEN_UPDATE',
   'PUT',
   payload => `/album/${payload?.album_id}`,
-  (album_id: number, secret: boolean, refreshSecret: boolean) => ({
+  (album_id: string, secret: boolean, refreshSecret: boolean) => ({
     album_id,
     body: {
       is_secret: secret,

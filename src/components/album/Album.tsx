@@ -1,16 +1,29 @@
 import React from 'react';
 
-// import classes from './Album.module.scss';
+import classes from './Album.module.scss';
 
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
+import { AlbumType } from "../../redux/reducers/album";
+import { useHistory } from "react-router-dom";
 
 const Album: React.FC<Props> = ({ album }) => {
+  const history = useHistory();
+
   return album ? (
-    <Stack spacing={1}>
+    <Stack
+      onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
+        history.push(`/album/${album.id}/${album.name}`);
+        e.preventDefault();
+      }}
+      component="a"
+      href={`/album/${album.id}/${album.name}`}
+      className={classes.album}
+      spacing={1}
+    >
       <img src="https://picsum.photos/300/200" alt="" width={240} height={160} />
-      <Typography variant="body1"><strong>Taste Cantus</strong></Typography>
+      <Typography variant="body1"><strong>{album.name}</strong></Typography>
       <Typography variant="caption">12 uur geleden • Kick-In 2021</Typography>
     </Stack>
   ) : (
@@ -23,7 +36,7 @@ const Album: React.FC<Props> = ({ album }) => {
 };
 
 interface Props {
-  album: object | null;
+  album: AlbumType | null;
 }
 
 export default Album;

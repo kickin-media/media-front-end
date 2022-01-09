@@ -5,9 +5,9 @@ import AlbumPage from './AlbumPage';
 
 const routes = () => (
   <Switch>
-    <Route exact path="/album/" component={AlbumPage} />
+    <Route exact path="/album/:albumId/:name" component={AlbumPage} />
 
-    <Route render={() => <Redirect to="/album/" />} />
+    <Route render={() => <Redirect to="/" />} />
   </Switch>
 );
 

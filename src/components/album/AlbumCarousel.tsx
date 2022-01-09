@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import { MobileStepper } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
+import { AlbumType } from "../../redux/reducers/album";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -22,7 +23,7 @@ const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
 
   let aa = albums ? albums : new Array(viewSize).fill(null);
 
-  let views: ({} | null)[][] = [];
+  let views: (AlbumType | null)[][] = [];
   for (let i = 0; i < aa.length; i += viewSize) views.push(aa.slice(i, i + viewSize));
 
   return (
@@ -74,7 +75,7 @@ const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
 }
 
 interface Props {
-  albums: {}[] | null;
+  albums: AlbumType[] | null;
   title: string;
 }
 

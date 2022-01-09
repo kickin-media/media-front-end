@@ -24,7 +24,7 @@ export const get = createAPIAction(
   'EVENT_GET',
   'GET',
   payload => `/event/${payload?.event_id}`,
-  (event_id: number) => ({ event_id}),
+  (event_id: string) => ({ event_id}),
   schemas.EVENT
 );
 
@@ -32,7 +32,7 @@ export const update = createAPIAction(
   'EVENT_UPDATE',
   'PUT',
   payload => `/event/${payload?.event_id}`,
-  (event_id: number, name: string, timestamp: Date) => ({
+  (event_id: string, name: string, timestamp: Date) => ({
     event_id,
     body: {
       name,
@@ -46,7 +46,7 @@ export const remove = createAPIAction(
   'EVENT_DELETE',
   'DELETE',
   payload => `/event/${payload?.event_id}`,
-  (event_id: number) => ({ event_id })
+  (event_id: string) => ({ event_id })
 );
 
 export const getAlbums = createAPIAction(
@@ -55,22 +55,6 @@ export const getAlbums = createAPIAction(
   (payload, state) => state.auth.authenticated
     ? `/event/${payload?.event_id}/albums/authenticated`
     : `/event/${payload?.event_id}/albums`,
-  (event_id: number) => ({ event_id }),
+  (event_id: string) => ({ event_id }),
   schemas.ALBUM_ARRAY
 );
-
-export const updateHiddenStatus = createAPIAction(
-  'ALBUM_HIDDEN_UPDATE',
-  'PUT',
-  payload => `/album/${payload?.album_id}`,
-  (album_id: number, secret: boolean, refreshSecret: boolean) => ({
-    album_id,
-    body: {
-      is_secret: secret,
-      refresh_secret: refreshSecret
-    }
-  }),
-  schemas.ALBUM
-);
-
-

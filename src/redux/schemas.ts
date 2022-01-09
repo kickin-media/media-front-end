@@ -1,6 +1,10 @@
 import { schema } from 'normalizr';
 
-export const EVENT = new schema.Entity('event');
+export const EVENT = new schema.Entity('event', {}, {
+  processStrategy: (value, parent, key) => Object.assign({}, value, {
+    timestamp: new Date(value.timestamp)
+  })
+});
 export const EVENT_ARRAY = new schema.Array(EVENT);
 
 export const ALBUM = new schema.Entity('album', {
