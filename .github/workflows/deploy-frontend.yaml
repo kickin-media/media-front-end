@@ -1,0 +1,32 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+
+  build-and-push:
+    name: Build front-end and push to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build front-end
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy front-end to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --acl private
+        env:
+          AWS_S3_BUCKET: kickin-media-frontend-dev
+          AWS_ACCESS_KEY_ID: ${{ secrets.CICD_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.CICD_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: eu-west-1
+          SOURCE_DIR: build
