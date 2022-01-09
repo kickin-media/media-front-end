@@ -24,6 +24,7 @@ const AlbumPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(actions.get(albumId));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
   return (

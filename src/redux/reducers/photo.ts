@@ -1,6 +1,6 @@
 import { createReducer, Reducer } from "@reduxjs/toolkit";
 
-import * as actions from '../actions/photo';
+// import * as actions from '../actions/photo';
 import * as albumActions from '../actions/album';
 
 export type PhotoStateType = { [key: string]: PhotoType };
