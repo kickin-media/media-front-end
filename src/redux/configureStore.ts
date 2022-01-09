@@ -11,7 +11,7 @@ const configureStore = (preloadedState: any) => configure({
   preloadedState,
   middleware: [
     authMiddleware,
-    apiMiddleware('https://media-api.nas.jonathanj.nl'),
+    apiMiddleware('https://api.dev.kick-in.media'),
     ...(process.env.NODE_ENV === "production" ? [] : [createLogger({
       collapsed: true,
       diff: true,
