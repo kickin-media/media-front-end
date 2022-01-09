@@ -1,0 +1,72 @@
+import { createAPIAction } from "../middlewares/api";
+import * as schemas from '../schemas';
+
+export const list = createAPIAction(
+  'ALBUM_LIST',
+  'GET',
+  '/album/',
+  undefined,
+  schemas.ALBUM_ARRAY
+);
+
+export const create = createAPIAction(
+  'ALBUM_CREATE',
+  'POST',
+  '/album/',
+  (name: string, timestamp: Date, release: Date, event_id: number) => ({ body: {
+    name,
+    timestamp,
+    release_time: release,
+    event_id
+  }}),
+  schemas.ALBUM
+);
+
+export const get = createAPIAction(
+  'ALBUM_GET',
+  'GET',
+  (payload, state) => state.auth.authenticated
+    ? `/album/${payload?.album_id}/authenticated`
+    : `/album/${payload?.album_id}`,
+  (album_id: number) => ({ album_id }),
+  schemas.ALBUM
+);
+
+export const update = createAPIAction(
+  'ALBUM_UPDATE',
+  'PUT',
+  payload => `/album/${payload?.album_id}`,
+  (album_id: number, name: string, timestamp: Date, release: Date, event_id: number) => ({
+    album_id,
+    body: {
+      name,
+      timestamp,
+      release_time: release,
+      event_id
+    }
+  }),
+  schemas.ALBUM
+);
+
+export const remove = createAPIAction(
+  'ALBUM_DELETE',
+  'DELETE',
+  payload => `/album/${payload?.album_id}`,
+  (album_id: number) => ({ album_id })
+);
+
+export const updateHiddenStatus = createAPIAction(
+  'ALBUM_HIDDEN_UPDATE',
+  'PUT',
+  payload => `/album/${payload?.album_id}`,
+  (album_id: number, secret: boolean, refreshSecret: boolean) => ({
+    album_id,
+    body: {
+      is_secret: secret,
+      refresh_secret: refreshSecret
+    }
+  }),
+  schemas.ALBUM
+);
+
+

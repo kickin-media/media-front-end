@@ -14,7 +14,7 @@ export interface ApiCallType {
     success: string
   };
 
-  url: string | ((state: StateType) => string);
+  url: string | ((payload: { [key: string]: any } | undefined, state: StateType) => string);
   options?: RequestInit;
 
   injectResponse?: object;
@@ -28,13 +28,15 @@ export interface ApiActionType extends AnyAction {
   [CALL_API]: ApiCallType;
 }
 
+type NonUndefined<T> = T extends undefined ? never : T;
+
 type PayloadType = { [key: string]: any };
 export const createAPIAction: <PA extends (...args: any[]) => PayloadType | undefined = () => undefined>(
   action: string,
   method: string,
-  url: string | ((state: StateType) => string),
+  url: string | ((payload: ReturnType<PA> | undefined, state: StateType) => string),
   createPayload?: PA,
-  schema?: schema.Entity,
+  schema?: schema.Entity | schema.Array,
   injectResponse?: object
 )  => ((...args: Parameters<PA>) => AnyAction) & { request: string, success: string, failure: string } = (
   action, method, url, createPayload, schema, injectResponse
@@ -155,7 +157,7 @@ export const apiMiddleware: (endpoint: string) => Middleware = endpoint => api =
     if (typeof callAPI === "undefined") return next(action);
 
     // Correct the endpoint
-    if (typeof callAPI.url === 'function') callAPI.url = callAPI.url(api.getState());
+    if (typeof callAPI.url === 'function') callAPI.url = callAPI.url(action.payload, api.getState());
 
     // Declare a small action generator
     const actionWith = (data: any) => {
