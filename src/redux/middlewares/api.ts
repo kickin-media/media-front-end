@@ -28,8 +28,6 @@ export interface ApiActionType extends AnyAction {
   [CALL_API]: ApiCallType;
 }
 
-type NonUndefined<T> = T extends undefined ? never : T;
-
 type PayloadType = { [key: string]: any };
 export const createAPIAction: <PA extends (...args: any[]) => PayloadType | undefined = () => undefined>(
   action: string,
@@ -42,7 +40,7 @@ export const createAPIAction: <PA extends (...args: any[]) => PayloadType | unde
   action, method, url, createPayload, schema, injectResponse
 ) => {
   const actionCreator = (...args: any[]) => {
-    const payload = createPayload ? createPayload(args) : undefined;
+    const payload = createPayload ? createPayload.apply(null, args) : undefined;
 
     return {
       type: CALL_API,
@@ -58,7 +56,7 @@ export const createAPIAction: <PA extends (...args: any[]) => PayloadType | unde
         url,
         options: {
           method,
-          body: payload && payload.body ? payload.body : undefined
+          body: payload && payload.body ? JSON.stringify(payload.body) : undefined
         },
 
         injectResponse,

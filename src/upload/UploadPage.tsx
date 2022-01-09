@@ -3,7 +3,7 @@ import clsx from "clsx";
 
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import { Card, CardActionArea, Checkbox } from "@mui/material";
+import { Card, Checkbox } from "@mui/material";
 import {
   AddToPhotos,
   CheckCircle, Close,

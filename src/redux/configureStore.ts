@@ -11,7 +11,7 @@ const configureStore = (preloadedState: any) => configure({
   preloadedState,
   middleware: [
     authMiddleware,
-    apiMiddleware('http://localhost:8000'),
+    apiMiddleware('https://media-api.nas.jonathanj.nl'),
     ...(process.env.NODE_ENV === "production" ? [] : [createLogger({
       collapsed: true,
       diff: true,

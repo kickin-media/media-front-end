@@ -6,6 +6,8 @@ import hero from "../res/images/hero.jpg";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 
+import AlbumEditDialog from "./dialogs/AlbumEditDialog";
+
 const images = new Array(40).fill(null).map(() => Math.random() >= 0.5 ? 'h' : 'v');
 
 const AlbumPage: React.FC = () => (
@@ -16,6 +18,9 @@ const AlbumPage: React.FC = () => (
 
       <img src={hero} style={{ width: '100%' }} alt="Hero" />
     </Region>
+
+    <AlbumEditDialog open />
+
     <ImageList cols={12} rowHeight={100}>
       {images.map((orientation, index) => orientation === 'h' ? (
         <ImageListItem key={index} cols={6} rows={4}>

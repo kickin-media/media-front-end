@@ -40,6 +40,7 @@ const DropEmLikeItsHot: React.FC = () => {
       document.removeEventListener('dragleave', onDragEnd);
       document.removeEventListener('drop', onDrop);
     };
+    // eslint-disable-next-line
   }, []);
 
   return (

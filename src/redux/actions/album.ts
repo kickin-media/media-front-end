@@ -13,7 +13,7 @@ export const create = createAPIAction(
   'ALBUM_CREATE',
   'POST',
   '/album/',
-  (name: string, timestamp: Date, release: Date, event_id: number) => ({ body: {
+  (name: string, timestamp: Date, release: Date | null, event_id: string) => ({ body: {
     name,
     timestamp,
     release_time: release,
@@ -36,7 +36,7 @@ export const update = createAPIAction(
   'ALBUM_UPDATE',
   'PUT',
   payload => `/album/${payload?.album_id}`,
-  (album_id: number, name: string, timestamp: Date, release: Date, event_id: number) => ({
+  (album_id: string, name: string, timestamp: Date, release: Date | null, event_id: string) => ({
     album_id,
     body: {
       name,
