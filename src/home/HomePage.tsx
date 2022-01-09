@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import {Region} from '../components/ui/AppUI';
 
 import hero from '../res/images/hero.jpg';
-import AlbumCarousel from "../components/album/AlbumCarousel";
+import AlbumCarousel from "../album/components/AlbumCarousel";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StateType } from "../redux/reducers/reducers";
 
