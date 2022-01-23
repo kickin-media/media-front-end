@@ -143,7 +143,7 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
                     <IconButton
                       size="large"
                       color="inherit"
-                      onClick={() => login(location.hostname)}
+                      onClick={() => login(document.location.href)}
                     >
                       <AccountIcon/>
                     </IconButton>
