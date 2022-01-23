@@ -25,9 +25,7 @@ export const create = createAPIAction(
 export const get = createAPIAction(
   'ALBUM_GET',
   'GET',
-  (payload, state) => state.auth.authenticated
-    ? `/album/${payload?.album_id}/authenticated`
-    : `/album/${payload?.album_id}`,
+  payload => `/album/${payload?.album_id}`,
   (album_id: string) => ({ album_id }),
   schemas.ALBUM
 );

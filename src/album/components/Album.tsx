@@ -1,4 +1,5 @@
 import React from 'react';
+import slugify from 'slugify';
 
 import classes from './Album.module.scss';
 
@@ -14,11 +15,11 @@ const Album: React.FC<Props> = ({ album }) => {
   return album ? (
     <Stack
       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
-        history.push(`/album/${album.id}/${album.name}`);
+        history.push(`/album/${album.id}/${slugify(album.name).toLowerCase()}`);
         e.preventDefault();
       }}
       component="a"
-      href={`/album/${album.id}/${album.name}`}
+      href={`/album/${album.id}/${slugify(album.name).toLowerCase()}`}
       className={classes.album}
       spacing={1}
     >

@@ -52,9 +52,7 @@ export const remove = createAPIAction(
 export const getAlbums = createAPIAction(
   'EVENT_ALBUMS_GET',
   'GET',
-  (payload, state) => state.auth.authenticated
-    ? `/event/${payload?.event_id}/albums/authenticated`
-    : `/event/${payload?.event_id}/albums`,
+  payload => `/event/${payload?.event_id}/albums`,
   (event_id: string) => ({ event_id }),
   schemas.ALBUM_ARRAY
 );
