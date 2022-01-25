@@ -42,7 +42,7 @@ const DropEmLikeItsHot: React.FC = () => {
     e.preventDefault();
 
     history.push('/upload/', {
-      addedFiles: e.dataTransfer.files
+      files: e.dataTransfer.files
     });
   };
 

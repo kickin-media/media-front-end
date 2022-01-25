@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from "clsx";
 
 import ImageList from '@mui/material/ImageList';
@@ -16,30 +16,62 @@ import Typography from "@mui/material/Typography";
 
 import classes from './UploadPage.module.scss';
 import IconButton from "@mui/material/IconButton";
+import { useHistory } from "react-router-dom";
+import Skeleton from "@mui/material/Skeleton";
 
 const UploadPage: React.FC = () => {
+  const [files, setFiles] = useState<{ [key: string]: File }>({});
+  const [previews, setPreviews] = useState<{ [key: string]: string }>({});
   const [selected, setSelected] = useState<{ [key: string]: boolean }>({});
+
+  const history = useHistory<UploadHistoryState>();
+  useEffect(() => history.block((location, action) => {
+    if (location.pathname === '/upload/') return;
+    return 'Navigating away from page will cancel the ongoing upload process. Are you sure you want to leave?';
+  }));
+
+  useEffect(() => {
+    if (!history.location.state || !history.location.state.files) return;
+
+    const newFiles = history.location.state.files;
+    if (newFiles.length === 0) return;
+
+    const res: { [key: string]: File } = {};
+    for (let i = 0; i < newFiles.length; i++) res[`${newFiles[i].name}-${newFiles[i].lastModified}`] = newFiles[i];
+
+    setFiles(f => Object.assign({}, f, res));
+
+    Object.keys(res)
+      .forEach(key => res[key].arrayBuffer()
+        .then(buffer => setPreviews(p => Object.assign({}, p, {
+          [key]: p[key] ? p[key] : URL.createObjectURL(new Blob([buffer]))
+        }))));
+  }, [history.location.state, setFiles, setPreviews]);
 
   let selectedCount = Object.keys(selected).filter(img => selected[img]).length;
 
   return (
     <>
       <ImageList cols={6}>
-        {new Array(40).fill(null).map((item, index) => (
+        {Object.keys(files).map(key => (
           <ImageListItem
-            key={index}
+            key={key}
             className={clsx(classes.image, {
-              [classes.selected]: selected[index]
+              [classes.selected]: selected[key]
             })}
-            onClick={() => setSelected({ ...selected, [index]: !selected[index] })}
+            onClick={() => setSelected(s => Object.assign({}, s, { [key]: !selected[key] }))}
           >
             <Checkbox
               className={classes.check}
               icon={<RadioButtonUnchecked />}
               checkedIcon={<CheckCircle />}
-              checked={selected[index] !== undefined ? selected[index] : false}
+              checked={selected[key] !== undefined ? selected[key] : false}
             />
-            <img src={`https://picsum.photos/200/200?index=${index}`} alt="" />
+            {previews[key] ? (
+              <img src={previews[key]} alt={files[key].name} />
+            ) : (
+              <Skeleton variant="rectangular" width={100} height={100} />
+            )}
           </ImageListItem>
         ))}
       </ImageList>
@@ -103,5 +135,9 @@ const UploadPage: React.FC = () => {
     </>
   );
 };
+
+interface UploadHistoryState {
+  files: FileList | null;
+}
 
 export default UploadPage;
