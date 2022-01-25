@@ -23,7 +23,7 @@ const Album: React.FC<Props> = ({ album }) => {
       className={classes.album}
       spacing={1}
     >
-      <img src="https://picsum.photos/300/200" alt="" width={240} height={160} />
+      <img src={album.coverPhoto.imgUrls.small} alt="" width={240} height={160} />
       <Typography variant="body1"><strong>{album.name}</strong></Typography>
       <Typography variant="caption">12 uur geleden • Kick-In 2021</Typography>
     </Stack>

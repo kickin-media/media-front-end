@@ -13,6 +13,7 @@ import { StateType } from "../redux/reducers/reducers";
 
 import * as actions from '../redux/actions/album';
 import Lightbox from "./components/Lightbox";
+import AlbumGallery from "./components/AlbumGallery";
 
 const AlbumPage: React.FC = () => {
   const { albumId } = useParams<{ albumId: string }>();
@@ -49,27 +50,29 @@ const AlbumPage: React.FC = () => {
         onClose={() => setLightbox(null)}
       />) : null}
 
-      <ImageList cols={12} rowHeight={100}>
-        {photos.map((photo, index) => (
-          <ImageListItem
-            key={photo.id}
-            cols={3}
-            rows={3}
-            onClick={() => setLightbox(index)}
-          >
-            <img src={photo.imgUrls.large} alt="" />
-          </ImageListItem>
-        ))}
-        {/*{images.map((orientation, index) => orientation === 'h' ? (*/}
-        {/*  <ImageListItem key={index} cols={6} rows={4}>*/}
-        {/*    <img src={`https://picsum.photos/600/400?index=${index}`} alt="" />*/}
-        {/*  </ImageListItem>*/}
-        {/*) : (*/}
-        {/*  <ImageListItem key={index} cols={4} rows={6}>*/}
-        {/*    <img src={`https://picsum.photos/400/600?index=${index}`} alt="" />*/}
-        {/*  </ImageListItem>*/}
-        {/*))}*/}
-      </ImageList>
+      <AlbumGallery album={album} photos={photos} />
+
+      {/*<ImageList cols={12} rowHeight={100}>*/}
+      {/*  {photos.map((photo, index) => (*/}
+      {/*    <ImageListItem*/}
+      {/*      key={photo.id}*/}
+      {/*      cols={3}*/}
+      {/*      rows={3}*/}
+      {/*      onClick={() => setLightbox(index)}*/}
+      {/*    >*/}
+      {/*      <img src={photo.imgUrls.large} alt="" />*/}
+      {/*    </ImageListItem>*/}
+      {/*  ))}*/}
+      {/*  /!*{images.map((orientation, index) => orientation === 'h' ? (*!/*/}
+      {/*  /!*  <ImageListItem key={index} cols={6} rows={4}>*!/*/}
+      {/*  /!*    <img src={`https://picsum.photos/600/400?index=${index}`} alt="" />*!/*/}
+      {/*  /!*  </ImageListItem>*!/*/}
+      {/*  /!*) : (*!/*/}
+      {/*  /!*  <ImageListItem key={index} cols={4} rows={6}>*!/*/}
+      {/*  /!*    <img src={`https://picsum.photos/400/600?index=${index}`} alt="" />*!/*/}
+      {/*  /!*  </ImageListItem>*!/*/}
+      {/*  /!*))}*!/*/}
+      {/*</ImageList>*/}
     </>
   );
 }

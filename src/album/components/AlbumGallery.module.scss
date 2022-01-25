@@ -1,0 +1,29 @@
+.gallery {
+  width: 100%;
+
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.gallery > .photo, .gallery::after {
+  --ratio: calc(var(--w) / var(--h));
+  --row-height: 9rem;
+  flex-basis: calc(var(--ratio) * var(--row-height));
+}
+
+.gallery > .photo {
+  margin: 0.25rem;
+  flex-grow: calc(var(--ratio) * 100);
+}
+
+.gallery::after {
+  --w: 2;
+  --h: 1;
+  content: '';
+  flex-grow: 1000000;
+}
+
+.gallery > .photo > img {
+  display: block;
+  width: 100%;
+}

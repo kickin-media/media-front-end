@@ -2,6 +2,7 @@ import { createReducer, Reducer } from "@reduxjs/toolkit";
 
 import * as actions from '../actions/album';
 import * as eventActions from '../actions/event';
+import { PhotoType } from "./photo";
 
 export type AlbumStateType = { [key: string]: AlbumType };
 
@@ -11,6 +12,7 @@ export interface AlbumType {
   eventId: string;
 
   name: string;
+  coverPhoto: PhotoType;
 
   photos?: string[];
   photosCount: number;
