@@ -4,40 +4,59 @@ import clsx from 'clsx';
 import classes from './DropEmLikeItsHot.module.scss';
 import uploadGraphic from '../../res/graphics/upload.svg';
 import Typography from "@mui/material/Typography";
+import { useHistory } from "react-router-dom";
+
+const isValid = (e: DragEvent) => {
+  if (!e.dataTransfer || !e.dataTransfer.items) return false;
+
+  for (let i = 0; i < e.dataTransfer.items.length; i++) {
+    const item = e.dataTransfer.items[i];
+    if (item.kind !== 'file') continue;
+
+    if (item.type === 'image/jpeg') return true;
+  }
+
+  return false;
+}
 
 const DropEmLikeItsHot: React.FC = () => {
-  const [canDrop, setCanDrop] = useState<NodeJS.Timeout | null>(null);
+  const [canDrop, setCanDrop] = useState<boolean>(false);
+
+  const history = useHistory();
 
   const onDrag = (e: DragEvent) => {
-    if (canDrop !== null) clearTimeout(canDrop);
-    setCanDrop(setTimeout(() => setCanDrop(null), 5000));
-    e.stopPropagation();
+    if (!isValid(e)) return;
+
+    setCanDrop(true);
+    e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = "copy";
   };
 
-  const onDragEnd = (e: DragEvent) => {
-    if (canDrop !== null) clearTimeout(canDrop);
-    setCanDrop(null);
-    e.stopPropagation();
-  };
+  const onDragEnd = () => { setCanDrop(false) };
 
   const onDrop = (e: DragEvent) => {
-    if (canDrop !== null) clearTimeout(canDrop);
-    setCanDrop(null);
-    e.stopPropagation();
+    setCanDrop(false);
+    if (!isValid(e)) return;
+    if (!e.dataTransfer) return;
 
-    console.log('drop', e);
+    e.preventDefault();
+
+    history.push('/upload/', {
+      addedFiles: e.dataTransfer.files
+    });
   };
 
   useEffect(() => {
-    document.addEventListener('drag', onDrag);
+    document.addEventListener('dragover', onDrag);
+    document.addEventListener('dragenter', onDrag);
     document.addEventListener('dragend', onDragEnd);
     document.addEventListener('drop', onDrop);
 
     // Remove event listeners upon unmounting the component
     return () => {
-      if (canDrop !== null) clearTimeout(canDrop);
-      document.removeEventListener('drag', onDrag);
-      document.removeEventListener('dragleave', onDragEnd);
+      document.removeEventListener('dragover', onDrag);
+      document.removeEventListener('dragenter', onDrag);
+      document.removeEventListener('dragend', onDragEnd);
       document.removeEventListener('drop', onDrop);
     };
     // eslint-disable-next-line
