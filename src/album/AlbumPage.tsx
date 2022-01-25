@@ -3,8 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Region } from "../components/ui/AppUI";
 
 import hero from "../res/images/hero.jpg";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
 
 import AlbumEditDialog from "./dialogs/AlbumEditDialog";
 import { useParams } from "react-router-dom";
