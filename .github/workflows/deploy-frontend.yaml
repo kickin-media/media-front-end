@@ -3,13 +3,19 @@ name: Build and Publish
 on:
   push:
     branches: [master]
-  pull_request:
 
 jobs:
 
   build-and-push:
     name: Build front-end and push to S3
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        environment:
+          - dev
+          - prod
 
     steps:
       - name: Checkout code
@@ -25,7 +31,7 @@ jobs:
         with:
           args: --acl private
         env:
-          AWS_S3_BUCKET: kickin-media-frontend-dev
+          AWS_S3_BUCKET: kickin-media-frontend-${{ matrix.environment }}
           AWS_ACCESS_KEY_ID: ${{ secrets.CICD_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.CICD_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-west-1
