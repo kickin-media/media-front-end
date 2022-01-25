@@ -17,6 +17,9 @@ jobs:
           - dev
           - prod
 
+    environment:
+      name: ${{ matrix.environment }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
