@@ -16,10 +16,12 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const [prevOpen, setOpen] = useState(open !== undefined ? open: false);
 
   useEffect(() => {
-    if (startId === null) return;
     if (open === prevOpen) return;
+    if (open && startId === null) return;
     setOpen(open !== undefined ? open: false);
-    setIndex(photos.map(photo => photo.id).indexOf(startId));
+
+    if (open && startId !== null) setIndex(photos.map(photo => photo.id).indexOf(startId));
+    else setIndex(0);
   }, [prevOpen, open, startId, photos]);
 
   const update = (delta: number) => () => setIndex(prev => {
