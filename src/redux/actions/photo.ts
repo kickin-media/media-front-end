@@ -26,7 +26,7 @@ export const getOriginal = createAPIAction(
 export const reprocess = createAPIAction(
   'PHOTO_REPROCESS',
   'POST',
-  payload => `/photo/${payload?.photo_id}`,
+  payload => `/photo/${payload?.photo_id}/reprocess`,
   (photo_id: number) => ({ photo_id })
 );
 
@@ -41,5 +41,5 @@ export const setAlbums = createAPIAction(
   'PHOTO_ALBUM_SET',
   'PUT',
   payload => `/photo/${payload?.photo_id}/albums`,
-  (photo_id: number) => ({ photo_id })
+  (photo_id: number, albums: string[]) => ({ photo_id, body: albums })
 );

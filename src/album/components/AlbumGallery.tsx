@@ -20,7 +20,7 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
           style={{ '--w': 100, '--h': 100 } as React.CSSProperties}
         >
           <img
-            src={photo.imgUrls.large}
+            src={photo.imgUrls.small}
             alt=""
             onLoad={e => {
               console.log(e);

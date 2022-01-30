@@ -65,24 +65,36 @@ const UploadPage: React.FC = () => {
 
       Object.keys(files).forEach((key, index) => {
         const fields: { [key: string]: string } = signedUrls.response[index].preSignedUrl.fields;
-        const q = Object.keys(fields).map(key => `${key}=${fields[key]}`).join('&');
 
-        files[key].arrayBuffer().then(data => fetch(
-          `${signedUrls.response[index].preSignedUrl.url}?${q}`, {
-            body: data,
-            method: 'POST'
-          }
-        )).then(res => {
+        const formData = new FormData();
+        Object.keys(fields).forEach(key => formData.append(key, fields[key]))
+
+        files[key].arrayBuffer().then(data => {
+          formData.append('file', new Blob([data], { type: 'image/jpeg' }), files[key].name);
+
+          return fetch(
+            `${signedUrls.response[index].preSignedUrl.url}`, {
+              body: formData,
+              method: 'POST',
+            }
+          );
+        }).then(res => {
           if (!res.ok) {
             setErrors(e => [...e, key]);
             return;
           }
 
-          setProgress(progress => progress + 100 / Object.keys(files).length);
+          setProgress(progress => progress + 100 / Object.keys(files).length / 3 * 2);
+          dispatch(actions.setAlbums(signedUrls.response[index].photoId, [albumId as string]))
+            .then((res: AnyAction) => {
+              if (res.type !== actions.setAlbums.success) return;
+
+              setProgress(progress => progress + 100 / Object.keys(files).length / 3);
+            });
         }, () => setErrors(e => [...e, key]));
       });
     });
-  }, [dispatch, files, step]);
+  }, [dispatch, albumId, files, step]);
 
   return (
     <Stepper orientation="vertical" activeStep={step}>
