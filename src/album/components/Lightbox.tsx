@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import Backdrop from '@mui/material/Backdrop';
 import IconButton from "@mui/material/IconButton";
 import SwipeableViews from "react-swipeable-views";
 
