@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import UploadGrid from "./components/UploadGrid";
 
 import { StateType } from "../redux/reducers/reducers";
-import { Step, StepContent, StepLabel, Stepper } from "@mui/material";
+import { LinearProgress, Step, StepContent, StepLabel, Stepper } from "@mui/material";
 
 import classes from './UploadPage.module.scss';
 import uploadGraphic from '../res/graphics/upload.svg';
@@ -48,7 +48,6 @@ const UploadPage: React.FC = () => {
 
     setFiles(f => Object.assign({}, f, res));
     history.replace(history.location.pathname, {});
-
   });
 
   return (
@@ -64,7 +63,12 @@ const UploadPage: React.FC = () => {
           </StepLabel>
           <StepContent TransitionProps={{ unmountOnExit: false }}>
             {Object.keys(files).length > 0 ? (
-              <UploadGrid files={files} />
+              <UploadGrid files={files} onRemove={key => setFiles(f => {
+                const copy = Object.assign({}, f);
+                delete copy[key];
+
+                return copy;
+              })} />
             ) : (
               <div className={classes['empty-upload']}>
                 <img src={uploadGraphic} alt="" />
@@ -95,22 +99,23 @@ const UploadPage: React.FC = () => {
           )}>
             Select album
           </StepLabel>
-          <StepContent>
+          <StepContent className={classes['step-album']}>
+            <Typography>Select an album to upload the selected images to:</Typography>
             <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
               if (!success) return;
-              if (albumFormRef.current !== null) albumFormRef.current.reset();
-
               setAlbum(values.albumId);
             }} />
-            <Button onClick={() => setStep(0)}>Back</Button>
-            <Button
-              color="primary"
-              variant="contained"
-              disabled={album === null}
-              onClick={() => setStep(2)}
-            >
-              Confirm
-            </Button>
+            <div className={classes.actions}>
+              <Button onClick={() => setStep(0)}>Back</Button>
+              <Button
+                color="primary"
+                variant="contained"
+                disabled={album === null}
+                onClick={() => setStep(2)}
+              >
+                Confirm
+              </Button>
+            </div>
           </StepContent>
         </Step>
 
@@ -118,7 +123,11 @@ const UploadPage: React.FC = () => {
         <Step>
           <StepLabel>Upload to server</StepLabel>
           <StepContent>
-
+            <div className={classes.upload}>
+              <img src={uploadGraphic} alt="" />
+              <LinearProgress variant="determinate" value={50} />
+              <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+            </div>
           </StepContent>
         </Step>
       </Stepper>

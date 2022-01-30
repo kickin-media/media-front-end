@@ -21,14 +21,16 @@ const UploadAlbumForm: React.FC<Props> = ({ reference, onSubmit }) => {
 
   const [values, setValues] = useState<FormValues>(reset());
 
-  const canSubmit = () => values.albumId !== '' && albums[values.albumId] !== undefined;
-  const submit = () => {
-    if (!canSubmit()) {
-      if (onSubmit) onSubmit(false, values);
+  const canSubmit = (vals: FormValues = values) => vals.albumId !== '' && albums[vals.albumId] !== undefined;
+  const submit = (vals?: FormValues) => {
+    if (vals === undefined) vals = values;
+
+    if (!canSubmit(vals)) {
+      if (onSubmit) onSubmit(false, vals);
       return;
     }
 
-    if (onSubmit) onSubmit(true, values);
+    if (onSubmit) onSubmit(true, vals);
   }
 
   if (reference !== undefined) reference.current = {
@@ -45,7 +47,10 @@ const UploadAlbumForm: React.FC<Props> = ({ reference, onSubmit }) => {
           labelId="form-upload-album-label"
           label="Album"
           value={values.albumId}
-          onChange={e => setValues(v => ({ ...v, albumId: e.target.value}))}
+          onChange={e => {
+            setValues(v => ({ ...v, albumId: e.target.value}));
+            submit({ ...values, albumId: e.target.value });
+          }}
           fullWidth
         >
           {Object.keys(albums).map(id => (
