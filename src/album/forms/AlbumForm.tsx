@@ -16,10 +16,12 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 
 import * as actions from '../../redux/actions/album';
+import { StateType } from "../../redux/reducers/reducers";
 
 const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
   const dispatch = useDispatch();
   const album = useSelector((state: any) => albumId ? state.album[albumId] : null, shallowEqual);
+  const events = useSelector((state: StateType) => state.event, shallowEqual);
 
   const reset = () => {
     if (!albumId) return {
@@ -86,7 +88,9 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
           value={values.eventId}
           onChange={e => setValues({ ...values, eventId: e.target.value })}
         >
-          <MenuItem value={0}>HUTS</MenuItem>
+          {Object.keys(events).map(key => (
+            <MenuItem key={key} value={key}>{events[key].name}</MenuItem>
+          ))}
         </Select>
       </FormControl>
 
