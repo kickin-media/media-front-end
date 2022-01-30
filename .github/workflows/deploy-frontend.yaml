@@ -17,6 +17,9 @@ jobs:
           - dev
           - prod
 
+    environment:
+      name: ${{ matrix.environment }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,7 +35,7 @@ jobs:
           args: --acl private
         env:
           AWS_S3_BUCKET: kickin-media-frontend-${{ matrix.environment }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.CICD_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.CICD_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-west-1
           SOURCE_DIR: build
