@@ -34,7 +34,7 @@ export const authMiddleware: Middleware = api => next => {
 
   return action => {
     // Catch any undefined actions and cancel their processing as it might result in problems further down the line
-    if (!action) return;
+    if (!action) return action;
 
     switch (action.type) {
       case auth.login.toString():
@@ -55,6 +55,6 @@ export const authMiddleware: Middleware = api => next => {
         break;
     }
 
-    next(action);
+    return next(action);
   };
 };

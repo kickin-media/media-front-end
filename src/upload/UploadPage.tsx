@@ -1,35 +1,42 @@
-import React, { useEffect, useState } from 'react';
-import clsx from "clsx";
+import React, { useEffect, useRef, useState } from 'react';
+import { shallowEqual, useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
-import { Card, Checkbox } from "@mui/material";
-import {
-  AddToPhotos,
-  CheckCircle, Close,
-  CreateNewFolder,
-  DriveFolderUpload,
-  PermMedia,
-  RadioButtonUnchecked, SelectAll
-} from "@mui/icons-material";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import UploadGrid from "./components/UploadGrid";
+
+import { StateType } from "../redux/reducers/reducers";
+import { Step, StepContent, StepLabel, Stepper } from "@mui/material";
 
 import classes from './UploadPage.module.scss';
-import IconButton from "@mui/material/IconButton";
-import { useHistory } from "react-router-dom";
-import Skeleton from "@mui/material/Skeleton";
+import uploadGraphic from '../res/graphics/upload.svg';
+import Typography from "@mui/material/Typography";
+import UploadAlbumForm, { UploadAlbumFormRef } from "./forms/UploadAlbumForm";
 
 const UploadPage: React.FC = () => {
-  const [files, setFiles] = useState<{ [key: string]: File }>({});
-  const [previews, setPreviews] = useState<{ [key: string]: string }>({});
-  const [selected, setSelected] = useState<{ [key: string]: boolean }>({});
+  const albumFormRef = useRef<UploadAlbumFormRef>(null);
 
+  const [albumId, setAlbum] = useState<string | null>(null);
+  const [files, setFiles] = useState<{ [key: string]: File }>({});
+  const [step, setStep] = useState(0);
+
+  const album = useSelector((state: StateType) => albumId === null
+    ? null
+    : state.album[albumId],
+    shallowEqual);
+
+  // Prevent users from accidentally navigating away from this page
   const history = useHistory<UploadHistoryState>();
-  useEffect(() => history.block((location, action) => {
+  useEffect(() => history.block(location => {
+    // However, allow users to add other files to the upload (uses History API state replace)
     if (location.pathname === '/upload/') return;
+
+    // Otherwise, show warning prompt to the user
     return 'Navigating away from page will cancel the ongoing upload process. Are you sure you want to leave?';
   }));
 
+  // Process newly uploaded files
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!history.location.state || !history.location.state.files) return;
 
@@ -40,104 +47,111 @@ const UploadPage: React.FC = () => {
     for (let i = 0; i < newFiles.length; i++) res[`${newFiles[i].name}-${newFiles[i].lastModified}`] = newFiles[i];
 
     setFiles(f => Object.assign({}, f, res));
+    history.replace(history.location.pathname, {});
 
-    Object.keys(res)
-      .forEach(key => res[key].arrayBuffer()
-        .then(buffer => setPreviews(p => Object.assign({}, p, {
-          [key]: p[key] ? p[key] : URL.createObjectURL(new Blob([buffer]))
-        }))));
-  }, [history.location.state, setFiles, setPreviews]);
-
-  let selectedCount = Object.keys(selected).filter(img => selected[img]).length;
+  });
 
   return (
     <>
-      <ImageList cols={6}>
-        {Object.keys(files).map(key => (
-          <ImageListItem
-            key={key}
-            className={clsx(classes.image, {
-              [classes.selected]: selected[key]
-            })}
-            onClick={() => setSelected(s => Object.assign({}, s, { [key]: !selected[key] }))}
+      <Stepper orientation="vertical" activeStep={step}>
+
+        {/* STEP 1: SELECT IMAGES */}
+        <Step>
+          <StepLabel
+            optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
           >
-            <Checkbox
-              className={classes.check}
-              icon={<RadioButtonUnchecked />}
-              checkedIcon={<CheckCircle />}
-              checked={selected[key] !== undefined ? selected[key] : false}
-            />
-            {previews[key] ? (
-              <img src={previews[key]} alt={files[key].name} />
+            Select images
+          </StepLabel>
+          <StepContent TransitionProps={{ unmountOnExit: false }}>
+            {Object.keys(files).length > 0 ? (
+              <UploadGrid files={files} />
             ) : (
-              <Skeleton variant="rectangular" width={100} height={100} />
+              <div className={classes['empty-upload']}>
+                <img src={uploadGraphic} alt="" />
+                <Typography className={classes.instructions} variant="h4">Drop 'em like its hot!</Typography>
+                <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+              </div>
             )}
-          </ImageListItem>
-        ))}
-      </ImageList>
-
-      <div className={classes.folders}>
-        {selectedCount > 0 ? (
-          <Card variant="outlined" className={classes['selected-status']}>
-            {selectedCount} selected
-            <IconButton onClick={() => setSelected({})}><Close /></IconButton>
-          </Card>
-        ) : (
-          <Card variant="outlined" className={classes['selected-status']}>
-            0 selected
-            <IconButton
-              onClick={() => {
-                const selected: any = {};
-                for (let i = 0; i < 40; i++) selected[i] = true;
-                setSelected(selected);
-              }}
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={Object.keys(files).length === 0}
+              onClick={() => setStep(1)}
             >
-              <SelectAll />
-            </IconButton>
-          </Card>
-        )}
+              Next
+            </Button>
+          </StepContent>
+        </Step>
 
-        <Card variant="outlined">
-          <DriveFolderUpload />
-          <div>
-            <Typography variant="body2">Current upload</Typography>
-            <Typography variant="caption">40 images</Typography>
-          </div>
-          <IconButton><AddToPhotos /></IconButton>
-        </Card>
+        {/* STEP 2: SELECT ALBUM */}
+        <Step>
+          <StepLabel optional={(
+            <Typography variant="caption">
+              {album === null
+                ? 'No album selected'
+                : album.name
+              }
+            </Typography>
+          )}>
+            Select album
+          </StepLabel>
+          <StepContent>
+            <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
+              if (!success) return;
+              if (albumFormRef.current !== null) albumFormRef.current.reset();
 
-        <Card variant="outlined">
-          <PermMedia />
-          <div>
-            <Typography variant="body2">Bestorming van de Bastille</Typography>
-            <Typography variant="caption">20 images</Typography>
-          </div>
-          <IconButton><AddToPhotos /></IconButton>
-        </Card>
+              setAlbum(values.albumId);
+            }} />
+            <Button onClick={() => setStep(0)}>Back</Button>
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={album === null}
+              onClick={() => setStep(2)}
+            >
+              Confirm
+            </Button>
+          </StepContent>
+        </Step>
 
-        <Card variant="outlined">
-          <PermMedia />
-          <div>
-            <Typography variant="body2">Taste Cantus</Typography>
-            <Typography variant="caption">20 images</Typography>
-          </div>
-          <IconButton><AddToPhotos /></IconButton>
-        </Card>
+        {/* STEP 3: UPLOAD IMAGES*/}
+        <Step>
+          <StepLabel>Upload to server</StepLabel>
+          <StepContent>
 
-        <Card variant="outlined">
-          <CreateNewFolder />
-          <div>
-            <Typography variant="body2">Add album...</Typography>
-          </div>
-          <IconButton><AddToPhotos /></IconButton>
-        </Card>
-      </div>
+          </StepContent>
+        </Step>
+      </Stepper>
+
+      {/*<Button*/}
+      {/*  variant="outlined"*/}
+      {/*  onClick={() => {*/}
+      {/*    dispatch(actions.create(Object.keys(files).length)).then(*/}
+      {/*      (res: AnyAction) => {*/}
+      {/*        if (res.type !== actions.create.success) return;*/}
+
+      {/*        Object.keys(files).forEach((key, index) => {*/}
+      {/*          const fields: { [key: string]: string } = res.response[index].preSignedUrl.fields;*/}
+      {/*          const q = Object.keys(fields).map(key => `${key}=${fields[key]}`).join('&');*/}
+      {/*          files[key].arrayBuffer().then(data => fetch(*/}
+      {/*            `${res.response[index].preSignedUrl.url}?${q}`, {*/}
+      {/*            body: data,*/}
+      {/*            method: 'POST',*/}
+      {/*          }));*/}
+      {/*        });*/}
+      {/*      },*/}
+      {/*      (err: any) => console.warn(err)*/}
+      {/*    );*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  Upload*/}
+      {/*</Button>*/}
     </>
   );
 };
 
 interface UploadHistoryState {
-  files: FileList | null;
+  files?: FileList | null;
 }
 
 export default UploadPage;

@@ -32,6 +32,11 @@ const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
     Object.keys(albums).forEach(id => state[id] = mergeAlbums(state[id], albums[id]));
   },
 
+  [actions.list.success]: (state, action) => {
+    const albums = action.response.entities.album;
+    Object.keys(albums).forEach(id => state[id] = mergeAlbums(state[id], albums[id]));
+  },
+
   [actions.get.success]: (state, action) => {
     const album = action.response.entities.album[action.response.result];
     state[album.id] = mergeAlbums(state[album.id], album);

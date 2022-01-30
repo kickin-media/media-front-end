@@ -33,7 +33,8 @@ export const reprocess = createAPIAction(
 export const create = createAPIAction(
   'PHOTO_CREATE',
   'POST',
-  '/photo/'
+  payload => `/photo/?num_uploads=${payload?.amount}`,
+  (amount: number = 1) => ({ amount })
 );
 
 export const setAlbums = createAPIAction(

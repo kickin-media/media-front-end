@@ -148,7 +148,7 @@ export const apiMiddleware: (endpoint: string) => Middleware = endpoint => api =
 
   return (action) => {
     // Catch any undefined actions and cancel processing
-    if (!action) return;
+    if (!action) return action;
 
     // If there is no CALL_API block in the action, then just ignore it and pass the action on to the next middleware
     const callAPI: ApiCallType | undefined = action[CALL_API];
