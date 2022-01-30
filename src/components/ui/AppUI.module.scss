@@ -2,6 +2,8 @@
   height: 3rem;
 
   margin-right: 1rem;
+
+  cursor: pointer;
 }
 
 .mobile .logo {
@@ -54,6 +56,8 @@ div:not(:empty)~.header:not(.scrolled) {
     top: 50%;
     transform: translate(0, -50%);
   }
+
+  > img { width: 100%; }
 }
 
 .alert {

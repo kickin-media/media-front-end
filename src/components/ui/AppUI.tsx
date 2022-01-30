@@ -107,7 +107,12 @@ const AppUI: React.FC<Props> = ({children}) => {
               </IconButton>
             )}
 
-            <img className={classes.logo} src={logo} alt="Kick-In logo"/>
+            <img
+              className={classes.logo}
+              src={logo}
+              alt="Kick-In logo"
+              onClick={() => history.push('/')}
+            />
 
             {desktop ? (
               <Box className={classes['account-wrapper']}>
@@ -168,7 +173,7 @@ const AppUI: React.FC<Props> = ({children}) => {
       </Drawer>
 
       {/* Content */}
-      <Container maxWidth="lg">
+      <Container maxWidth="lg" className={classes.content}>
         <Alert className={classes.alert} severity="info">
           <b>Kick-In Media Site - Testing Phase</b><br />
           This media site (<a href="https://www.kick-in.media/">kick-in.media</a>) is currently in a testing phase;

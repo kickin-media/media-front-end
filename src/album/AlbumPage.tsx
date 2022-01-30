@@ -38,7 +38,7 @@ const AlbumPage: React.FC = () => {
             <Typography>12 uur geleden • Kick-In 2021</Typography>
           </Container>
 
-          <img src={album.coverPhoto.imgUrls.large} style={{ width: '100%' }} alt="Hero" />
+          <img src={album.coverPhoto.imgUrls.large} alt="" />
         </Region>
       )}
 
