@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { shallowEqual, useSelector } from "react-redux";
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Button from "@mui/material/Button";
@@ -13,13 +13,19 @@ import uploadGraphic from '../res/graphics/upload.svg';
 import Typography from "@mui/material/Typography";
 import UploadAlbumForm, { UploadAlbumFormRef } from "./forms/UploadAlbumForm";
 
+import * as actions from '../redux/actions/photo';
+import { AnyAction } from "@reduxjs/toolkit";
+
 const UploadPage: React.FC = () => {
   const albumFormRef = useRef<UploadAlbumFormRef>(null);
 
   const [albumId, setAlbum] = useState<string | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
   const [files, setFiles] = useState<{ [key: string]: File }>({});
+  const [progress, setProgress] = useState(0);
   const [step, setStep] = useState(0);
 
+  const dispatch = useDispatch();
   const album = useSelector((state: StateType) => albumId === null
     ? null
     : state.album[albumId],
@@ -49,6 +55,34 @@ const UploadPage: React.FC = () => {
     setFiles(f => Object.assign({}, f, res));
     history.replace(history.location.pathname, {});
   });
+
+  // Upload images once the last step is triggered
+  useEffect(() => {
+    if (step !== 2) return;
+
+    dispatch(actions.create(Object.keys(files).length)).then((signedUrls: AnyAction) => {
+      if (signedUrls.type !== actions.create.success) return;
+
+      Object.keys(files).forEach((key, index) => {
+        const fields: { [key: string]: string } = signedUrls.response[index].preSignedUrl.fields;
+        const q = Object.keys(fields).map(key => `${key}=${fields[key]}`).join('&');
+
+        files[key].arrayBuffer().then(data => fetch(
+          `${signedUrls.response[index].preSignedUrl.url}?${q}`, {
+            body: data,
+            method: 'POST'
+          }
+        )).then(res => {
+          if (!res.ok) {
+            setErrors(e => [...e, key]);
+            return;
+          }
+
+          setProgress(progress => progress + 100 / Object.keys(files).length);
+        }, () => setErrors(e => [...e, key]));
+      });
+    });
+  }, [dispatch, files, step]);
 
   return (
     <>
@@ -125,8 +159,11 @@ const UploadPage: React.FC = () => {
           <StepContent>
             <div className={classes.upload}>
               <img src={uploadGraphic} alt="" />
-              <LinearProgress variant="determinate" value={50} />
+              <LinearProgress variant="determinate" value={progress} />
               <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+              {errors.map((error, index) => (
+                <Typography key={index}>{error}</Typography>
+              ))}
             </div>
           </StepContent>
         </Step>
