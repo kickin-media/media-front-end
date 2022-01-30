@@ -39,6 +39,17 @@ div:not(:empty)~.header:not(.scrolled) {
 .hero {
   max-height: 100vh;
   overflow-y: hidden;
+
+  position: relative;
+
+  color: white;
+  text-shadow: 0 1px 3px #262626;
+
+  > div {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
 }
 
 .footer {

@@ -12,7 +12,7 @@ export interface AlbumType {
   eventId: string;
 
   name: string;
-  coverPhoto: PhotoType;
+  coverPhoto: PhotoType | null;
 
   photos?: string[];
   photosCount: number;

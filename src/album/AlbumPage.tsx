@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 
 import { Region } from "../components/ui/AppUI";
 
-import hero from "../res/images/hero.jpg";
-
 import AlbumEditDialog from "./dialogs/AlbumEditDialog";
 import { useParams } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -11,6 +9,8 @@ import { StateType } from "../redux/reducers/reducers";
 
 import * as actions from '../redux/actions/album';
 import AlbumGallery from "./components/AlbumGallery";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 
 const AlbumPage: React.FC = () => {
   const { albumId } = useParams<{ albumId: string }>();
@@ -28,12 +28,16 @@ const AlbumPage: React.FC = () => {
 
   return (
     <>
-      <Region name="hero">
-        {/*<Typography variant="h2">Taste Cantus</Typography>*/}
-        {/*<Typography variant="caption">12 uur geleden • Kick-In 2021</Typography>*/}
+      {album.coverPhoto !== null && (
+        <Region name="hero">
+          <Container maxWidth="lg">
+            <Typography variant="h2">{album.name}</Typography>
+            <Typography>12 uur geleden • Kick-In 2021</Typography>
+          </Container>
 
-        <img src={hero} style={{ width: '100%' }} alt="Hero" />
-      </Region>
+          <img src={album.coverPhoto.imgUrls.large} style={{ width: '100%' }} alt="Hero" />
+        </Region>
+      )}
 
       <AlbumEditDialog />
 
