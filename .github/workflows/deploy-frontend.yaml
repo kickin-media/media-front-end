@@ -39,3 +39,12 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-west-1
           SOURCE_DIR: build
+
+      - name: Invalidate front-end cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION }}
+          PATHS: "/*"
+          AWS_REGION: "eu-west-1"
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
