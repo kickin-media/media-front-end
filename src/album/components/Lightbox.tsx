@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 
-import IconButton from "@mui/material/IconButton";
-import SwipeableViews from "react-swipeable-views";
-
-import { Close, Info, KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
-
 import { PhotoType } from "../../redux/reducers/photo";
 import { AlbumType } from "../../redux/reducers/album";
 
+import IconButton from "@mui/material/IconButton";
+import Modal from '@mui/material/Modal';
+import SwipeableViews from "react-swipeable-views";
+
+import Close from '@mui/icons-material/Close';
+import Info from '@mui/icons-material/Info';
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+
+
 import classes from './Lightbox.module.scss';
-import { Modal } from "@mui/material";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
