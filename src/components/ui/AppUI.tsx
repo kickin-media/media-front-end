@@ -9,7 +9,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Drawer from '@mui/material/Drawer';
@@ -22,7 +21,6 @@ import MUILink from '@mui/material/Link';
 import Portal from '@mui/material/Portal';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
 
 import AccountIcon from '@mui/icons-material/AccountCircle';
 import AlbumIcon from '@mui/icons-material/PhotoLibrary';
@@ -36,6 +34,7 @@ import { login } from "../../redux/actions/auth";
 import { UserType } from "../../redux/reducers/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
+import { Alert } from "@mui/material";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -55,12 +54,6 @@ export const Region: React.FC<{ children: React.ReactNode, name: string }> = (pr
     {context => context[props.name].current ? (<Portal container={context[props.name].current}>{props.children}</Portal>) : null}
   </RegionContext.Consumer>
 );
-
-
-// ##
-// # BREADCRUMB
-// ##
-const Link = ((props: any) => <MUILink {...props} component={RouterLink} />) as unknown as (typeof RouterLink);
 
 
 // ##
@@ -172,11 +165,13 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
 
       {/* Content */}
       <Container maxWidth="lg">
-        <Breadcrumbs aria-label="breadcrumb">
-          <Link to="/">Home</Link>
-          <Link to="/kick-in2022">Kick-In 2022</Link>
-          <Typography>Uploaden</Typography>
-        </Breadcrumbs>
+        <Alert severity="info">
+          <b>Kick-In Media Site - Testing Phase</b><br />
+          This media site (<a href="https://www.kick-in.media/">kick-in.media</a>) is currently in a testing phase;
+          this means that this app is currently in development, but we would love to get feedback from you! If you have
+          the time, you can fill in <a href="https://forms.gle/DccESdS33oKog1Tm8">this form</a> (takes max. 5 minutes)
+          or send an e-mail to <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a>.
+        </Alert>
 
         {children}
       </Container>
