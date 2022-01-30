@@ -11,6 +11,7 @@ import * as actions from '../redux/actions/album';
 import AlbumGallery from "./components/AlbumGallery";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import { CircularProgress } from "@mui/material";
 
 const AlbumPage: React.FC = () => {
   const { albumId } = useParams<{ albumId: string }>();
@@ -25,6 +26,8 @@ const AlbumPage: React.FC = () => {
     dispatch(actions.get(albumId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
+
+  if (!album) return <CircularProgress />;
 
   return (
     <>
