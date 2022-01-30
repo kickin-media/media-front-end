@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { Region } from "../components/ui/AppUI";
 
@@ -10,13 +10,10 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StateType } from "../redux/reducers/reducers";
 
 import * as actions from '../redux/actions/album';
-import Lightbox from "./components/Lightbox";
 import AlbumGallery from "./components/AlbumGallery";
 
 const AlbumPage: React.FC = () => {
   const { albumId } = useParams<{ albumId: string }>();
-
-  const [lightbox, setLightbox] = useState<null | number>(null);
 
   const dispatch = useDispatch();
   const album = useSelector((state: StateType) => state.album[albumId], shallowEqual);
@@ -39,14 +36,6 @@ const AlbumPage: React.FC = () => {
       </Region>
 
       <AlbumEditDialog />
-
-      {album !== undefined ? (<Lightbox
-        open={lightbox !== null}
-        album={album}
-        photos={photos}
-        start={lightbox !== null ? lightbox : 0}
-        onClose={() => setLightbox(null)}
-      />) : null}
 
       <AlbumGallery album={album} photos={photos} />
     </>

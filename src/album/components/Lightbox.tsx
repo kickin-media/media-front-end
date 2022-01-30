@@ -11,15 +11,23 @@ import { AlbumType } from "../../redux/reducers/album";
 
 import classes from './Lightbox.module.scss';
 
-const Lightbox: React.FC<Props> = ({ open, album, photos, start, onClose }) => {
-  const [index, setIndex] = useState(start);
+const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
+  const [index, setIndex] = useState(0);
   const [prevOpen, setOpen] = useState(open !== undefined ? open: false);
 
   useEffect(() => {
+    if (startId === null) return;
     if (open === prevOpen) return;
     setOpen(open !== undefined ? open: false);
-    setIndex(start);
-  }, [prevOpen, open, start]);
+    setIndex(photos.map(photo => photo.id).indexOf(startId));
+  }, [prevOpen, open, startId, photos]);
+
+  const update = (delta: number) => () => setIndex(prev => {
+    const nextIndex = prev + delta;
+    if (onChange) onChange(photos[nextIndex].id);
+
+    return nextIndex;
+  });
 
   return (
     <Backdrop
@@ -33,7 +41,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, start, onClose }) => {
 
       <div className={classes.carousel}>
         <IconButton
-          onClick={() => setIndex(index - 1)}
+          onClick={update(-1)}
           disabled={index === 0}
         >
           <KeyboardArrowLeft />
@@ -52,7 +60,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, start, onClose }) => {
           ))}
         </SwipeableViews>
         <IconButton
-          onClick={() => setIndex(index + 1)}
+          onClick={update(1)}
           disabled={index === photos.length - 1}
         >
           <KeyboardArrowRight />
@@ -67,8 +75,9 @@ interface Props {
   photos: PhotoType[];
 
   open?: boolean;
-  start: number;
+  startId: string | null;
 
+  onChange?: (photoId: string) => void;
   onClose?: () => void;
 }
 

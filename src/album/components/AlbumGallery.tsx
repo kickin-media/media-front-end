@@ -7,8 +7,13 @@ import { PhotoType } from "../../redux/reducers/photo";
 import classes from './AlbumGallery.module.scss';
 import { AlbumType } from "../../redux/reducers/album";
 import slugify from "slugify";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import Lightbox from "./Lightbox";
 
 const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
+  const history = useHistory();
+  const routeMatch = useRouteMatch<RouteProps>();
+
   if (!photos || !album) return <CircularProgress />;
 
   return (
@@ -19,13 +24,15 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
           className={classes.photo}
           href={`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`}
           style={{ '--w': 100, '--h': 100 } as React.CSSProperties}
-
+          onClick={e => {
+            history.push(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`);
+            e.preventDefault();
+          }}
         >
           <img
             src={photo.imgUrls.small}
             alt=""
             onLoad={e => {
-              console.log(e);
               // @ts-ignore
               e.target.parentNode.style.setProperty('--w', e.target.naturalWidth);
               // @ts-ignore
@@ -34,6 +41,15 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
           />
         </a>
       ))}
+
+      <Lightbox
+        album={album}
+        photos={photos}
+        open={routeMatch.params.photoId !== undefined}
+        startId={routeMatch.params.photoId ? routeMatch.params.photoId : null}
+        onChange={photoId => history.replace(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photoId}`)}
+        onClose={history.goBack}
+      />
     </div>
   );
 };
@@ -41,6 +57,10 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
 interface Props {
   album?: AlbumType;
   photos?: PhotoType[];
+}
+
+interface RouteProps {
+  photoId?: string;
 }
 
 export default AlbumGallery;
