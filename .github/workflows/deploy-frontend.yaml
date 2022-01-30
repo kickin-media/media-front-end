@@ -26,8 +26,8 @@ jobs:
 
       - name: Build front-end
         run: |
-          npm install
-          npm run build
+          yarn install
+          API_ENV=${{ matrix.environment }} yarn run build
 
       - name: Deploy front-end to S3
         uses: jakejarvis/s3-sync-action@master
