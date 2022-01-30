@@ -12,12 +12,14 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
   if (!photos || !album) return <CircularProgress />;
 
   return (
-    <div className={classes.gallery} style={{ '--row-height': 120 } as React.CSSProperties}>
+    <div className={classes.gallery}>
       {photos.map(photo => (
         <a
           key={photo.id}
+          className={classes.photo}
           href={`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`}
           style={{ '--w': 100, '--h': 100 } as React.CSSProperties}
+
         >
           <img
             src={photo.imgUrls.small}

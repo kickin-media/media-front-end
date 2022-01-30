@@ -3,16 +3,17 @@
 
   display: flex;
   flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .gallery > .photo, .gallery::after {
   --ratio: calc(var(--w) / var(--h));
-  --row-height: 9rem;
+  --row-height: 12rem;
   flex-basis: calc(var(--ratio) * var(--row-height));
 }
 
 .gallery > .photo {
-  margin: 0.25rem;
+  //margin: 0.25rem;
   flex-grow: calc(var(--ratio) * 100);
 }
 
