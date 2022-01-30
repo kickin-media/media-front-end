@@ -85,114 +85,87 @@ const UploadPage: React.FC = () => {
   }, [dispatch, files, step]);
 
   return (
-    <>
-      <Stepper orientation="vertical" activeStep={step}>
+    <Stepper orientation="vertical" activeStep={step}>
+      {/* STEP 1: SELECT IMAGES */}
+      <Step>
+        <StepLabel
+          optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
+        >
+          Select images
+        </StepLabel>
+        <StepContent TransitionProps={{ unmountOnExit: false }}>
+          {Object.keys(files).length > 0 ? (
+            <UploadGrid files={files} onRemove={key => setFiles(f => {
+              const copy = Object.assign({}, f);
+              delete copy[key];
 
-        {/* STEP 1: SELECT IMAGES */}
-        <Step>
-          <StepLabel
-            optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
+              return copy;
+            })} />
+          ) : (
+            <div className={classes['empty-upload']}>
+              <img src={uploadGraphic} alt="" />
+              <Typography className={classes.instructions} variant="h4">Drop 'em like its hot!</Typography>
+              <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+            </div>
+          )}
+          <Button
+            color="primary"
+            variant="contained"
+            disabled={Object.keys(files).length === 0}
+            onClick={() => setStep(1)}
           >
-            Select images
-          </StepLabel>
-          <StepContent TransitionProps={{ unmountOnExit: false }}>
-            {Object.keys(files).length > 0 ? (
-              <UploadGrid files={files} onRemove={key => setFiles(f => {
-                const copy = Object.assign({}, f);
-                delete copy[key];
+            Next
+          </Button>
+        </StepContent>
+      </Step>
 
-                return copy;
-              })} />
-            ) : (
-              <div className={classes['empty-upload']}>
-                <img src={uploadGraphic} alt="" />
-                <Typography className={classes.instructions} variant="h4">Drop 'em like its hot!</Typography>
-                <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
-              </div>
-            )}
+      {/* STEP 2: SELECT ALBUM */}
+      <Step>
+        <StepLabel optional={(
+          <Typography variant="caption">
+            {album === null
+              ? 'No album selected'
+              : album.name
+            }
+          </Typography>
+        )}>
+          Select album
+        </StepLabel>
+        <StepContent className={classes['step-album']}>
+          <Typography>Select an album to upload the selected images to:</Typography>
+          <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
+            if (!success) return;
+            setAlbum(values.albumId);
+          }} />
+          <div className={classes.actions}>
+            <Button onClick={() => setStep(0)}>Back</Button>
             <Button
               color="primary"
               variant="contained"
-              disabled={Object.keys(files).length === 0}
-              onClick={() => setStep(1)}
+              disabled={album === null}
+              onClick={() => setStep(2)}
             >
-              Next
+              Confirm
             </Button>
-          </StepContent>
-        </Step>
+          </div>
+        </StepContent>
+      </Step>
 
-        {/* STEP 2: SELECT ALBUM */}
-        <Step>
-          <StepLabel optional={(
-            <Typography variant="caption">
-              {album === null
-                ? 'No album selected'
-                : album.name
-              }
-            </Typography>
-          )}>
-            Select album
-          </StepLabel>
-          <StepContent className={classes['step-album']}>
-            <Typography>Select an album to upload the selected images to:</Typography>
-            <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
-              if (!success) return;
-              setAlbum(values.albumId);
-            }} />
-            <div className={classes.actions}>
-              <Button onClick={() => setStep(0)}>Back</Button>
-              <Button
-                color="primary"
-                variant="contained"
-                disabled={album === null}
-                onClick={() => setStep(2)}
-              >
-                Confirm
-              </Button>
-            </div>
-          </StepContent>
-        </Step>
-
-        {/* STEP 3: UPLOAD IMAGES*/}
-        <Step>
-          <StepLabel>Upload to server</StepLabel>
-          <StepContent>
-            <div className={classes.upload}>
-              <img src={uploadGraphic} alt="" />
-              <LinearProgress variant="determinate" value={progress} />
-              <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
-              {errors.map((error, index) => (
-                <Typography key={index}>{error}</Typography>
-              ))}
-            </div>
-          </StepContent>
-        </Step>
-      </Stepper>
-
-      {/*<Button*/}
-      {/*  variant="outlined"*/}
-      {/*  onClick={() => {*/}
-      {/*    dispatch(actions.create(Object.keys(files).length)).then(*/}
-      {/*      (res: AnyAction) => {*/}
-      {/*        if (res.type !== actions.create.success) return;*/}
-
-      {/*        Object.keys(files).forEach((key, index) => {*/}
-      {/*          const fields: { [key: string]: string } = res.response[index].preSignedUrl.fields;*/}
-      {/*          const q = Object.keys(fields).map(key => `${key}=${fields[key]}`).join('&');*/}
-      {/*          files[key].arrayBuffer().then(data => fetch(*/}
-      {/*            `${res.response[index].preSignedUrl.url}?${q}`, {*/}
-      {/*            body: data,*/}
-      {/*            method: 'POST',*/}
-      {/*          }));*/}
-      {/*        });*/}
-      {/*      },*/}
-      {/*      (err: any) => console.warn(err)*/}
-      {/*    );*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  Upload*/}
-      {/*</Button>*/}
-    </>
+      {/* STEP 3: UPLOAD IMAGES*/}
+      <Step>
+        <StepLabel>Upload to server</StepLabel>
+        <StepContent>
+          <div className={classes.upload}>
+            <img src={uploadGraphic} alt="" />
+            <LinearProgress variant="determinate" value={progress} />
+            <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+            {errors.map((error, index) => (
+              <Typography key={index}>{files[error].name}</Typography>
+            ))}
+          </div>
+        </StepContent>
+      </Step>
+    </Stepper>
   );
 };
 
