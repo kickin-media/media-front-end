@@ -164,7 +164,7 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
 
       {/* Content */}
       <Container maxWidth="lg">
-        <Alert severity="info">
+        <Alert className={classes.alert} severity="info">
           <b>Kick-In Media Site - Testing Phase</b><br />
           This media site (<a href="https://www.kick-in.media/">kick-in.media</a>) is currently in a testing phase;
           this means that this app is currently in development, but we would love to get feedback from you! If you have

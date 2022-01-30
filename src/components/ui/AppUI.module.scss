@@ -52,9 +52,14 @@ div:not(:empty)~.header:not(.scrolled) {
   }
 }
 
+.alert {
+  margin-bottom: 1rem;
+}
+
 .footer {
   position: relative;
 
+  margin-top: 2rem;
   padding: 2rem 0;
 
   background-color: #1565c0;
