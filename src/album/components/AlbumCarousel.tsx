@@ -18,6 +18,7 @@ const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
   const [activeStep, setActiveStep] = React.useState(0);
+  if (albums !== null && albums.length === 0) return null;
 
   const viewSize = 4;
 
