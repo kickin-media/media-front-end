@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
-import { compose } from 'redux';
-import { connect } from 'react-redux';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
 import {useTheme} from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import Alert from '@mui/material/Alert';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
+import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon'
@@ -30,10 +31,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import classes from './AppUI.module.scss';
 import logo from '../../res/images/logo-white.png';
 import { login } from "../../redux/actions/auth";
-import { UserType } from "../../redux/reducers/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
-import { Alert, Grid } from "@mui/material";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -58,8 +57,13 @@ export const Region: React.FC<{ children: React.ReactNode, name: string }> = (pr
 // ##
 // # APPLICATION UI
 // ##
-const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, history, login, user}) => {
+const AppUI: React.FC<Props> = ({children}) => {
   const hero = useRef();
+
+  const history = useHistory();
+
+  const dispatch = useDispatch();
+  const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user : undefined, shallowEqual);
 
   // Save the component's state
   const [drawer, setDrawer] = useState<boolean>(false);
@@ -124,6 +128,7 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
                 ))}
                 {user ? (
                   <Button
+                    className={classes['user-menu']}
                     color="inherit"
                     variant="outlined"
                     endIcon={<Avatar alt={user.name} src={user.picture} sx={{width: 24, height: 24}} />}
@@ -135,7 +140,7 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
                     <IconButton
                       size="large"
                       color="inherit"
-                      onClick={() => login(document.location.origin)}
+                      onClick={() => dispatch(login(document.location.origin))}
                     >
                       <AccountIcon/>
                     </IconButton>
@@ -201,17 +206,4 @@ interface Props {
   children?: React.ReactNode;
 }
 
-interface ReduxProps {
-  login: typeof login;
-
-  user?: UserType;
-}
-
-export default compose(
-  withRouter,
-  connect((state: StateType) => ({
-    user: state.auth.authenticated ? state.auth.user : undefined,
-  }), (dispatch) => ({
-    login: (redirectUri?: string) => dispatch(login(redirectUri)),
-  }))
-)(AppUI) as unknown as React.FC<Props>;
+export default AppUI;
