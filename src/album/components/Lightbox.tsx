@@ -10,6 +10,7 @@ import { PhotoType } from "../../redux/reducers/photo";
 import { AlbumType } from "../../redux/reducers/album";
 
 import classes from './Lightbox.module.scss';
+import { Modal } from "@mui/material";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -35,54 +36,54 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   });
 
   return (
-    <Backdrop
+    <Modal
       open={prevOpen}
-      className={classes.backdrop}
-      onClick={e => {
-        if (onClose) onClose();
-        e.stopPropagation();
-      }}
+      onClose={onClose}
     >
-      <div className={classes.actions} onClick={e => e.stopPropagation()}>
-        <IconButton><Info /></IconButton>
-        <IconButton onClick={onClose}><Close /></IconButton>
-      </div>
+      <div className={classes.root} onClick={() => {
+        if (onClose) onClose();
+      }}>
+        <div className={classes.actions} onClick={e => e.stopPropagation()}>
+          <IconButton><Info /></IconButton>
+          <IconButton onClick={onClose}><Close /></IconButton>
+        </div>
 
-      <div className={classes.carousel}>
-        <IconButton
-          onClick={e => {
-            update(-1);
-            e.stopPropagation();
-          }}
-          disabled={index === 0}
-        >
-          <KeyboardArrowLeft />
-        </IconButton>
-        <SwipeableViews
-          index={index}
-          onChangeIndex={index => setIndex(index)}
-          enableMouseEvents
-        >
-          {photos.map(photo => (
-            <img
-              key={photo.id}
-              src={photo.imgUrls.large}
-              alt=""
-              onClick={e => e.stopPropagation()}
-            />
-          ))}
-        </SwipeableViews>
-        <IconButton
-          onClick={e => {
-            update(1);
-            e.stopPropagation();
-          }}
-          disabled={index === photos.length - 1}
-        >
-          <KeyboardArrowRight />
-        </IconButton>
+        <div className={classes.carousel}>
+          <IconButton
+            onClick={e => {
+              update(-1);
+              e.stopPropagation();
+            }}
+            disabled={index === 0}
+          >
+            <KeyboardArrowLeft />
+          </IconButton>
+          <SwipeableViews
+            index={index}
+            onChangeIndex={index => setIndex(index)}
+            enableMouseEvents
+          >
+            {photos.map(photo => (
+              <img
+                key={photo.id}
+                src={photo.imgUrls.large}
+                alt=""
+                onClick={e => e.stopPropagation()}
+              />
+            ))}
+          </SwipeableViews>
+          <IconButton
+            onClick={e => {
+              update(1);
+              e.stopPropagation();
+            }}
+            disabled={index === photos.length - 1}
+          >
+            <KeyboardArrowRight />
+          </IconButton>
+        </div>
       </div>
-    </Backdrop>
+    </Modal>
   );
 };
 
