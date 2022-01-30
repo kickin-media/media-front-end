@@ -24,8 +24,11 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     else setIndex(0);
   }, [prevOpen, open, startId, photos]);
 
-  const update = (delta: number) => () => setIndex(prev => {
-    const nextIndex = prev + delta;
+  const update = (delta: number) => setIndex(prev => {
+    let nextIndex = prev + delta;
+    if (nextIndex < 0) nextIndex = 0;
+    if (nextIndex >= photos.length) nextIndex = photos.length - 1;
+
     if (onChange) onChange(photos[nextIndex].id);
 
     return nextIndex;
@@ -35,15 +38,22 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     <Backdrop
       open={prevOpen}
       className={classes.backdrop}
+      onClick={e => {
+        if (onClose) onClose();
+        e.stopPropagation();
+      }}
     >
-      <div className={classes.actions}>
+      <div className={classes.actions} onClick={e => e.stopPropagation()}>
         <IconButton><Info /></IconButton>
         <IconButton onClick={onClose}><Close /></IconButton>
       </div>
 
       <div className={classes.carousel}>
         <IconButton
-          onClick={update(-1)}
+          onClick={e => {
+            update(-1);
+            e.stopPropagation();
+          }}
           disabled={index === 0}
         >
           <KeyboardArrowLeft />
@@ -58,11 +68,15 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
               key={photo.id}
               src={photo.imgUrls.large}
               alt=""
+              onClick={e => e.stopPropagation()}
             />
           ))}
         </SwipeableViews>
         <IconButton
-          onClick={update(1)}
+          onClick={e => {
+            update(1);
+            e.stopPropagation();
+          }}
           disabled={index === photos.length - 1}
         >
           <KeyboardArrowRight />
