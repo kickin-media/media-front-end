@@ -39,7 +39,7 @@ import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
-  {label: 'Foto\'s', target: '/albums/', icon: <AlbumIcon />},
+  {label: 'Events', target: '/event/', icon: <AlbumIcon />},
   {label: 'Media Crew', target: '/media/', icon: <InfoIcon />},
 ];
 

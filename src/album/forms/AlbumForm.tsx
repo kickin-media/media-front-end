@@ -58,9 +58,9 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
       return;
     }
 
-    console.log(dispatch(albumId
+    dispatch(albumId
       ? actions.update(albumId, values.name as string, values.timestamp, values.release, values.eventId)
-      : actions.create(values.name, values.timestamp, values.release, values.eventId)));
+      : actions.create(values.name, values.timestamp, values.release, values.eventId));
   };
 
   if (reference !== undefined) reference.current = {

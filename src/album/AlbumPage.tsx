@@ -49,28 +49,6 @@ const AlbumPage: React.FC = () => {
       />) : null}
 
       <AlbumGallery album={album} photos={photos} />
-
-      {/*<ImageList cols={12} rowHeight={100}>*/}
-      {/*  {photos.map((photo, index) => (*/}
-      {/*    <ImageListItem*/}
-      {/*      key={photo.id}*/}
-      {/*      cols={3}*/}
-      {/*      rows={3}*/}
-      {/*      onClick={() => setLightbox(index)}*/}
-      {/*    >*/}
-      {/*      <img src={photo.imgUrls.large} alt="" />*/}
-      {/*    </ImageListItem>*/}
-      {/*  ))}*/}
-      {/*  /!*{images.map((orientation, index) => orientation === 'h' ? (*!/*/}
-      {/*  /!*  <ImageListItem key={index} cols={6} rows={4}>*!/*/}
-      {/*  /!*    <img src={`https://picsum.photos/600/400?index=${index}`} alt="" />*!/*/}
-      {/*  /!*  </ImageListItem>*!/*/}
-      {/*  /!*) : (*!/*/}
-      {/*  /!*  <ImageListItem key={index} cols={4} rows={6}>*!/*/}
-      {/*  /!*    <img src={`https://picsum.photos/400/600?index=${index}`} alt="" />*!/*/}
-      {/*  /!*  </ImageListItem>*!/*/}
-      {/*  /!*))}*!/*/}
-      {/*</ImageList>*/}
     </>
   );
 }

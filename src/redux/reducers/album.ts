@@ -21,14 +21,13 @@ export interface AlbumType {
   timestamp: Date;
 }
 
-const mergeAlbums = (old: AlbumType | undefined, current: AlbumType) => {
-  // TODO: Merge
-  return current;
-};
+const mergeAlbums = (old: AlbumType | undefined, current: AlbumType) => Object.assign({}, old, current);
 
 const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
   [eventActions.getAlbums.success]: (state, action) => {
     const albums = action.response.entities.album;
+    if (!albums) return;
+
     Object.keys(albums).forEach(id => state[id] = mergeAlbums(state[id], albums[id]));
   },
 
