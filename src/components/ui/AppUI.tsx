@@ -34,7 +34,7 @@ import { login } from "../../redux/actions/auth";
 import { UserType } from "../../redux/reducers/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
-import { Alert } from "@mui/material";
+import { Alert, Grid } from "@mui/material";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -176,8 +176,24 @@ const AppUI: React.FC<ReduxProps & RouteComponentProps & Props> = ({children, hi
         {children}
       </Container>
 
+      {/* Footer */}
+      <div className={classes.footer}>
+        <Container maxWidth="lg">
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <img src={logo} alt="Kick-In logo"/>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <b>Kick-In Media App</b><br />
+              <a href="https://www.kick-in.nl">Kick-In Website</a><br />
+              <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a>
+            </Grid>
+          </Grid>
+        </Container>
+      </div>
+
       {/* Others */}
-      <DropEmLikeItsHot />
+      {user !== undefined ? <DropEmLikeItsHot /> : null}
     </RegionContext.Provider>
   );
 };
