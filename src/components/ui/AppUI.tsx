@@ -33,6 +33,7 @@ import logo from '../../res/images/logo-white.png';
 import { login } from "../../redux/actions/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
+import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -202,6 +203,7 @@ const AppUI: React.FC<Props> = ({children}) => {
       </div>
 
       {/* Others */}
+      <AdminSpeedDial />
       {user !== undefined ? <DropEmLikeItsHot /> : null}
     </RegionContext.Provider>
   );
