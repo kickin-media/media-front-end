@@ -20,6 +20,11 @@ const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
   [actions.list.success]: (state, action) => {
     const events = action.response.entities.event;
     Object.keys(events).forEach(id => state[id] = mergeEvents(state[id], events[id]));
+  },
+
+  [actions.get.success]: (state, action) => {
+    const event = action.response.entities.event[action.response.result];
+    state[event.id] = mergeEvents(state[event.id], event);
   }
 });
 
