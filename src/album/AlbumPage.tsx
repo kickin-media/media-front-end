@@ -19,7 +19,9 @@ const AlbumPage: React.FC = () => {
 
   const dispatch = useDispatch();
   const album = useSelector((state: StateType) => state.album[albumId], shallowEqual);
-  const event = useSelector((state: StateType) => state.event[state.album[albumId].eventId]);
+  const event = useSelector((state: StateType) => state.album[albumId]
+    ? state.event[state.album[albumId].eventId]
+    : null, shallowEqual);
   const photos = useSelector((state: StateType) => album && album.photos
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
@@ -29,7 +31,8 @@ const AlbumPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
-  if (!album) return <CircularProgress />;
+  console.log(album, event);
+  if (!album || !event) return <CircularProgress />;
 
   return (
     <>

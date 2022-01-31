@@ -1,6 +1,7 @@
 import { createReducer, Reducer } from "@reduxjs/toolkit";
 
 import * as actions from '../actions/event';
+import * as albumActions from '../actions/album';
 
 export type EventStateType = { [key: string]: EventType };
 
@@ -17,6 +18,11 @@ const mergeEvents = (old: EventType | undefined, current: EventType) => {
 };
 
 const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
+  [albumActions.get.success]: (state, action) => {
+    const events = action.response.entities.event;
+    Object.keys(events).forEach(id => state[id] = mergeEvents(state[id], events[id]));
+  },
+
   [actions.list.success]: (state, action) => {
     const events = action.response.entities.event;
     Object.keys(events).forEach(id => state[id] = mergeEvents(state[id], events[id]));
