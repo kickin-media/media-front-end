@@ -31,7 +31,6 @@ const AlbumPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch])
 
-  console.log(album, event);
   if (!album || !event) return <CircularProgress />;
 
   return (

@@ -42,6 +42,13 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     <Modal
       open={prevOpen}
       onClose={onClose}
+      onKeyDown={e => {
+        if (e.key === 'ArrowLeft') update(-1);
+        if (e.key === 'ArrowRight') update(1);
+        else return;
+
+        e.stopPropagation();
+      }}
     >
       <div className={classes.root} onClick={() => {
         if (onClose) onClose();
