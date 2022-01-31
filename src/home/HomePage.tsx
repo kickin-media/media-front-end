@@ -35,7 +35,6 @@ const HomePage = () => {
           title={events[event].name}
         />
       ))}
-      <AlbumCarousel albums={null} title="Recente albums" />
     </>
   );
 }
