@@ -13,6 +13,11 @@
       padding: 0;
     }
   }
+
+  .stepper.progress {
+    flex-grow: 1;
+    max-width: 8rem;
+  }
 }
 
 .carousel {

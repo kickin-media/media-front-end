@@ -13,19 +13,30 @@ import { MobileStepper } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { AlbumType } from "../../redux/reducers/album";
+import useWidth from "../../util/useWidth";
+import clsx from "clsx";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
+const VIEW_SIZES: { [key: string]: number } = { 'xs': 1, 'sm': 3 };
+
 const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
   const [activeStep, setActiveStep] = React.useState(0);
+
+  const width = useWidth();
+
   if (albums !== null && albums.length === 0) return null;
 
-  const viewSize = 4;
+  const viewSize = VIEW_SIZES[width] ? VIEW_SIZES[width] : 4;
 
-  let aa = albums ? albums : new Array(viewSize).fill(null);
+  console.log(width, viewSize);
+
+  let aa = albums ? albums : new Array(5 * viewSize).fill(null);
 
   let views: (AlbumType | null)[][] = [];
   for (let i = 0; i < aa.length; i += viewSize) views.push(aa.slice(i, i + viewSize));
+
+  const progress = VIEW_SIZES[width] && views.length > 3;
 
   return (
     <>
@@ -35,8 +46,9 @@ const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
         {/* Only show the stepper/pagination if there are multiple pages/views */}
         {views.length > 1 && (
           <MobileStepper
-            className={classes.stepper}
+            className={clsx(classes.stepper, { [classes.progress]: progress })}
             steps={views.length}
+            variant={progress ? 'progress' : 'dots'}
             position="static"
             activeStep={activeStep}
             nextButton={(
