@@ -1,16 +1,24 @@
 import React from 'react';
 import slugify from 'slugify';
+import { useHistory } from "react-router-dom";
+import { relativeDate } from "../../util/date";
 
-import classes from './Album.module.scss';
+import { useSelector } from "react-redux";
+import { AlbumType } from "../../redux/reducers/album";
+import { StateType } from "../../redux/reducers/reducers";
 
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
-import { AlbumType } from "../../redux/reducers/album";
-import { useHistory } from "react-router-dom";
+
+import classes from './Album.module.scss';
 
 const Album: React.FC<Props> = ({ album }) => {
   const history = useHistory();
+
+  const event = useSelector((state: StateType) => album !== null
+    ? state.event[album.eventId]
+    : null);
 
   return album ? (
     <Stack
@@ -27,7 +35,7 @@ const Album: React.FC<Props> = ({ album }) => {
         ? (<img src={album.coverPhoto.imgUrls.small} alt="" width={240} height={160} />)
         : (<Skeleton variant="rectangular" width={240} height={160} />)}
       <Typography variant="body1"><strong>{album.name}</strong></Typography>
-      <Typography variant="caption">12 uur geleden • Kick-In 2021</Typography>
+      <Typography variant="caption">{relativeDate(album.timestamp)} • {event?.name}</Typography>
     </Stack>
   ) : (
     <Stack spacing={1}>

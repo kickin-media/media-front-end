@@ -12,12 +12,14 @@ import AlbumGallery from "./components/AlbumGallery";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { CircularProgress } from "@mui/material";
+import { relativeDate } from "../util/date";
 
 const AlbumPage: React.FC = () => {
   const { albumId } = useParams<{ albumId: string }>();
 
   const dispatch = useDispatch();
   const album = useSelector((state: StateType) => state.album[albumId], shallowEqual);
+  const event = useSelector((state: StateType) => state.event[state.album[albumId].eventId]);
   const photos = useSelector((state: StateType) => album && album.photos
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
@@ -35,7 +37,7 @@ const AlbumPage: React.FC = () => {
         <Region name="hero">
           <Container maxWidth="lg">
             <Typography variant="h2">{album.name}</Typography>
-            <Typography>12 uur geleden • Kick-In 2021</Typography>
+            <Typography>{relativeDate(album.timestamp)} • {event.name}</Typography>
           </Container>
 
           <img src={album.coverPhoto.imgUrls.large} alt="" />
