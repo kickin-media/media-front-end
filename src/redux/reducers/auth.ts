@@ -33,7 +33,10 @@ const loadAuth: () => AuthStateType = () => {
   const stored = window.localStorage.getItem('auth');
   if (stored === null) return { authenticated: false };
 
-  return JSON.parse(stored);
+  const res = JSON.parse(stored);
+  res.expires = new Date(res.expires);
+
+  return res;
 };
 
 const auth: Reducer<AuthStateType> = createReducer(loadAuth(), {

@@ -46,12 +46,13 @@ export const authMiddleware: Middleware = api => next => {
         });
         break;
       case auth.logout.toString():
+        window.localStorage.removeItem('auth');
         webAuth.logout({ returnTo: action.payload.returnTo });
         break;
       case auth.renew.toString():
         webAuth.renewAuth({}, (error, result) => {
           console.log({ error, result });
-        })
+        });
         break;
     }
 

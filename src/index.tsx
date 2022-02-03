@@ -7,8 +7,24 @@ import App from './App';
 
 import configureStore from './redux/configureStore';
 import reportWebVitals from './reportWebVitals';
+import { StateType } from "./redux/reducers/reducers";
+import * as authActions from './redux/actions/auth';
 
 const store = configureStore({});
+
+// Renew authentication (if needed)
+const renewAuth = () => {
+  const auth = (store.getState() as StateType).auth;
+  if (!auth.authenticated) return;
+
+  // Check if the auth token expires within the next 5 minutes
+  if (auth.expires.getTime() - new Date().getTime() > 6 * 60 * 1000) return;
+
+  if (process.env.NODE_ENV === 'production') store.dispatch(authActions.renew());
+  else store.dispatch(authActions.logout(window.location.origin));
+};
+setInterval(renewAuth, 5 * 60 * 1000);
+renewAuth();
 
 ReactDOM.render(
   <React.StrictMode>
