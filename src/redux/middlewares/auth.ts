@@ -38,7 +38,6 @@ export const authMiddleware: Middleware = api => next => {
 
     switch (action.type) {
       case auth.login.toString():
-        console.log({ responseType: 'code', ...action.payload });
         webAuth.authorize({
           connection: 'kick-in-idb',
           responseType: 'token id_token',
