@@ -29,8 +29,6 @@ const AlbumCarousel: React.FC<Props> = ({ albums, title }) => {
 
   const viewSize = VIEW_SIZES[width] ? VIEW_SIZES[width] : 4;
 
-  console.log(width, viewSize);
-
   let aa = albums ? albums : new Array(5 * viewSize).fill(null);
 
   let views: (AlbumType | null)[][] = [];
