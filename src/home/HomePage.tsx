@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import {Region} from '../components/ui/AppUI';
 
 import hero from '../res/images/hero.jpg';
-import AlbumCarousel from "../album/components/AlbumCarousel";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StateType } from "../redux/reducers/reducers";
 
 import * as eventActions from '../redux/actions/event';
+import EventPage from "../event/EventPage";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -22,19 +22,22 @@ const HomePage = () => {
     Object.keys(events).forEach(id => dispatch(eventActions.getAlbums(id)))
   }, [dispatch, events]);
 
+  const sortedEvents = useMemo(() => Object.keys(events)
+    .sort((a, b) => events[b].timestamp.getTime() - events[a].timestamp.getTime()),
+    [events]);
+
+  const highlight = useMemo(() => sortedEvents
+    .filter(eventId => Object.keys(albums).some(albumId => albums[albumId].eventId === eventId)),
+    [sortedEvents, albums]);
+
   return (
     <>
       <Region name="hero">
-        <img src={hero} style={{ width: '100%' }} alt="Hero" />
+        <img src={hero} alt="Hero" />
+        <img src={hero} alt="Hero" />
       </Region>
 
-      {Object.keys(events).map(event => (
-        <AlbumCarousel
-          key={event}
-          albums={Object.keys(albums).filter(album => albums[album].eventId === event).map(album => albums[album])}
-          title={events[event].name}
-        />
-      ))}
+      {highlight.length > 0 && <EventPage eventId={highlight[0]} />}
     </>
   );
 }

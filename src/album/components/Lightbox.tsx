@@ -8,10 +8,8 @@ import Modal from '@mui/material/Modal';
 import SwipeableViews from "react-swipeable-views";
 
 import Close from '@mui/icons-material/Close';
-import Info from '@mui/icons-material/Info';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-
 
 import classes from './Lightbox.module.scss';
 
@@ -53,9 +51,12 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       <div className={classes.root} onClick={() => {
         if (onClose) onClose();
       }}>
-        <div className={classes.actions} onClick={e => e.stopPropagation()}>
-          <IconButton><Info /></IconButton>
-          <IconButton onClick={onClose}><Close /></IconButton>
+        <div className={classes.actions}>
+          {/*<IconButton><Info /></IconButton>*/}
+          <IconButton onClick={e => {
+            if (onClose) onClose();
+            e.stopPropagation();
+          }}><Close /></IconButton>
         </div>
 
         <div className={classes.carousel}>

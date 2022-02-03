@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import Album from "../album/components/Album";
 import { CircularProgress } from "@mui/material";
 
+import classes from './EventPage.module.scss';
+
 const EventPage: React.FC<Props> = ({ eventId }) => {
   const routeMatch = useRouteMatch<RouteProps>();
 
@@ -44,7 +46,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     <>
       <Typography variant="h3">{event.name}</Typography>
 
-      <div>
+      <div className={classes['album-grid']}>
         {albums !== null
           ? albums.map(album => <Album key={album.id} album={album} />)
           : <CircularProgress />}

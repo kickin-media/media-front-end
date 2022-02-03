@@ -1,0 +1,13 @@
+.album-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.album-grid::after {
+  content: '';
+  display: block;
+  flex-grow: 1;
+}

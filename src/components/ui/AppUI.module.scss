@@ -43,7 +43,7 @@ div:not(:empty)~.header:not(.scrolled) {
 }
 
 .hero {
-  max-height: 100vh;
+  max-height: 80vh;
   overflow-y: hidden;
 
   position: relative;
@@ -54,10 +54,17 @@ div:not(:empty)~.header:not(.scrolled) {
   > div {
     position: absolute;
     top: 50%;
+    z-index: 50;
     transform: translate(0, -50%);
   }
 
   > img { width: 100%; }
+  > img:last-child {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translate(0, -50%);
+  }
 }
 
 .alert {

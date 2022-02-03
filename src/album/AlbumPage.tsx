@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Region } from "../components/ui/AppUI";
 
@@ -29,7 +29,13 @@ const AlbumPage: React.FC = () => {
   useEffect(() => {
     dispatch(actions.get(albumId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch])
+  }, [dispatch]);
+
+  const sortedPhotos = useMemo(() => photos.sort((a, b) => {
+    if (a.timestamp === null) return 1;
+    if (b.timestamp === null) return -1;
+    return a.timestamp.getTime() - b.timestamp.getTime();
+  }), [photos]);
 
   if (!album || !event) return <CircularProgress />;
 
@@ -43,12 +49,13 @@ const AlbumPage: React.FC = () => {
           </Container>
 
           <img src={album.coverPhoto.imgUrls.large} alt="" />
+          <img src={album.coverPhoto.imgUrls.large} alt="" />
         </Region>
       )}
 
       <AlbumEditDialog />
 
-      <AlbumGallery album={album} photos={photos} />
+      <AlbumGallery album={album} photos={sortedPhotos} />
     </>
   );
 }
