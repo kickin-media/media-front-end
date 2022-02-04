@@ -10,8 +10,12 @@ import slugify from "slugify";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Lightbox from "./Lightbox";
 import Skeleton from "@mui/material/Skeleton";
+import useWidth from "../../util/useWidth";
+import clsx from "clsx";
 
 const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
+  const width = useWidth();
+
   const history = useHistory();
   const routeMatch = useRouteMatch<RouteProps>();
 
@@ -20,7 +24,7 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
   if (!photos || !album) return <CircularProgress />;
 
   return (
-    <div className={classes.gallery}>
+    <div className={clsx(classes.gallery, { [classes.small]: width === 'xs' })}>
       {photos.map(photo => (
         <a
           key={photo.id}

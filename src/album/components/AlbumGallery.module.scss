@@ -12,6 +12,10 @@
   flex-basis: calc(var(--ratio) * var(--row-height));
 }
 
+.gallery.small > .photo, .gallery.small::after {
+  --row-height: 7rem;
+}
+
 .gallery > .photo {
   flex-grow: calc(var(--ratio) * 100);
 }
