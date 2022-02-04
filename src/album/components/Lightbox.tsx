@@ -8,11 +8,16 @@ import Modal from '@mui/material/Modal';
 import SwipeableViews from "react-swipeable-views";
 
 import Close from '@mui/icons-material/Close';
+import Download from '@mui/icons-material/Download';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 import classes from './Lightbox.module.scss';
-import { CircularProgress } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { StateType } from "../../redux/reducers/reducers";
+
+import * as photoActions from '../../redux/actions/photo';
+import { AnyAction } from "@reduxjs/toolkit";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -48,6 +53,16 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     }
   }, [open, index, photos]);
 
+  const dispatch = useDispatch();
+  const canDownload = useSelector((state: StateType) =>
+    state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
+  const onDownload = (photoId: string) => dispatch(photoActions.getOriginal(photoId))
+    .then((res: AnyAction) => {
+      if (res.type !== photoActions.getOriginal.success) return Promise.reject();
+      return fetch(res.response.downloadUrl);
+    })
+    .then((res: any) => console.log(res));
+
   const update = (delta: number) => setIndex(prev => {
     let nextIndex = prev + delta;
     if (nextIndex < 0) nextIndex = 0;
@@ -75,6 +90,14 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       }}>
         <div className={classes.actions}>
           {/*<IconButton><Info /></IconButton>*/}
+          {canDownload && (
+            <IconButton onClick={e => {
+              e.stopPropagation();
+              onDownload(photos[index].id);
+            }}>
+              <Download />
+            </IconButton>
+          )}
           <IconButton onClick={e => {
             if (onClose) onClose();
             e.stopPropagation();
@@ -103,7 +126,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
                 alt=""
                 onClick={e => e.stopPropagation()}
               />
-            ) : null)}
+            ) : <div key={photo.id} />)}
           </SwipeableViews>
           <IconButton
             onClick={e => {
