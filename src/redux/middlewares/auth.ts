@@ -25,6 +25,7 @@ export const authMiddleware: Middleware = api => next => {
     // If the hash was parsed successfully, then dispatch a corresponding action and fix the browser's URL
     if (result) {
       api.dispatch(auth.authenticate(result));
+      console.log(webAuth);
       return;
     }
 
@@ -59,22 +60,8 @@ export const authMiddleware: Middleware = api => next => {
         webAuth.logout({ returnTo: action.payload.returnTo });
         break;
       case auth.renew.toString():
-        webAuth.renewAuth({
-          domain: 'kickin-media.eu.auth0.com',
-          clientID: 'JVlKeh2uzBJSw1cwOF34V1Ro57vj5uoh',
-          audience: 'https://api.kick-in.media',
-          scope: [
-            'openid',
-            'profile',
-            'email',
-            'photos:upload',
-            'albums:manage',
-            'photos:delete_other',
-            'albums:read_hidden',
-            'events:manage',
-            'photos:download_other',
-          ].join(' ')
-        }, (error, result) => {
+        webAuth.checkSession({}, (error, res) => console.log({ error, res }));
+        webAuth.renewAuth({}, (error, result) => {
           console.log({ error, result });
         });
         break;
