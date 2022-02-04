@@ -59,7 +59,22 @@ export const authMiddleware: Middleware = api => next => {
         webAuth.logout({ returnTo: action.payload.returnTo });
         break;
       case auth.renew.toString():
-        webAuth.renewAuth({}, (error, result) => {
+        webAuth.renewAuth({
+          domain: 'kickin-media.eu.auth0.com',
+          clientID: 'JVlKeh2uzBJSw1cwOF34V1Ro57vj5uoh',
+          audience: 'https://api.kick-in.media',
+          scope: [
+            'openid',
+            'profile',
+            'email',
+            'photos:upload',
+            'albums:manage',
+            'photos:delete_other',
+            'albums:read_hidden',
+            'events:manage',
+            'photos:download_other',
+          ].join(' ')
+        }, (error, result) => {
           console.log({ error, result });
         });
         break;
