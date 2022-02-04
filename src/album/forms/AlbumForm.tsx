@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 
 import * as actions from '../../redux/actions/album';
 import { StateType } from "../../redux/reducers/reducers";
+import { AnyAction } from "@reduxjs/toolkit";
 
 const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
   const dispatch = useDispatch();
@@ -62,7 +63,10 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
 
     dispatch(albumId
       ? actions.update(albumId, values.name as string, values.timestamp, values.release, values.eventId)
-      : actions.create(values.name, values.timestamp, values.release, values.eventId));
+      : actions.create(values.name, values.timestamp, values.release, values.eventId))
+      .then((res: AnyAction) => {
+        if (onSubmit) onSubmit(res.type === actions.update.success || res.type === actions.create.success);
+      });
   };
 
   if (reference !== undefined) reference.current = {

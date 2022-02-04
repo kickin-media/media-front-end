@@ -7,6 +7,7 @@ import TextField from "@mui/material/TextField";
 import fnsDateAdapter from "@mui/lab/AdapterDateFns";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import { LocalizationProvider } from "@mui/lab";
+import { AnyAction } from "@reduxjs/toolkit";
 
 const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
   const dispatch = useDispatch();
@@ -37,7 +38,10 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
 
     dispatch(eventId
       ? actions.update(eventId, values.name, values.timestamp)
-      : actions.create(values.name, values.timestamp));
+      : actions.create(values.name, values.timestamp))
+      .then((res: AnyAction) => {
+        if (onSubmit) onSubmit(res.type === actions.update.success || res.type === actions.create.success);
+      });
   }
 
   if (reference !== undefined) reference.current = {

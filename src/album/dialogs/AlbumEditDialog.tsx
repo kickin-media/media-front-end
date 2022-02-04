@@ -20,7 +20,14 @@ const AlbumEditDialog: React.FC<Props> = ({ albumId, open, onClose }) => {
     <Dialog open={open ? open : false}>
       <DialogTitle>Create/Edit Album</DialogTitle>
       <DialogContent className={classes.form}>
-        <AlbumForm albumId={albumId} reference={formRef} />
+        <AlbumForm albumId={albumId} reference={formRef} onSubmit={success => {
+          setLoading(false);
+
+          if (success) {
+            if (formRef.current !== null) formRef.current.reset();
+            if (onClose) onClose();
+          }
+        }} />
       </DialogContent>
       <DialogActions>
         <Button

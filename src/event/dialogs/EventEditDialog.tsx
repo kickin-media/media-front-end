@@ -22,7 +22,14 @@ const EventEditDialog: React.FC<Props> = ({ eventId, open, onClose }) => {
     <Dialog open={open ? open : false}>
       <DialogTitle>Create/Edit Event</DialogTitle>
       <DialogContent className={classes.form}>
-        <EventForm eventId={eventId} reference={formRef} />
+        <EventForm eventId={eventId} reference={formRef} onSubmit={success => {
+          setLoading(false);
+
+          if (success) {
+            if (formRef.current !== null) formRef.current.reset();
+            if (onClose) onClose();
+          }
+        }} />
       </DialogContent>
       <DialogActions>
         <Button
