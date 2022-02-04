@@ -12,10 +12,13 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 
 import classes from './Lightbox.module.scss';
+import { CircularProgress } from "@mui/material";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
   const [prevOpen, setOpen] = useState(open !== undefined ? open: false);
+
+  const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     if (open === prevOpen) return;
@@ -33,6 +36,17 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
 
     setIndex(photos.map(photo => photo.id).indexOf(startId));
   }, [open, startId, photos]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    for (let i = index - 1; i <= index + 1; i++) {
+      if (i < 0) continue;
+      if (i >= photos.length) continue;
+
+      setLoaded(l => Object.assign({}, l, { [photos[i].id]: true }));
+    }
+  }, [open, index, photos]);
 
   const update = (delta: number) => setIndex(prev => {
     let nextIndex = prev + delta;
@@ -82,14 +96,14 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
             onChangeIndex={index => setIndex(index)}
             enableMouseEvents
           >
-            {photos.map(photo => (
+            {photos.map(photo => loaded[photo.id] ? (
               <img
                 key={photo.id}
                 src={photo.imgUrls.large}
                 alt=""
                 onClick={e => e.stopPropagation()}
               />
-            ))}
+            ) : null)}
           </SwipeableViews>
           <IconButton
             onClick={e => {
