@@ -4,10 +4,19 @@
   flex-wrap: wrap;
   gap: 1rem;
   justify-content: space-between;
+
+  > a {
+    max-width: 480px;
+    flex-grow: 1;
+  }
 }
 
 .album-grid::after {
   content: '';
+  width: 240px;
+  height: 1px;
+
   display: block;
   flex-grow: 1;
+  flex-shrink: 1;
 }

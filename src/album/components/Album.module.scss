@@ -1,8 +1,18 @@
 .album {
+  width: 240px;
+  max-width: 360px;
+
   cursor: pointer;
+
+  align-items: stretch;
 
   color: black;
   text-decoration: none;
 
-  img { object-fit: cover; }
+  img {
+    //width: 240px;
+    max-width: 360px;
+    aspect-ratio: 1.5;
+    object-fit: cover;
+  }
 }

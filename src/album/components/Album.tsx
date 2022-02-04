@@ -32,7 +32,7 @@ const Album: React.FC<Props> = ({ album }) => {
       spacing={1}
     >
       {album.coverPhoto
-        ? (<img src={album.coverPhoto.imgUrls.small} alt="" width={240} height={160} />)
+        ? (<img src={album.coverPhoto.imgUrls.small} alt="" />)
         : (<Skeleton variant="rectangular" width={240} height={160} />)}
       <Typography variant="body1"><strong>{album.name}</strong></Typography>
       <Typography variant="caption">{relativeDate(album.timestamp)} • {event?.name}</Typography>
