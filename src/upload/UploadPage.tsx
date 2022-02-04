@@ -15,6 +15,7 @@ import UploadAlbumForm, { UploadAlbumFormRef } from "./forms/UploadAlbumForm";
 
 import * as actions from '../redux/actions/photo';
 import { AnyAction } from "@reduxjs/toolkit";
+import slugify from "slugify";
 
 const UploadPage: React.FC = () => {
   const albumFormRef = useRef<UploadAlbumFormRef>(null);
@@ -34,6 +35,8 @@ const UploadPage: React.FC = () => {
   // Prevent users from accidentally navigating away from this page
   const history = useHistory<UploadHistoryState>();
   useEffect(() => history.block(location => {
+    if (location.state && location.state.done === true) return;
+
     // However, allow users to add other files to the upload (uses History API state replace)
     if (location.pathname === '/upload/') return;
 
@@ -63,13 +66,13 @@ const UploadPage: React.FC = () => {
     dispatch(actions.create(Object.keys(files).length)).then((signedUrls: AnyAction) => {
       if (signedUrls.type !== actions.create.success) return;
 
-      Object.keys(files).forEach((key, index) => {
+      return Promise.all(Object.keys(files).map((key, index) => {
         const fields: { [key: string]: string } = signedUrls.response[index].preSignedUrl.fields;
 
         const formData = new FormData();
         Object.keys(fields).forEach(key => formData.append(key, fields[key]))
 
-        files[key].arrayBuffer().then(data => {
+        return files[key].arrayBuffer().then(data => {
           formData.append('file', new Blob([data], { type: 'image/jpeg' }), files[key].name);
 
           return fetch(
@@ -81,19 +84,27 @@ const UploadPage: React.FC = () => {
         }).then(res => {
           if (!res.ok) {
             setErrors(e => [...e, key]);
-            return;
+            return Promise.reject();
           }
 
           setProgress(progress => progress + 100 / Object.keys(files).length / 3 * 2);
-          dispatch(actions.setAlbums(signedUrls.response[index].photoId, [albumId as string]))
+          return dispatch(actions.setAlbums(signedUrls.response[index].photoId, [albumId as string]))
             .then((res: AnyAction) => {
               if (res.type !== actions.setAlbums.success) return;
 
               setProgress(progress => progress + 100 / Object.keys(files).length / 3);
             });
         }, () => setErrors(e => [...e, key]));
-      });
-    });
+      }));
+    }).catch(() => setStep(2))
+      .then(() => setTimeout(() => {
+        if (!album) return;
+        history.push(
+          `/album/${album.id}/${slugify(album.name).toLowerCase()}`,
+          { done: true }
+        );
+      }, 1000));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, albumId, files, step]);
 
   return (
@@ -182,6 +193,7 @@ const UploadPage: React.FC = () => {
 };
 
 interface UploadHistoryState {
+  done?: boolean;
   files?: FileList | null;
 }
 

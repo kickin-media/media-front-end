@@ -82,7 +82,7 @@ const AppUI: React.FC<Props> = ({children}) => {
   // Automatically close the menu drawer if the browser switches to desktop layout
   useEffect(() => {
     if (desktop) setDrawer(false);
-  }, [desktop])
+  }, [desktop]);
 
   return (
     <RegionContext.Provider value={{hero}}>
