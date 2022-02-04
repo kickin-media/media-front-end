@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CircularProgress from "@mui/material/CircularProgress";
 
@@ -9,10 +9,13 @@ import { AlbumType } from "../../redux/reducers/album";
 import slugify from "slugify";
 import { useHistory, useRouteMatch } from "react-router-dom";
 import Lightbox from "./Lightbox";
+import Skeleton from "@mui/material/Skeleton";
 
 const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
   const history = useHistory();
   const routeMatch = useRouteMatch<RouteProps>();
+
+  const [failed, setFailed] = useState<{ [key: string]: boolean }>({});
 
   if (!photos || !album) return <CircularProgress />;
 
@@ -29,16 +32,21 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
             e.preventDefault();
           }}
         >
-          <img
-            src={photo.imgUrls.small}
-            alt=""
-            onLoad={e => {
-              // @ts-ignore
-              e.target.parentNode.style.setProperty('--w', e.target.naturalWidth);
-              // @ts-ignore
-              e.target.parentNode.style.setProperty('--h', e.target.naturalHeight);
-            }}
-          />
+          {!failed[photo.id] ? (
+            <img
+              src={photo.imgUrls.small}
+              alt=""
+              onLoad={e => {
+                // @ts-ignore
+                e.target.parentNode.style.setProperty('--w', e.target.naturalWidth);
+                // @ts-ignore
+                e.target.parentNode.style.setProperty('--h', e.target.naturalHeight);
+              }}
+              onError={() => setFailed(f => Object.assign({}, f, { [photo.id]: true }))}
+            />
+          ) : (
+            <Skeleton variant="rectangular" />
+          )}
         </a>
       ))}
 
