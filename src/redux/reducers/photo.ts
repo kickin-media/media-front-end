@@ -16,6 +16,8 @@ export interface PhotoType {
   }
 
   timestamp: Date | null;
+
+  uploadProcessed: boolean;
 }
 
 const mergePhotos = (old: PhotoType | undefined, current: PhotoType) => {

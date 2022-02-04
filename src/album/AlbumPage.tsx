@@ -11,7 +11,7 @@ import * as actions from '../redux/actions/album';
 import AlbumGallery from "./components/AlbumGallery";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { CircularProgress } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
 import { relativeDate } from "../util/date";
 
 const AlbumPage: React.FC = () => {
@@ -25,17 +25,21 @@ const AlbumPage: React.FC = () => {
   const photos = useSelector((state: StateType) => album && album.photos
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
+  const canUpload = useSelector((state: StateType) =>
+    state.auth.authenticated && state.auth.scopes.includes('photos:upload'));
 
   useEffect(() => {
     dispatch(actions.get(albumId));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
-  const sortedPhotos = useMemo(() => photos.sort((a, b) => {
-    if (a.timestamp === null) return 1;
-    if (b.timestamp === null) return -1;
-    return a.timestamp.getTime() - b.timestamp.getTime();
-  }), [photos]);
+  const sortedPhotos = useMemo(() => photos
+    .filter(photo => photo.uploadProcessed)
+    .sort((a, b) => {
+      if (a.timestamp === null) return 1;
+      if (b.timestamp === null) return -1;
+      return a.timestamp.getTime() - b.timestamp.getTime();
+  }), [canUpload, photos]);
 
   if (!album || !event) return <CircularProgress />;
 
@@ -54,6 +58,12 @@ const AlbumPage: React.FC = () => {
       )}
 
       <AlbumEditDialog />
+
+      {photos.length !== sortedPhotos.length && (
+        <Alert severity="info">
+          {photos.length - sortedPhotos.length} photos are still being processed.
+        </Alert>
+      )}
 
       <AlbumGallery album={album} photos={sortedPhotos} />
     </>
