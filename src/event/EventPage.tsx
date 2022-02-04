@@ -48,7 +48,10 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
 
       <div className={classes['album-grid']}>
         {albums !== null
-          ? albums.map(album => <Album key={album.id} album={album} />)
+          ? albums
+            .filter(album => album.photosCount > 0
+              && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime()))
+            .map(album => <Album key={album.id} album={album} />)
           : <CircularProgress />}
       </div>
     </>

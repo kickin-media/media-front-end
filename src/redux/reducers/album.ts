@@ -17,7 +17,7 @@ export interface AlbumType {
   photos?: string[];
   photosCount: number;
 
-  release: Date | null;
+  releaseTime: Date | null;
   timestamp: Date;
 }
 
