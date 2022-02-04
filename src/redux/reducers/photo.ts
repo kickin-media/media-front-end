@@ -27,6 +27,8 @@ const mergePhotos = (old: PhotoType | undefined, current: PhotoType) => {
 
 const photo: Reducer<PhotoStateType> = createReducer({} as PhotoStateType, {
   [albumActions.get.success]: (state, action) => {
+    if (!action.response.entities || !action.response.entities.photo) return;
+
     const photos = action.response.entities.photo;
     Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
   }
