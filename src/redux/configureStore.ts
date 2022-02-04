@@ -14,7 +14,7 @@ const configureStore = (preloadedState: any) => configure({
   preloadedState,
   middleware: [
     authMiddleware,
-    apiMiddleware(process.env.API_ENV === 'prod' ? API_HOST_PROD : API_HOST_DEV),
+    apiMiddleware(process.env.REACT_APP_API_ENV === 'prod' ? API_HOST_PROD : API_HOST_DEV),
     ...(process.env.NODE_ENV === "production" ? [] : [createLogger({
       collapsed: true,
       diff: true,
@@ -24,6 +24,6 @@ const configureStore = (preloadedState: any) => configure({
 });
 
 console.log(process.env);
-console.log('api', process.env.API_ENV);
+console.log('api', process.env.REACT_APP_API_ENV);
 
 export default configureStore;
