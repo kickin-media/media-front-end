@@ -23,6 +23,7 @@ const configureStore = (preloadedState: any) => configure({
   ]
 });
 
+console.log(process.env);
 console.log('api', process.env.API_ENV);
 
 export default configureStore;
