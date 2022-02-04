@@ -28,7 +28,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import classes from './AppUI.module.scss';
 import logo from '../../res/images/logo-white.png';
-import { login } from "../../redux/actions/auth";
+import { login, logout } from "../../redux/actions/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
@@ -136,6 +136,7 @@ const AppUI: React.FC<Props> = ({children}) => {
                     color="inherit"
                     variant="outlined"
                     endIcon={<Avatar alt={user.name} src={user.picture} sx={{width: 24, height: 24}} />}
+                    onClick={() => dispatch(logout(window.location.origin))}
                   >
                     {user.name}
                   </Button>
