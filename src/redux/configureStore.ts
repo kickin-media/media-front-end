@@ -23,7 +23,4 @@ const configureStore = (preloadedState: any) => configure({
   ]
 });
 
-console.log(process.env);
-console.log('api', process.env.REACT_APP_API_ENV);
-
 export default configureStore;
