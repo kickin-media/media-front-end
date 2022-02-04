@@ -26,6 +26,10 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
       .filter(albumId => state.album[albumId].eventId === event.id)
       .map(albumId  => state.album[albumId])
     : null, shallowEqual);
+  const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
+    && (state.auth.scopes.includes('albums:manage')
+      || state.auth.scopes.includes('photos:upload')
+      || state.auth.scopes.includes('events:manage')));
 
   // Load event on mount
   useEffect(() => {
@@ -49,8 +53,9 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
       <div className={classes['album-grid']}>
         {albums !== null
           ? albums
-            .filter(album => album.photosCount > 0
-              && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime()))
+            .filter(album => canViewHidden
+              || (album.photosCount > 0
+                && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime())))
             .map(album => <Album key={album.id} album={album} />)
           : <CircularProgress />}
       </div>

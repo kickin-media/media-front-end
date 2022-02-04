@@ -9,6 +9,7 @@ const YEAR = 365 * DAY;
 export const relativeDate: (date: Date) => string = (date) => {
   const diff = new Date().getTime() - date.getTime();
 
+  if (diff < 0) return 'in the future';
   if (diff < MINUTE) return 'less than a minute ago';
   if (diff < 1.5 * MINUTE) return 'a minute ago';
   if (diff < 5 * MINUTE) return 'a few minutes ago';

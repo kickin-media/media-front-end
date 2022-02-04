@@ -15,4 +15,11 @@
     aspect-ratio: 1.5;
     object-fit: cover;
   }
+
+  > span:first-child {
+    width: unset !important;
+    height: unset !important;
+    max-width: 360px;
+    aspect-ratio: 1.5;
+  }
 }
