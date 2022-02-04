@@ -60,7 +60,9 @@ export const authMiddleware: Middleware = api => next => {
         webAuth.logout({ returnTo: action.payload.returnTo });
         break;
       case auth.renew.toString():
-        webAuth.checkSession({}, (error, res) => console.log({ error, res }));
+        webAuth.checkSession({
+          responseType: 'token id_token'
+        }, (error, res) => console.log({ error, res }));
         webAuth.renewAuth({
           responseType: 'token id_token'
         }, (error, result) => {
