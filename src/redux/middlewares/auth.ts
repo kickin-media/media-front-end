@@ -8,7 +8,17 @@ export const authMiddleware: Middleware = api => next => {
     domain: 'kickin-media.eu.auth0.com',
     clientID: 'JVlKeh2uzBJSw1cwOF34V1Ro57vj5uoh',
     audience: 'https://api.kick-in.media',
-    scope: 'openid profile email photos:upload albums:manage photos:delete_other albums:read_hidden events:manage photos:download_other',
+    scope: [
+      'openid',
+      'profile',
+      'email',
+      'photos:upload',
+      'albums:manage',
+      'photos:delete_other',
+      'albums:read_hidden',
+      'events:manage',
+      'photos:download_other',
+    ].join(' ')
   });
 
   webAuth.parseHash({ hash: window.location.hash }, (error, result) => {
