@@ -5,7 +5,7 @@ export const get = createAPIAction(
   'AUTHOR_GET',
   'GET',
   payload => `/author/${payload?.author_id}`,
-  (author_id: number) => ({ author_id }),
+  (author_id: string) => ({ author_id }),
   schemas.AUTHOR
 );
 

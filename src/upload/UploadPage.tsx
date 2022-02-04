@@ -17,6 +17,9 @@ import * as actions from '../redux/actions/photo';
 import { AnyAction } from "@reduxjs/toolkit";
 import slugify from "slugify";
 
+import * as authorActions from '../redux/actions/author';
+import AuthorDialog from "../author/dialogs/AuthorDialog";
+
 const UploadPage: React.FC = () => {
   const albumFormRef = useRef<UploadAlbumFormRef>(null);
 
@@ -30,6 +33,11 @@ const UploadPage: React.FC = () => {
   const album = useSelector((state: StateType) => albumId === null
     ? null
     : state.album[albumId],
+    shallowEqual);
+  const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : null);
+  const author = useSelector((state: StateType) => state.auth.authenticated
+    ? state.author[state.auth.user.sub]
+    : null,
     shallowEqual);
 
   // Prevent users from accidentally navigating away from this page
@@ -107,88 +115,103 @@ const UploadPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, albumId, files, step]);
 
+  console.log(author);
+  useEffect(() => {
+    if (user === null) return;
+    dispatch(authorActions.get(user));
+  }, [dispatch, user]);
+
   return (
-    <Stepper orientation="vertical" activeStep={step}>
-      {/* STEP 1: SELECT IMAGES */}
-      <Step>
-        <StepLabel
-          optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
-        >
-          Select images
-        </StepLabel>
-        <StepContent TransitionProps={{ unmountOnExit: false }}>
-          {Object.keys(files).length > 0 ? (
-            <UploadGrid files={files} onRemove={key => setFiles(f => {
-              const copy = Object.assign({}, f);
-              delete copy[key];
-
-              return copy;
-            })} />
-          ) : (
-            <div className={classes['empty-upload']}>
-              <img src={uploadGraphic} alt="" />
-              <Typography className={classes.instructions} variant="h4">Drop 'em like its hot!</Typography>
-              <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
-            </div>
-          )}
-          <Button
-            color="primary"
-            variant="contained"
-            disabled={Object.keys(files).length === 0}
-            onClick={() => setStep(1)}
+    <>
+      <AuthorDialog
+        open={author === null}
+        onClose={() => {
+          if (user === null) return;
+          dispatch(authorActions.get(user));
+        }}
+      />
+      <Stepper orientation="vertical" activeStep={step}>
+        {/* STEP 1: SELECT IMAGES */}
+        <Step>
+          <StepLabel
+            optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
           >
-            Next
-          </Button>
-        </StepContent>
-      </Step>
+            Select images
+          </StepLabel>
+          <StepContent TransitionProps={{ unmountOnExit: false }}>
+            {Object.keys(files).length > 0 ? (
+              <UploadGrid files={files} onRemove={key => setFiles(f => {
+                const copy = Object.assign({}, f);
+                delete copy[key];
 
-      {/* STEP 2: SELECT ALBUM */}
-      <Step>
-        <StepLabel optional={(
-          <Typography variant="caption">
-            {album === null
-              ? 'No album selected'
-              : album.name
-            }
-          </Typography>
-        )}>
-          Select album
-        </StepLabel>
-        <StepContent className={classes['step-album']}>
-          <Typography>Select an album to upload the selected images to:</Typography>
-          <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
-            if (!success) return;
-            setAlbum(values.albumId);
-          }} />
-          <div className={classes.actions}>
-            <Button onClick={() => setStep(0)}>Back</Button>
+                return copy;
+              })} />
+            ) : (
+              <div className={classes['empty-upload']}>
+                <img src={uploadGraphic} alt="" />
+                <Typography className={classes.instructions} variant="h4">Drop 'em like its hot!</Typography>
+                <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+              </div>
+            )}
             <Button
               color="primary"
               variant="contained"
-              disabled={album === null}
-              onClick={() => setStep(2)}
+              disabled={Object.keys(files).length === 0}
+              onClick={() => setStep(1)}
             >
-              Confirm
+              Next
             </Button>
-          </div>
-        </StepContent>
-      </Step>
+          </StepContent>
+        </Step>
 
-      {/* STEP 3: UPLOAD IMAGES*/}
-      <Step>
-        <StepLabel>Upload to server</StepLabel>
-        <StepContent>
-          <div className={classes.upload}>
-            <img src={uploadGraphic} alt="" />
-            <LinearProgress variant="determinate" value={progress} />
-            <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
-            {errors.map((error, index) => (
-              <Typography key={index}>{files[error].name}</Typography>
-            ))}
-          </div>
-        </StepContent>
-      </Step>
-    </Stepper>
+        {/* STEP 2: SELECT ALBUM */}
+        <Step>
+          <StepLabel optional={(
+            <Typography variant="caption">
+              {album === null
+                ? 'No album selected'
+                : album.name
+              }
+            </Typography>
+          )}>
+            Select album
+          </StepLabel>
+          <StepContent className={classes['step-album']}>
+            <Typography>Select an album to upload the selected images to:</Typography>
+            <UploadAlbumForm reference={albumFormRef} onSubmit={(success, values) => {
+              if (!success) return;
+              setAlbum(values.albumId);
+            }} />
+            <div className={classes.actions}>
+              <Button onClick={() => setStep(0)}>Back</Button>
+              <Button
+                color="primary"
+                variant="contained"
+                disabled={album === null}
+                onClick={() => setStep(2)}
+              >
+                Confirm
+              </Button>
+            </div>
+          </StepContent>
+        </Step>
+
+        {/* STEP 3: UPLOAD IMAGES*/}
+        <Step>
+          <StepLabel>Upload to server</StepLabel>
+          <StepContent>
+            <div className={classes.upload}>
+              <img src={uploadGraphic} alt="" />
+              <LinearProgress variant="determinate" value={progress} />
+              <a className={classes.copyright} href='https://www.freepik.com/vectors/website'>Website vector created by stories - www.freepik.com</a>
+              {errors.map((error, index) => (
+                <Typography key={index}>{files[error].name}</Typography>
+              ))}
+            </div>
+          </StepContent>
+        </Step>
+      </Stepper>
+    </>
   );
 };
 
