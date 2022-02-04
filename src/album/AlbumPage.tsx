@@ -39,7 +39,7 @@ const AlbumPage: React.FC = () => {
       if (a.timestamp === null) return 1;
       if (b.timestamp === null) return -1;
       return a.timestamp.getTime() - b.timestamp.getTime();
-  }), [canUpload, photos]);
+  }), [photos]);
 
   if (!album || !event) return <CircularProgress />;
 
@@ -59,7 +59,7 @@ const AlbumPage: React.FC = () => {
 
       <AlbumEditDialog />
 
-      {photos.length !== sortedPhotos.length && (
+      {(photos.length !== sortedPhotos.length && canUpload) && (
         <Alert severity="info">
           {photos.length - sortedPhotos.length} photos are still being processed.
         </Alert>

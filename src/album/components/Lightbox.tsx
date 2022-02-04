@@ -18,6 +18,7 @@ import { StateType } from "../../redux/reducers/reducers";
 
 import * as photoActions from '../../redux/actions/photo';
 import { AnyAction } from "@reduxjs/toolkit";
+import slugify from "slugify";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -61,7 +62,20 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       if (res.type !== photoActions.getOriginal.success) return Promise.reject();
       return fetch(res.response.downloadUrl);
     })
-    .then((res: any) => console.log(res));
+    .then((res: Response) => res.blob())
+    .then((blob: Blob) => URL.createObjectURL(blob))
+    .then((url: string) => {
+      const root = document.getElementsByClassName(classes.root)[0];
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
+      anchor.className = classes.download;
+
+      root.appendChild(anchor);
+      anchor.click();
+      root.removeChild(anchor);
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    });
 
   const update = (delta: number) => setIndex(prev => {
     let nextIndex = prev + delta;
