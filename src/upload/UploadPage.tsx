@@ -124,7 +124,7 @@ const UploadPage: React.FC = () => {
   return (
     <>
       <AuthorDialog
-        open={author === null}
+        open={author === null || author === undefined}
         onClose={() => {
           if (user === null) return;
           dispatch(authorActions.get(user));
