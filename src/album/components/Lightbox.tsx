@@ -3,7 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { PhotoType } from "../../redux/reducers/photo";
 import { AlbumType } from "../../redux/reducers/album";
 
+import Divider from '@mui/material/Divider';
 import IconButton from "@mui/material/IconButton";
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Menu from '@mui/material/Menu';
+import MenuItem from "@mui/material/MenuItem";
 import Modal from '@mui/material/Modal';
 import SwipeableViews from "react-swipeable-views";
 
@@ -11,6 +16,10 @@ import Close from '@mui/icons-material/Close';
 import Download from '@mui/icons-material/Download';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import PhotoSizeSelectSmall from '@mui/icons-material/PhotoSizeSelectSmall';
+import PhotoSizeSelectLarge from '@mui/icons-material/PhotoSizeSelectLarge';
+import PhotoSizeSelectActual from '@mui/icons-material/PhotoSizeSelectActual';
+import RawOn from '@mui/icons-material/RawOn';
 
 import classes from './Lightbox.module.scss';
 import { useDispatch, useSelector } from "react-redux";
@@ -25,6 +34,8 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const [prevOpen, setOpen] = useState(open !== undefined ? open: false);
 
   const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({});
+
+  const [downloadMenu, setDownloadMenu] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (open === prevOpen) return;
@@ -57,7 +68,10 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const dispatch = useDispatch();
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
-  const onDownload = (photoId: string) => dispatch(photoActions.getOriginal(photoId))
+  const onDownload = (url: string) => () => {
+
+  };
+  const onDownloadOriginal = (photoId: string) => () => dispatch(photoActions.getOriginal(photoId))
     .then((res: AnyAction) => {
       if (res.type !== photoActions.getOriginal.success) return Promise.reject();
       return fetch(res.response.downloadUrl);
@@ -104,14 +118,37 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       }}>
         <div className={classes.actions}>
           {/*<IconButton><Info /></IconButton>*/}
-          {canDownload && (
-            <IconButton onClick={e => {
-              e.stopPropagation();
-              onDownload(photos[index].id);
-            }}>
-              <Download />
-            </IconButton>
-          )}
+
+          <IconButton onClick={(e) => setDownloadMenu(e.currentTarget)}><Download /></IconButton>
+          <Menu
+            open={downloadMenu !== null}
+            onClose={() => setDownloadMenu(null)}
+            anchorEl={downloadMenu}
+          >
+            <MenuItem onClick={onDownload(photos[index].imgUrls.small)}>
+              <ListItemIcon><PhotoSizeSelectSmall /></ListItemIcon>
+              <ListItemText primary="Small" secondary="400px" />
+            </MenuItem>
+            <MenuItem onClick={onDownload(photos[index].imgUrls.medium)}>
+              <ListItemIcon><PhotoSizeSelectLarge /></ListItemIcon>
+              <ListItemText primary="Medium" secondary="800px" />
+            </MenuItem>
+            <MenuItem onClick={onDownload(photos[index].imgUrls.large)}>
+              <ListItemIcon><PhotoSizeSelectActual /></ListItemIcon>
+              <ListItemText primary="Large" secondary="2048px" />
+            </MenuItem>
+
+            {canDownload && (
+              <>
+                <Divider />
+                <MenuItem onClick={onDownloadOriginal(photos[index].id)}>
+                  <ListItemIcon><RawOn /></ListItemIcon>
+                  <ListItemText primary="Original" secondary="Without watermark" />
+                </MenuItem>
+              </>
+            )}
+          </Menu>
+
           <IconButton onClick={e => {
             if (onClose) onClose();
             e.stopPropagation();
