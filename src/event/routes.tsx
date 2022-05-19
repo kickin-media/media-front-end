@@ -7,7 +7,7 @@ import EventPage from "./EventPage";
 const routes = () => (
   <Switch>
     <Route exact path="/event/" component={EventOverviewPage} />
-    <Route exact path="/event/:eventId" component={EventPage} />
+    <Route exact path="/event/:eventId/:name" component={EventPage} />
 
     <Route render={() => <Redirect to="/" />} />
   </Switch>

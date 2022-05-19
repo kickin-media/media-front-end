@@ -3,7 +3,7 @@ const MINUTE = 60 * SECOND;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 const WEEK = DAY * 7;
-const MONTH = WEEK * 52 / 12;
+const MONTH = 365 * DAY / 12;
 const YEAR = 365 * DAY;
 
 export const relativeDate: (date: Date) => string = (date) => {
@@ -20,7 +20,6 @@ export const relativeDate: (date: Date) => string = (date) => {
   if (diff < 1.5 * WEEK) return `${Math.round(diff / DAY)} days ago`;
   if (diff < 1.5 * MONTH) return `${Math.round(diff / WEEK)} weeks ago`;
   if (diff < 1.5 * YEAR) return `${Math.round(diff / MONTH)} months ago`;
-  if (diff < 5 * YEAR) return `${Math.round(diff / YEAR)} years ago`;
 
   return date.toLocaleDateString();
 };

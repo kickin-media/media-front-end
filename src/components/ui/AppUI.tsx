@@ -23,6 +23,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 
 import AccountIcon from '@mui/icons-material/AccountCircle';
+import AlbumIcon from '@mui/icons-material/Album';
 import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
 
@@ -35,7 +36,7 @@ import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
-  // {label: 'Events', target: '/event/', icon: <AlbumIcon />},
+  {label: 'Events', target: '/event/', icon: <AlbumIcon />},
   // {label: 'Media Crew', target: '/media/', icon: <InfoIcon />},
 ];
 

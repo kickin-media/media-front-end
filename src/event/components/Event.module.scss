@@ -1,0 +1,26 @@
+.event {
+  //width: 100%;
+
+  margin-bottom: 1rem;
+
+  align-items: stretch;
+
+  color: black;
+  cursor: pointer;
+  text-decoration: none;
+
+  transition: background-color 200ms ease;
+  &:hover { background-color: rgba(0,0,0, 0.05); }
+
+  > span:first-child, > img {
+    width: 120px !important;
+    height: unset !important;
+    aspect-ratio: 1.5;
+    object-fit: cover;
+  }
+
+  > div {
+    flex-grow: 1;
+    padding: 0.5rem;
+  }
+}

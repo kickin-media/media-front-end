@@ -1,0 +1,31 @@
+.grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  > a { width: 100%; }
+}
+
+.grid.large > a {
+  width: calc(50% - 0.5rem);
+}
+
+.backref {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  svg {
+    width: 4rem;
+    height: 4rem;
+  }
+}
