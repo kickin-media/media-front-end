@@ -40,6 +40,7 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
             <img
               src={photo.imgUrls.small}
               alt=""
+              loading="lazy"
               onLoad={e => {
                 // @ts-ignore
                 e.target.parentNode.style.setProperty('--w', e.target.naturalWidth);
