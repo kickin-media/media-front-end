@@ -125,28 +125,32 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
             onClose={() => setDownloadMenu(null)}
             anchorEl={downloadMenu}
           >
-            <MenuItem onClick={onDownload(photos[index].imgUrls.small)}>
-              <ListItemIcon><PhotoSizeSelectSmall /></ListItemIcon>
-              <ListItemText primary="Small" secondary="400px" />
-            </MenuItem>
-            <MenuItem onClick={onDownload(photos[index].imgUrls.medium)}>
-              <ListItemIcon><PhotoSizeSelectLarge /></ListItemIcon>
-              <ListItemText primary="Medium" secondary="800px" />
-            </MenuItem>
-            <MenuItem onClick={onDownload(photos[index].imgUrls.large)}>
-              <ListItemIcon><PhotoSizeSelectActual /></ListItemIcon>
-              <ListItemText primary="Large" secondary="2048px" />
-            </MenuItem>
-
-            {canDownload && (
+            {photos[index] ? (
               <>
-                <Divider />
-                <MenuItem onClick={onDownloadOriginal(photos[index].id)}>
-                  <ListItemIcon><RawOn /></ListItemIcon>
-                  <ListItemText primary="Original" secondary="Without watermark" />
+                <MenuItem onClick={onDownload(photos[index].imgUrls.small)}>
+                  <ListItemIcon><PhotoSizeSelectSmall /></ListItemIcon>
+                  <ListItemText primary="Small" secondary="400px" />
                 </MenuItem>
+                <MenuItem onClick={onDownload(photos[index].imgUrls.medium)}>
+                  <ListItemIcon><PhotoSizeSelectLarge /></ListItemIcon>
+                  <ListItemText primary="Medium" secondary="800px" />
+                </MenuItem>
+                <MenuItem onClick={onDownload(photos[index].imgUrls.large)}>
+                  <ListItemIcon><PhotoSizeSelectActual /></ListItemIcon>
+                  <ListItemText primary="Large" secondary="2048px" />
+                </MenuItem>
+
+                {canDownload && (
+                  <>
+                    <Divider />
+                    <MenuItem onClick={onDownloadOriginal(photos[index].id)}>
+                      <ListItemIcon><RawOn /></ListItemIcon>
+                      <ListItemText primary="Original" secondary="Without watermark" />
+                    </MenuItem>
+                  </>
+                )}
               </>
-            )}
+            ) : null}
           </Menu>
 
           <IconButton onClick={e => {
