@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useRouteMatch } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StateType } from "../redux/reducers/reducers";
 
@@ -7,11 +7,18 @@ import * as actions from '../redux/actions/event';
 import { AnyAction } from "@reduxjs/toolkit";
 import Typography from "@mui/material/Typography";
 import Album from "../album/components/Album";
-import { CircularProgress } from "@mui/material";
+import { ButtonGroup, CircularProgress } from "@mui/material";
 
 import classes from './EventPage.module.scss';
+import Button from "@mui/material/Button";
+import EventEditDialog from "./dialogs/EventEditDialog";
+import DeleteDialog from "../components/dialogs/DeleteDialog";
 
 const EventPage: React.FC<Props> = ({ eventId }) => {
+  const [edit, setEdit] = useState<boolean>(false);
+  const [deleteOpen, setDelete] = useState<boolean>(false);
+
+  const history = useHistory();
   const routeMatch = useRouteMatch<RouteProps>();
 
   const dispatch = useDispatch();
@@ -50,6 +57,13 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     <>
       <Typography variant="h3">{event.name}</Typography>
 
+      <div className={classes.actions}>
+        <ButtonGroup variant="outlined">
+          <Button onClick={() => setEdit(true)}>Edit</Button>
+          <Button onClick={() => setDelete(true)}>Delete</Button>
+        </ButtonGroup>
+      </div>
+
       <div className={classes['album-grid']}>
         {albums !== null
           ? albums
@@ -59,6 +73,16 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
             .map(album => <Album key={album.id} album={album} />)
           : <CircularProgress />}
       </div>
+
+      <EventEditDialog eventId={event ? event.id : undefined} open={edit} onClose={() => setEdit(false)} />
+      <DeleteDialog
+        open={deleteOpen}
+        onFail={() => setDelete(false)}
+        onSuccess={() => dispatch(actions.remove(event.id)).then((res: AnyAction) => {
+          setDelete(false);
+          history.push('/event/');
+        })}
+      />
     </>
   );
 };

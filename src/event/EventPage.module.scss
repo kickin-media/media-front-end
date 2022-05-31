@@ -1,3 +1,12 @@
+.actions {
+  width: 100%;
+
+  display: flex;
+  justify-content: flex-end;
+
+  padding: 1rem 0;
+}
+
 .album-grid {
   display: flex;
   flex-direction: row;
