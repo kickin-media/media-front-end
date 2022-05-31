@@ -23,6 +23,11 @@ const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
     Object.keys(events).forEach(id => state[id] = mergeEvents(state[id], events[id]));
   },
 
+  [actions.create.success]: (state, action) => {
+    const event = action.response.entities.event[action.response.result];
+    state[event.id] = event;
+  },
+
   [actions.list.success]: (state, action) => {
     const events = action.response.entities.event;
     Object.keys(events).forEach(id => state[id] = mergeEvents(state[id], events[id]));
@@ -31,7 +36,11 @@ const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
   [actions.get.success]: (state, action) => {
     const event = action.response.entities.event[action.response.result];
     state[event.id] = mergeEvents(state[event.id], event);
-  }
+  },
+
+  [actions.remove.success]: (state, action) => {
+    delete state[action.payload['event_id']];
+  },
 });
 
 export default event;
