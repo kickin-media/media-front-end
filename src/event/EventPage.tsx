@@ -80,6 +80,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
         onFail={() => setDelete(false)}
         onSuccess={() => dispatch(actions.remove(event.id)).then((res: AnyAction) => {
           setDelete(false);
+          if (res.type.endsWith('_FAILURE')) return;
           history.push('/event/');
         })}
       />

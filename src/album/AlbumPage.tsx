@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Region } from "../components/ui/AppUI";
 
 import AlbumEditDialog from "./dialogs/AlbumEditDialog";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { StateType } from "../redux/reducers/reducers";
 
@@ -11,11 +11,21 @@ import * as actions from '../redux/actions/album';
 import AlbumGallery from "./components/AlbumGallery";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { Alert, CircularProgress } from "@mui/material";
+import { Alert, ButtonGroup, CircularProgress } from "@mui/material";
 import { relativeDate } from "../util/date";
 
+import classes from './AlbumPage.module.scss';
+import Button from "@mui/material/Button";
+import DeleteDialog from "../components/dialogs/DeleteDialog";
+import { AnyAction } from "@reduxjs/toolkit";
+import slugify from "slugify";
+
 const AlbumPage: React.FC = () => {
+  const [edit, setEdit] = useState<boolean>(false);
+  const [deleteOpen, setDelete] = useState<boolean>(false);
+
   const { albumId } = useParams<{ albumId: string }>();
+  const history = useHistory();
 
   const dispatch = useDispatch();
   const album = useSelector((state: StateType) => state.album[albumId], shallowEqual);
@@ -45,7 +55,7 @@ const AlbumPage: React.FC = () => {
 
   return (
     <>
-      {album.coverPhoto !== null && (
+      {album.coverPhoto && (
         <Region name="hero">
           <Container maxWidth="lg">
             <Typography variant="h2">{album.name}</Typography>
@@ -57,15 +67,31 @@ const AlbumPage: React.FC = () => {
         </Region>
       )}
 
-      <AlbumEditDialog />
-
       {(photos.length !== sortedPhotos.length && canUpload) && (
         <Alert severity="info">
           {photos.length - sortedPhotos.length} photos are still being processed.
         </Alert>
       )}
 
+      <div className={classes.actions}>
+        <ButtonGroup variant="outlined">
+          <Button onClick={() => setEdit(true)}>Edit</Button>
+          <Button onClick={() => setDelete(true)}>Delete</Button>
+        </ButtonGroup>
+      </div>
+
       <AlbumGallery album={album} photos={sortedPhotos} />
+
+      <AlbumEditDialog albumId={album ? album.id : undefined} open={edit} onClose={() => setEdit(false)} />
+      <DeleteDialog
+        open={deleteOpen}
+        onFail={() => setDelete(false)}
+        onSuccess={() => dispatch(actions.remove(album.id)).then((res: AnyAction) => {
+          setDelete(false);
+          if (res.type.endsWith('_FAILURE')) return;
+          history.push(`/event/${event.id}/${slugify(event.name)}`);
+        })}
+      />
     </>
   );
 }
