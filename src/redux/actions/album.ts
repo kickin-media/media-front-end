@@ -53,6 +53,13 @@ export const remove = createAPIAction(
   (album_id: string) => ({ album_id })
 );
 
+export const clear = createAPIAction(
+  'ALBUM_CLEAR',
+  'DELETE',
+  payload => `/album/${payload?.album_id}/empty`,
+  (album_id: string) => ({ album_id })
+);
+
 export const updateHiddenStatus = createAPIAction(
   'ALBUM_HIDDEN_UPDATE',
   'PUT',

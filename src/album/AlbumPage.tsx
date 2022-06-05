@@ -19,8 +19,10 @@ import Button from "@mui/material/Button";
 import DeleteDialog from "../components/dialogs/DeleteDialog";
 import { AnyAction } from "@reduxjs/toolkit";
 import slugify from "slugify";
+import AlbumClearDialog from "./dialogs/AlbumClearDialog";
 
 const AlbumPage: React.FC = () => {
+  const [clear, setClear] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [deleteOpen, setDelete] = useState<boolean>(false);
 
@@ -35,8 +37,12 @@ const AlbumPage: React.FC = () => {
   const photos = useSelector((state: StateType) => album && album.photos
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
+
   const canUpload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:upload'));
+
+  const canCrud = useSelector((state: StateType) =>
+    state.auth.authenticated && state.auth.scopes.includes('album:manage'));
 
   useEffect(() => {
     dispatch(actions.get(albumId));
@@ -73,16 +79,18 @@ const AlbumPage: React.FC = () => {
         </Alert>
       )}
 
-      <div className={classes.actions}>
+      {canCrud && (<div className={classes.actions}>
         <ButtonGroup variant="outlined">
           <Button onClick={() => setEdit(true)}>Edit</Button>
+          <Button onClick={() => setClear(true)}>Clear</Button>
           <Button onClick={() => setDelete(true)}>Delete</Button>
         </ButtonGroup>
-      </div>
+      </div>)}
 
       <AlbumGallery album={album} photos={sortedPhotos} />
 
-      <AlbumEditDialog albumId={album ? album.id : undefined} open={edit} onClose={() => setEdit(false)} />
+      <AlbumEditDialog albumId={albumId} open={edit} onClose={() => setEdit(false)} />
+      <AlbumClearDialog albumId={albumId} open={clear} onClose={() => setClear(false)} />
       <DeleteDialog
         open={deleteOpen}
         onFail={() => setDelete(false)}

@@ -38,6 +38,9 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
       || state.auth.scopes.includes('photos:upload')
       || state.auth.scopes.includes('events:manage')));
 
+  const canCrud = useSelector((state: StateType) => state.auth.authenticated
+    && state.auth.scopes.includes('events:manage'));
+
   // Load event on mount
   useEffect(() => {
     dispatch(actions.get((() => {
@@ -57,12 +60,12 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     <>
       <Typography variant="h3">{event.name}</Typography>
 
-      <div className={classes.actions}>
+      {canCrud && (<div className={classes.actions}>
         <ButtonGroup variant="outlined">
           <Button onClick={() => setEdit(true)}>Edit</Button>
           <Button onClick={() => setDelete(true)}>Delete</Button>
         </ButtonGroup>
-      </div>
+      </div>)}
 
       <div className={classes['album-grid']}>
         {albums !== null
