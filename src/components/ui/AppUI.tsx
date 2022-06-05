@@ -33,6 +33,7 @@ import { login, logout } from "../../redux/actions/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
+import { usePageTracking } from "../../util/analytics";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -61,6 +62,7 @@ const AppUI: React.FC<Props> = ({children}) => {
   const hero = useRef();
 
   const history = useHistory();
+  usePageTracking();
 
   const dispatch = useDispatch();
   const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user : undefined, shallowEqual);
