@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
+import clsx from "clsx";
+import slugify from "slugify";
 
-import CircularProgress from "@mui/material/CircularProgress";
+import { useHistory, useRouteMatch } from "react-router-dom";
+import useWidth from "../../util/useWidth";
 
 import { PhotoType } from "../../redux/reducers/photo";
-
-import classes from './AlbumGallery.module.scss';
 import { AlbumType } from "../../redux/reducers/album";
-import slugify from "slugify";
-import { useHistory, useRouteMatch } from "react-router-dom";
+
+import CircularProgress from "@mui/material/CircularProgress";
 import Lightbox from "./Lightbox";
 import Skeleton from "@mui/material/Skeleton";
-import useWidth from "../../util/useWidth";
-import clsx from "clsx";
 
-const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
+import classes from './AlbumGallery.module.scss';
+
+const AlbumGallery: React.FC<Props> = ({ album, photos, selected, onSelect, onDeselect } ) => {
   const width = useWidth();
 
   const history = useHistory();
@@ -23,17 +24,28 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
 
   if (!photos || !album) return <CircularProgress />;
 
+  const selectMode = selected !== undefined;
+
   return (
-    <div className={clsx(classes.gallery, { [classes.small]: width === 'xs' })}>
+    <div className={clsx(classes.gallery, {
+      [classes['select-mode']]: selectMode,
+      [classes.small]: width === 'xs'
+    })}>
       {photos.map(photo => (
         <a
           key={photo.id}
-          className={classes.photo}
+          className={clsx(classes.photo, { [classes.selected]: selected && selected[photo.id] })}
           href={`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`}
           style={{ '--w': 100, '--h': 100 } as React.CSSProperties}
           onClick={e => {
-            history.push(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`);
             e.preventDefault();
+            if (selectMode) {
+              if (selected[photo.id] && onDeselect) onDeselect(photo.id);
+              else if (onSelect) onSelect(photo.id);
+              return;
+            }
+
+            history.push(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`);
           }}
         >
           {!failed[photo.id] ? (
@@ -70,6 +82,10 @@ const AlbumGallery: React.FC<Props> = ({ album, photos } ) => {
 interface Props {
   album?: AlbumType;
   photos?: PhotoType[];
+
+  selected?: { [key: string]: boolean };
+  onSelect?: (albumId: string) => void;
+  onDeselect?: (albumId: string) => void;
 }
 
 interface RouteProps {

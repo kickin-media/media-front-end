@@ -6,6 +6,16 @@
   gap: 0.5rem;
 }
 
+.gallery.select-mode {
+  //> .photo.selected > img { border-radius: 0; }
+
+  > .photo:not(.selected) > img {
+    border-radius: 1rem;
+    transform: scale(0.95);
+    filter: opacity(0.5);
+  }
+}
+
 .gallery > .photo, .gallery::after {
   --ratio: calc(var(--w) / var(--h));
   --row-height: 12rem;
@@ -30,6 +40,10 @@
 .gallery > .photo > img {
   display: block;
   width: 100%;
+
+  border-radius: 0.5rem;
+
+  transition: filter ease 300ms, border-radius ease 300ms, transform ease 300ms;
 }
 
 .gallery > .photo > span {

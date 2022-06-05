@@ -1,6 +1,6 @@
 import { createReducer, Reducer } from "@reduxjs/toolkit";
 
-// import * as actions from '../actions/photo';
+import * as actions from '../actions/photo';
 import * as albumActions from '../actions/album';
 
 export type PhotoStateType = { [key: string]: PhotoType };
@@ -31,6 +31,10 @@ const photo: Reducer<PhotoStateType> = createReducer({} as PhotoStateType, {
 
     const photos = action.response.entities.photo;
     Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
+  },
+
+  [actions.remove.success]: (state, action) => {
+    delete state[action.payload['photo_id']];
   }
 });
 

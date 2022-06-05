@@ -1,30 +1,40 @@
 import React, { useEffect, useMemo, useState } from 'react';
-
-import { Region } from "../components/ui/AppUI";
-
-import AlbumEditDialog from "./dialogs/AlbumEditDialog";
-import { useHistory, useParams } from "react-router-dom";
+import { relativeDate } from "../util/date";
+import slugify from "slugify";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { StateType } from "../redux/reducers/reducers";
+import { useHistory, useParams } from "react-router-dom";
 
 import * as actions from '../redux/actions/album';
+import { AnyAction } from "@reduxjs/toolkit";
+import { StateType } from "../redux/reducers/reducers";
+
+import Alert from '@mui/material/Alert';
+import AlbumClearDialog from "./dialogs/AlbumClearDialog";
+import AlbumEditDialog from "./dialogs/AlbumEditDialog";
 import AlbumGallery from "./components/AlbumGallery";
-import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import ButtonGroup from '@mui/material/ButtonGroup';
+import CircularProgress from '@mui/material/CircularProgress';
 import Container from "@mui/material/Container";
-import { Alert, ButtonGroup, CircularProgress } from "@mui/material";
-import { relativeDate } from "../util/date";
+import DeleteDialog from "../components/dialogs/DeleteDialog";
+import { Region } from "../components/ui/AppUI";
+import Typography from "@mui/material/Typography";
+
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import classes from './AlbumPage.module.scss';
-import Button from "@mui/material/Button";
-import DeleteDialog from "../components/dialogs/DeleteDialog";
-import { AnyAction } from "@reduxjs/toolkit";
-import slugify from "slugify";
-import AlbumClearDialog from "./dialogs/AlbumClearDialog";
+import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [deleteOpen, setDelete] = useState<boolean>(false);
+
+  const [selected, setSelected] = useState<{ [key: string]: boolean } | undefined>(undefined);
+  const [removeSelected, setRemoveSelected] = useState<boolean>(false);
 
   const { albumId } = useParams<{ albumId: string }>();
   const history = useHistory();
@@ -59,6 +69,10 @@ const AlbumPage: React.FC = () => {
 
   if (!album || !event) return <CircularProgress />;
 
+  const selectCount = selected === undefined
+    ? 0
+    : Object.keys(selected).filter(id => selected[id]).length;
+
   return (
     <>
       {album.coverPhoto && (
@@ -81,13 +95,52 @@ const AlbumPage: React.FC = () => {
 
       {canCrud && (<div className={classes.actions}>
         <ButtonGroup variant="outlined">
-          <Button onClick={() => setEdit(true)}>Edit</Button>
-          <Button onClick={() => setClear(true)}>Clear</Button>
-          <Button onClick={() => setDelete(true)}>Delete</Button>
+          <Button
+            onClick={() => setSelected(selected !== undefined ? undefined : {})}
+            startIcon={selected !== undefined ? <CheckBoxIcon /> : <CheckBoxOutlinedIcon />}
+          >
+            Select
+          </Button>
+          {selected !== undefined && (
+            <Button
+              onClick={() => {
+                if (selectCount === 0) setSelected(photos.map(photo => ({ [photo.id]: true }))
+                  .reduce((a, b) => Object.assign({}, a, b), {}));
+                else setSelected({});
+              }}
+              startIcon={<ClearAllIcon />}
+            >
+              {selectCount === 0 ? 'All' : 'Clear'}
+            </Button>
+          )}
         </ButtonGroup>
+
+        {selected === undefined ? (
+          <ButtonGroup variant="outlined">
+            <Button onClick={() => setEdit(true)}>Edit</Button>
+            <Button onClick={() => setClear(true)} color="error">Clear</Button>
+            <Button onClick={() => setDelete(true)} color="error">Delete</Button>
+          </ButtonGroup>
+        ) : (
+          <Button
+            onClick={() => setRemoveSelected(true)}
+            startIcon={<DeleteIcon />}
+            color="error"
+            disabled={selectCount === 0}
+            variant="contained"
+          >
+            Delete
+          </Button>
+        )}
       </div>)}
 
-      <AlbumGallery album={album} photos={sortedPhotos} />
+      <AlbumGallery
+        album={album}
+        photos={sortedPhotos}
+        selected={selected}
+        onSelect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: true }))}
+        onDeselect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: false }))}
+      />
 
       <AlbumEditDialog albumId={albumId} open={edit} onClose={() => setEdit(false)} />
       <AlbumClearDialog albumId={albumId} open={clear} onClose={() => setClear(false)} />
@@ -99,6 +152,12 @@ const AlbumPage: React.FC = () => {
           if (res.type.endsWith('_FAILURE')) return;
           history.push(`/event/${event.id}/${slugify(event.name)}`);
         })}
+      />
+
+      <PhotoDeleteDialog
+        photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
+        open={removeSelected}
+        onClose={() => setRemoveSelected(false)}
       />
     </>
   );

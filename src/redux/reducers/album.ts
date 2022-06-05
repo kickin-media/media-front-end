@@ -1,8 +1,10 @@
 import { createReducer, Reducer } from "@reduxjs/toolkit";
 
+import { PhotoType } from "./photo";
+
 import * as actions from '../actions/album';
 import * as eventActions from '../actions/event';
-import { PhotoType } from "./photo";
+import * as photoActions from '../actions/photo';
 
 export type AlbumStateType = { [key: string]: AlbumType };
 
@@ -29,6 +31,15 @@ const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
     if (!albums) return;
 
     Object.keys(albums).forEach(id => state[id] = mergeAlbums(state[id], albums[id]));
+  },
+
+  [photoActions.remove.success]: (state, action) => {
+    const removed = action.payload['photo_id'];
+
+    Object.keys(state).forEach(albumId => {
+      if (!state[albumId].photos) return;
+      state[albumId].photos = state[albumId].photos?.filter(other => removed !== other);
+    })
   },
 
   [actions.create.success]: (state, action) => {
