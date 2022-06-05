@@ -42,7 +42,7 @@ const AlbumPage: React.FC = () => {
     state.auth.authenticated && state.auth.scopes.includes('photos:upload'));
 
   const canCrud = useSelector((state: StateType) =>
-    state.auth.authenticated && state.auth.scopes.includes('album:manage'));
+    state.auth.authenticated && state.auth.scopes.includes('albums:manage'));
 
   useEffect(() => {
     dispatch(actions.get(albumId));
