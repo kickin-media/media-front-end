@@ -52,7 +52,7 @@ export const usePageTracking = () => {
     let prev = history.location.pathname;
     history.listen(l => {
       if (l.pathname === prev) return;
-      if (l.state.noTrack) return;
+      if (l.state && l.state.noTrack) return;
 
       trackPage(l.pathname, '');
       prev = l.pathname;
