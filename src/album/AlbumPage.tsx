@@ -27,6 +27,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import classes from './AlbumPage.module.scss';
 import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
+import { trackEvent } from "../util/analytics";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
@@ -56,8 +57,11 @@ const AlbumPage: React.FC = () => {
 
   useEffect(() => {
     dispatch(actions.get(albumId));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, albumId]);
+
+  useEffect(() => {
+    trackEvent('view_album', albumId);
+  }, [albumId]);
 
   const sortedPhotos = useMemo(() => photos
     .filter(photo => photo.uploadProcessed)

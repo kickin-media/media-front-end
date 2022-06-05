@@ -15,6 +15,7 @@ export const trackEvent: (type: string, value: string) => void = (type, value) =
         website: getSiteId(),
         event_type: type,
         event_value: value,
+        url: window.location.pathname,
         hostname: window.location.hostname,
         language: navigator.language,
         screen: `${window.screen.width}x${window.screen.height}`
@@ -40,13 +41,18 @@ export const trackPage: (url: string, referrer: string) => void = (url, referrer
   }
 );
 
+interface TrackingState {
+  noTrack?: boolean;
+}
+
 export const usePageTracking = () => {
-  const history = useHistory();
+  const history = useHistory<TrackingState>();
   useEffect(() => {
     trackPage(history.location.pathname, document.referrer)
     let prev = history.location.pathname;
     history.listen(l => {
       if (l.pathname === prev) return;
+      if (l.state.noTrack) return;
 
       trackPage(l.pathname, '');
       prev = l.pathname;

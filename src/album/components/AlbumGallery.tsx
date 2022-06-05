@@ -13,6 +13,7 @@ import Lightbox from "./Lightbox";
 import Skeleton from "@mui/material/Skeleton";
 
 import classes from './AlbumGallery.module.scss';
+import { trackEvent } from "../../util/analytics";
 
 const AlbumGallery: React.FC<Props> = ({ album, photos, selected, onSelect, onDeselect } ) => {
   const width = useWidth();
@@ -72,7 +73,10 @@ const AlbumGallery: React.FC<Props> = ({ album, photos, selected, onSelect, onDe
         photos={photos}
         open={routeMatch.params.photoId !== undefined}
         startId={routeMatch.params.photoId ? routeMatch.params.photoId : null}
-        onChange={photoId => history.replace(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photoId}`)}
+        onChange={photoId => {
+          trackEvent('view_photo', photoId);
+          history.replace(`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photoId}`, { noTrack: true });
+        }}
         onClose={history.goBack}
       />
     </div>

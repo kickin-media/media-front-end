@@ -28,6 +28,7 @@ import { StateType } from "../../redux/reducers/reducers";
 import * as photoActions from '../../redux/actions/photo';
 import { AnyAction } from "@reduxjs/toolkit";
 import slugify from "slugify";
+import { trackEvent } from "../../util/analytics";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -68,12 +69,13 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const dispatch = useDispatch();
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
-  const onDownload = (url: string) => () => {
-
+  const onDownload = (photoId: string, url: string) => () => {
+    trackEvent('download', photoId);
   };
   const onDownloadOriginal = (photoId: string) => () => dispatch(photoActions.getOriginal(photoId))
     .then((res: AnyAction) => {
       if (res.type !== photoActions.getOriginal.success) return Promise.reject();
+      trackEvent('download', photoId);
       return fetch(res.response.downloadUrl);
     })
     .then((res: Response) => res.blob())
@@ -90,6 +92,11 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       root.removeChild(anchor);
       setTimeout(() => URL.revokeObjectURL(url), 30000);
     });
+
+  const moveTo = (index: number) => setIndex(() => {
+    if (onChange) onChange(photos[index].id);
+    return index;
+  });
 
   const update = (delta: number) => setIndex(prev => {
     let nextIndex = prev + delta;
@@ -127,15 +134,15 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           >
             {photos[index] ? (
               <>
-                <MenuItem onClick={onDownload(photos[index].imgUrls.small)}>
+                <MenuItem onClick={onDownload(photos[index].id, photos[index].imgUrls.small)}>
                   <ListItemIcon><PhotoSizeSelectSmall /></ListItemIcon>
                   <ListItemText primary="Small" secondary="400px" />
                 </MenuItem>
-                <MenuItem onClick={onDownload(photos[index].imgUrls.medium)}>
+                <MenuItem onClick={onDownload(photos[index].id, photos[index].imgUrls.medium)}>
                   <ListItemIcon><PhotoSizeSelectLarge /></ListItemIcon>
                   <ListItemText primary="Medium" secondary="800px" />
                 </MenuItem>
-                <MenuItem onClick={onDownload(photos[index].imgUrls.large)}>
+                <MenuItem onClick={onDownload(photos[index].id, photos[index].imgUrls.large)}>
                   <ListItemIcon><PhotoSizeSelectActual /></ListItemIcon>
                   <ListItemText primary="Large" secondary="2048px" />
                 </MenuItem>
@@ -171,7 +178,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           </IconButton>
           <SwipeableViews
             index={index}
-            onChangeIndex={index => setIndex(index)}
+            onChangeIndex={index => moveTo(index)}
             enableMouseEvents
           >
             {photos.map(photo => loaded[photo.id] ? (
