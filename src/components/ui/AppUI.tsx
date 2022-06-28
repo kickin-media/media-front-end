@@ -34,6 +34,7 @@ import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
 import { usePageTracking } from "../../util/analytics";
+import CookieDialog from "../dialogs/CookieDialog";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -70,6 +71,9 @@ const AppUI: React.FC<Props> = ({children}) => {
   // Save the component's state
   const [drawer, setDrawer] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState<boolean>(false);
+
+  const loadedCookieSetting = window.localStorage.getItem('cookies');
+  const [cookieDialog, setCookieDialog] = useState<boolean>(loadedCookieSetting === null);
 
   // Add onscroll behaviour
   const onScroll = () => setScrolled(window.scrollY > 0);
@@ -208,6 +212,11 @@ const AppUI: React.FC<Props> = ({children}) => {
       {/* Others */}
       <AdminSpeedDial />
       {user !== undefined ? <DropEmLikeItsHot /> : null}
+      <CookieDialog open={cookieDialog} onClose={() => {
+        setCookieDialog(false);
+        window.localStorage.setItem('cookies', 'Helemaal priem joh, doe lekker je functionele koekjes bij mij ' +
+          'installeren, mij hoor je niet klagen');
+      }} />
     </RegionContext.Provider>
   );
 };
