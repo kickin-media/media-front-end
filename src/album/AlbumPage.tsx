@@ -18,6 +18,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Container from "@mui/material/Container";
 import DeleteDialog from "../components/dialogs/DeleteDialog";
 import { Region } from "../components/ui/AppUI";
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from "@mui/material/Typography";
 
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -28,6 +30,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import classes from './AlbumPage.module.scss';
 import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
 import { trackEvent } from "../util/analytics";
+import { Badge } from "@mui/material";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
@@ -36,6 +39,8 @@ const AlbumPage: React.FC = () => {
 
   const [selected, setSelected] = useState<{ [key: string]: boolean } | undefined>(undefined);
   const [removeSelected, setRemoveSelected] = useState<boolean>(false);
+
+  const [sortMethod, setSortMethod] = useState<'chronological' | 'new'>('chronological');
 
   const { albumId } = useParams<{ albumId: string }>();
   const history = useHistory();
@@ -66,10 +71,45 @@ const AlbumPage: React.FC = () => {
   const sortedPhotos = useMemo(() => photos
     .filter(photo => photo.uploadProcessed)
     .sort((a, b) => {
-      if (a.timestamp === null) return 1;
-      if (b.timestamp === null) return -1;
-      return a.timestamp.getTime() - b.timestamp.getTime();
-  }), [photos]);
+      if (sortMethod === 'chronological') {
+        if (a.timestamp === null) return 1;
+        if (b.timestamp === null) return -1;
+        return a.timestamp.getTime() - b.timestamp.getTime();
+      } else {
+        if (a.uploadedAt === null) return -1;
+        if (b.uploadedAt === null) return 1;
+
+        const diff = b.uploadedAt.getTime() - a.uploadedAt.getTime();
+        if (diff !== 0) return diff;
+
+        if (a.timestamp === null) return -1;
+        if (b.timestamp === null) return 1;
+
+        return b.timestamp.getTime() - a.timestamp.getTime();
+      }
+  }), [photos, sortMethod]);
+
+  const storedLastSeen = window.localStorage.getItem(`album-${albumId}`)
+  const [lastSeen, setLastSeen] = useState<Date | null>(storedLastSeen === null
+    ? null
+    : new Date(storedLastSeen));
+  const newestPhoto = useMemo(() => new Date(Math.max(...photos
+    .filter(photo => photo.uploadProcessed)
+    .filter(photo => photo.uploadedAt !== null)
+    // @ts-ignore
+    .map(photo => photo.uploadedAt.getTime()))), [photos]);
+  useEffect(() => {
+    if (!newestPhoto) return;
+    try {
+      window.localStorage.setItem(`album-${albumId}`, newestPhoto.toISOString());
+    } catch (RangeError) { }
+  }, [albumId, newestPhoto]);
+  const amountNew = useMemo(() => {
+    if (lastSeen === null) return 0;
+    return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
+  }, [lastSeen, sortedPhotos]);
+
+  console.log('', amountNew);
 
   if (!album || !event) return <CircularProgress />;
 
@@ -137,6 +177,36 @@ const AlbumPage: React.FC = () => {
           </Button>
         )}
       </div>)}
+
+      <div className={classes.actions}>
+        <ToggleButtonGroup
+          onChange={(e, selected) => setSortMethod(selected)}
+          value={sortMethod}
+          color="primary"
+          exclusive
+          size="small"
+          className={classes['sort-menu']}
+        >
+          <ToggleButton value="chronological">Chronological</ToggleButton>
+          {amountNew > 0 ? (
+            // @ts-ignore
+            <Badge
+              badgeContent={amountNew}
+              color="primary"
+              onClick={e => {
+                setSortMethod('new');
+                setLastSeen(newestPhoto);
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            >
+              <ToggleButton value="new">New first</ToggleButton>
+            </Badge>
+          ) : (
+            <ToggleButton value="new">New first</ToggleButton>
+          )}
+        </ToggleButtonGroup>
+      </div>
 
       <AlbumGallery
         album={album}

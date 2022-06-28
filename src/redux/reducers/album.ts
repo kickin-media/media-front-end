@@ -57,6 +57,11 @@ const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
     state[album.id] = mergeAlbums(state[album.id], album);
   },
 
+  [actions.clear.success]: (state, action) => {
+    state[action.payload['album_id']].photos = [];
+    state[action.payload['album_id']].coverPhoto = null;
+  },
+
   [actions.remove.success]: (state, action) => {
     delete state[action.payload['album_id']];
   }
