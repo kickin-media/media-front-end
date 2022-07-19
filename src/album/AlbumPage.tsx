@@ -12,11 +12,13 @@ import Alert from '@mui/material/Alert';
 import AlbumClearDialog from "./dialogs/AlbumClearDialog";
 import AlbumEditDialog from "./dialogs/AlbumEditDialog";
 import AlbumGallery from "./components/AlbumGallery";
+import Badge from '@mui/material/Badge';
 import Button from "@mui/material/Button";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from "@mui/material/Container";
 import DeleteDialog from "../components/dialogs/DeleteDialog";
+import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
 import { Region } from "../components/ui/AppUI";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -28,9 +30,7 @@ import ClearAllIcon from '@mui/icons-material/ClearAll';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import classes from './AlbumPage.module.scss';
-import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
 import { trackEvent } from "../util/analytics";
-import { Badge } from "@mui/material";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
@@ -40,7 +40,7 @@ const AlbumPage: React.FC = () => {
   const [selected, setSelected] = useState<{ [key: string]: boolean } | undefined>(undefined);
   const [removeSelected, setRemoveSelected] = useState<boolean>(false);
 
-  const [sortMethod, setSortMethod] = useState<'chronological' | 'new'>('chronological');
+  const [sortMethod, setSortMethod] = useState<'chronological' | 'new' | 'mine'>('chronological');
 
   const { albumId } = useParams<{ albumId: string }>();
   const history = useHistory();
@@ -53,6 +53,8 @@ const AlbumPage: React.FC = () => {
   const photos = useSelector((state: StateType) => album && album.photos
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
+
+  const uid = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : 'nonexisting');
 
   const canUpload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:upload'));
@@ -68,14 +70,11 @@ const AlbumPage: React.FC = () => {
     trackEvent('view_album', albumId);
   }, [albumId]);
 
-  const sortedPhotos = useMemo(() => photos
-    .filter(photo => photo.uploadProcessed)
+  const processedPhotos = useMemo(() => photos.filter(photo => photo.uploadProcessed), [photos]);
+  const sortedPhotos = useMemo(() => processedPhotos
+    .filter(photo => sortMethod !== 'mine' || photo.author.id === uid)
     .sort((a, b) => {
-      if (sortMethod === 'chronological') {
-        if (a.timestamp === null) return 1;
-        if (b.timestamp === null) return -1;
-        return a.timestamp.getTime() - b.timestamp.getTime();
-      } else {
+      if (sortMethod === 'new') {
         if (a.uploadedAt === null) return -1;
         if (b.uploadedAt === null) return 1;
 
@@ -86,8 +85,16 @@ const AlbumPage: React.FC = () => {
         if (b.timestamp === null) return 1;
 
         return b.timestamp.getTime() - a.timestamp.getTime();
+      } else {
+        if (a.timestamp === null) return 1;
+        if (b.timestamp === null) return -1;
+        return a.timestamp.getTime() - b.timestamp.getTime();
       }
-  }), [photos, sortMethod]);
+  }), [processedPhotos, uid, sortMethod]);
+  const filteredPhotos = useMemo(() => selected === undefined || canCrud
+    ? sortedPhotos
+    : sortedPhotos.filter(photo => photo.author.id === uid),
+    [selected, canCrud, sortedPhotos, uid]);
 
   const storedLastSeen = window.localStorage.getItem(`album-${albumId}`)
   const [lastSeen, setLastSeen] = useState<Date | null>(storedLastSeen === null
@@ -109,8 +116,6 @@ const AlbumPage: React.FC = () => {
     return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
   }, [lastSeen, sortedPhotos]);
 
-  console.log('', amountNew);
-
   if (!album || !event) return <CircularProgress />;
 
   const selectCount = selected === undefined
@@ -131,13 +136,13 @@ const AlbumPage: React.FC = () => {
         </Region>
       )}
 
-      {(photos.length !== sortedPhotos.length && canUpload) && (
+      {(photos.length !== processedPhotos.length && canUpload) && (
         <Alert severity="info">
-          {photos.length - sortedPhotos.length} photos are still being processed.
+          {photos.length - processedPhotos.length} photos are still being processed.
         </Alert>
       )}
 
-      {canCrud && (<div className={classes.actions}>
+      {(canCrud || canUpload) && (<div className={classes.actions}>
         <ButtonGroup variant="outlined">
           <Button
             onClick={() => setSelected(selected !== undefined ? undefined : {})}
@@ -159,7 +164,7 @@ const AlbumPage: React.FC = () => {
           )}
         </ButtonGroup>
 
-        {selected === undefined ? (
+        {selected === undefined && canCrud ? (
           <ButtonGroup variant="outlined">
             <Button onClick={() => setEdit(true)}>Edit</Button>
             <Button onClick={() => setClear(true)} color="error">Clear</Button>
@@ -180,13 +185,17 @@ const AlbumPage: React.FC = () => {
 
       <div className={classes.actions}>
         <ToggleButtonGroup
-          onChange={(e, selected) => setSortMethod(selected)}
+          onChange={(e, selected) =>
+            setSortMethod((current ) => selected === null
+              ? current
+              : selected)}
           value={sortMethod}
           color="primary"
           exclusive
           size="small"
           className={classes['sort-menu']}
         >
+          {canUpload && <ToggleButton value="mine">My Photos</ToggleButton>}
           <ToggleButton value="chronological">Chronological</ToggleButton>
           {amountNew > 0 ? (
             // @ts-ignore
@@ -210,7 +219,7 @@ const AlbumPage: React.FC = () => {
 
       <AlbumGallery
         album={album}
-        photos={sortedPhotos}
+        photos={filteredPhotos}
         selected={selected}
         onSelect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: true }))}
         onDeselect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: false }))}

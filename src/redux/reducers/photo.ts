@@ -2,11 +2,13 @@ import { createReducer, Reducer } from "@reduxjs/toolkit";
 
 import * as actions from '../actions/photo';
 import * as albumActions from '../actions/album';
+import { AuthorType } from "./author";
 
 export type PhotoStateType = { [key: string]: PhotoType };
 
 export interface PhotoType {
   id: string;
+  author: AuthorType;
 
   imgUrls: {
     original: string;
