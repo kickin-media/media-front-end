@@ -92,7 +92,7 @@ const AlbumPage: React.FC = () => {
   const storedLastSeen = window.localStorage.getItem(`album-${albumId}`)
   const [lastSeen, setLastSeen] = useState<Date | null>(storedLastSeen === null
     ? null
-    : new Date(storedLastSeen));
+    : new Date(storedLastSeen.split(" ")[0]));
   const newestPhoto = useMemo(() => new Date(Math.max(...photos
     .filter(photo => photo.uploadProcessed)
     .filter(photo => photo.uploadedAt !== null)
@@ -101,9 +101,9 @@ const AlbumPage: React.FC = () => {
   useEffect(() => {
     if (!newestPhoto) return;
     try {
-      window.localStorage.setItem(`album-${albumId}`, newestPhoto.toISOString());
+      window.localStorage.setItem(`album-${albumId}`, newestPhoto.toISOString() + " " + album.photosCount);
     } catch (RangeError) { }
-  }, [albumId, newestPhoto]);
+  }, [albumId, album.photosCount, newestPhoto]);
   const amountNew = useMemo(() => {
     if (lastSeen === null) return 0;
     return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
