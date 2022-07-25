@@ -12,6 +12,7 @@ export interface AlbumType {
   id: string;
 
   eventId: string;
+  hiddenSecret: string | null;
 
   name: string;
   coverPhoto: PhotoType | null;
@@ -45,6 +46,16 @@ const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
   [actions.create.success]: (state, action) => {
     const album = action.response.entities.album[action.response.result];
     state[album.id] = album;
+  },
+
+  [actions.update.success]: (state, action) => {
+    const album = action.response.entities.album[action.response.result];
+    state[album.id] = mergeAlbums(state[album.id], album)
+  },
+
+  [actions.updateHiddenStatus.success]: (state, action) => {
+    const album = action.response.entities.album[action.response.result];
+    state[album.id] = mergeAlbums(state[album.id], album);
   },
 
   [actions.list.success]: (state, action) => {

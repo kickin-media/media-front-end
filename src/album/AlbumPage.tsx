@@ -136,6 +136,12 @@ const AlbumPage: React.FC = () => {
         </Region>
       )}
 
+      {album.hiddenSecret && (
+        <Alert severity="warning">
+          This is a <em>private</em> / <em>hidden</em> album, please be careful when sharing the URL or the secret.
+        </Alert>
+      )}
+
       {(photos.length !== processedPhotos.length && canUpload) && (
         <Alert severity="info">
           {photos.length - processedPhotos.length} photos are still being processed.

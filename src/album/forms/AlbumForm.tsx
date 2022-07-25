@@ -1,15 +1,15 @@
 import React, { MutableRefObject, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import fnsDateAdapter from '@mui/lab/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import Checkbox from '@mui/material/Checkbox';
-import DateTimePicker from '@mui/lab/DateTimePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import InputLabel from '@mui/material/InputLabel';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import Switch from '@mui/material/Switch';
@@ -18,11 +18,13 @@ import TextField from '@mui/material/TextField';
 import * as actions from '../../redux/actions/album';
 import { StateType } from "../../redux/reducers/reducers";
 import { AnyAction } from "@reduxjs/toolkit";
+import { AlbumType } from "../../redux/reducers/album";
+import { EventStateType } from "../../redux/reducers/event";
 
 const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
   const dispatch = useDispatch();
-  const album = useSelector((state: any) => albumId ? state.album[albumId] : null, shallowEqual);
-  const events = useSelector((state: StateType) => state.event, shallowEqual);
+  const album: AlbumType = useSelector((state: any) => albumId ? state.album[albumId] : null, shallowEqual);
+  const events: EventStateType = useSelector((state: StateType) => state.event, shallowEqual);
 
   const reset = () => {
     if (!albumId) return {
@@ -32,17 +34,17 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
       timestamp: new Date(),
       release: null,
 
-      secret: true
+      secret: false
     } as FormValues;
 
     return {
       name: album.name,
       eventId: album.eventId,
 
-      timestamp: album.timeStamp,
+      timestamp: album.timestamp,
       release: album.releaseTime,
 
-      secret: album.isSecret
+      secret: album.hiddenSecret !== null
     } as FormValues;
   };
 
@@ -65,7 +67,16 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
       ? actions.update(albumId, values.name as string, values.timestamp, values.release, values.eventId)
       : actions.create(values.name, values.timestamp, values.release, values.eventId))
       .then((res: AnyAction) => {
-        if (onSubmit) onSubmit(res.type === actions.update.success || res.type === actions.create.success);
+        const success = res.type === actions.update.success || res.type === actions.create.success;
+        if (!success) {
+          if (onSubmit) onSubmit(false);
+          return;
+        }
+
+        dispatch(actions.updateHiddenStatus(res.payload['album_id'], values.secret, false))
+          .then((res: AnyAction) => {
+            if (onSubmit) onSubmit(res.type === actions.updateHiddenStatus.success);
+          });
       });
   };
 
@@ -98,9 +109,11 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
         </Select>
       </FormControl>
 
-      <LocalizationProvider dateAdapter={fnsDateAdapter}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateTimePicker
           renderInput={(props) => <TextField {...props} />}
+          ampm={false}
+          ampmInClock={true}
           label="Date"
           value={values.timestamp}
           onChange={date => setValues({ ...values, timestamp: date as Date })}
@@ -122,6 +135,8 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
           />
           <DateTimePicker
             renderInput={(props) => <TextField {...props} />}
+            ampm={false}
+            ampmInClock={true}
             label="Release date"
             disabled={values.release === null}
             value={values.release === null ? values.timestamp : values.release}
@@ -130,7 +145,15 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
         </FormControl>
       </LocalizationProvider>
 
-      <FormControlLabel control={<Switch checked={values.secret} />} label="Is secret album" />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={values.secret}
+            onChange={() => setValues({ ...values, secret: !values.secret })}
+          />
+        }
+        label="Is secret album"
+      />
     </>
   );
 };

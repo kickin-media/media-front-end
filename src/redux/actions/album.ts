@@ -63,7 +63,7 @@ export const clear = createAPIAction(
 export const updateHiddenStatus = createAPIAction(
   'ALBUM_HIDDEN_UPDATE',
   'PUT',
-  payload => `/album/${payload?.album_id}`,
+  payload => `/album/${payload?.album_id}/hidden`,
   (album_id: string, secret: boolean, refreshSecret: boolean) => ({
     album_id,
     body: {

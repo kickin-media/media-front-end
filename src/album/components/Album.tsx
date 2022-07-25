@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import slugify from 'slugify';
 import { useHistory } from "react-router-dom";
 import { relativeDate } from "../../util/date";
@@ -36,7 +37,12 @@ const Album: React.FC<Props> = ({ album }) => {
       className={classes.album}
       spacing={1}
     >
-      <Badge color="warning" variant="dot" invisible={!isNew}>
+      <Badge
+        className={clsx({ [classes.secret]: album.hiddenSecret !== null })}
+        invisible={!isNew}
+        color="warning"
+        variant="dot"
+      >
         {album.coverPhoto
           ? (<img src={album.coverPhoto.imgUrls.small} alt="" />)
           : (<Skeleton variant="rectangular" width={240} height={160} />)}
