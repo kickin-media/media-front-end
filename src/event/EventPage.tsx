@@ -32,6 +32,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     ? Object.keys(state.album)
       .filter(albumId => state.album[albumId].eventId === event.id)
       .map(albumId  => state.album[albumId])
+      .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
     : null, shallowEqual);
   const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
     && (state.auth.scopes.includes('albums:manage')
