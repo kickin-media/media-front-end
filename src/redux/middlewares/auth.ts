@@ -25,7 +25,6 @@ export const authMiddleware: Middleware = api => next => {
     // If the hash was parsed successfully, then dispatch a corresponding action and fix the browser's URL
     if (result) {
       api.dispatch(auth.authenticate(result));
-      console.log(webAuth);
       return;
     }
 
