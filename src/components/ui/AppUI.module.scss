@@ -29,11 +29,21 @@
 }
 
 .header {
-  transition: background 300ms ease, box-shadow 300ms ease !important;
+  backdrop-filter: blur(20px) !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  transition: background 300ms ease,
+              box-shadow 300ms ease !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+
+  > * {
+    filter: drop-shadow(1px 1px 1px black);
+  }
 }
 
 div:not(:empty)~.header:not(.scrolled) {
-  background: none;
+  background: none !important;
+  backdrop-filter: none !important;
+  border-bottom: none;
 
   box-shadow: none;
 
@@ -77,7 +87,7 @@ div:not(:empty)~.header:not(.scrolled) {
   margin-top: 2rem;
   padding: 2rem 0;
 
-  background-color: #1565c0;
+  background-color: #007c00;
   color: white;
 
   &::before {

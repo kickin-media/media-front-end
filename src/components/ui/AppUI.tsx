@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 
 import {useTheme} from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import Alert from '@mui/material/Alert';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -181,14 +180,6 @@ const AppUI: React.FC<Props> = ({children}) => {
 
       {/* Content */}
       <Container maxWidth="lg" className={classes.content}>
-        <Alert className={classes.alert} severity="info">
-          <b>Kick-In Media Site - Testing Phase</b><br />
-          This media site (<a href="https://www.kick-in.media/">kick-in.media</a>) is currently in a testing phase;
-          this means that this app is currently in development, but we would love to get feedback from you! If you have
-          the time, you can fill in <a href="https://forms.gle/DccESdS33oKog1Tm8">this form</a> (takes max. 5 minutes)
-          or send an e-mail to <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a>.
-        </Alert>
-
         {children}
       </Container>
 

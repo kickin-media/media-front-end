@@ -41,7 +41,7 @@ const Album: React.FC<Props> = ({ album }) => {
           ? (<img src={album.coverPhoto.imgUrls.small} alt="" />)
           : (<Skeleton variant="rectangular" width={240} height={160} />)}
 
-        <NewReleases />
+        {isNew && <NewReleases />}
       </Badge>
 
 

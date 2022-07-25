@@ -108,9 +108,9 @@ const AlbumPage: React.FC = () => {
   useEffect(() => {
     if (!newestPhoto) return;
     try {
-      window.localStorage.setItem(`album-${albumId}`, newestPhoto.toISOString() + " " + album.photosCount);
+      window.localStorage.setItem(`album-${albumId}`, newestPhoto.toISOString() + " " + (album ? album.photosCount : 0));
     } catch (RangeError) { }
-  }, [albumId, album.photosCount, newestPhoto]);
+  }, [albumId, album, newestPhoto]);
   const amountNew = useMemo(() => {
     if (lastSeen === null) return 0;
     return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
