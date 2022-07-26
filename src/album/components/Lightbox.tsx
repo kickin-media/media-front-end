@@ -69,29 +69,35 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const dispatch = useDispatch();
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
-  const onDownload = (photoId: string, url: string) => () => {
+  const onDownload = (photoId: string, url: string) => (e) => {
     trackEvent('download', photoId);
+    e.stopPropagation();
+    e.preventDefault();
   };
-  const onDownloadOriginal = (photoId: string) => () => dispatch(photoActions.getOriginal(photoId))
-    .then((res: AnyAction) => {
-      if (res.type !== photoActions.getOriginal.success) return Promise.reject();
-      trackEvent('download', photoId);
-      return fetch(res.response.downloadUrl);
-    })
-    .then((res: Response) => res.blob())
-    .then((blob: Blob) => URL.createObjectURL(blob))
-    .then((url: string) => {
-      const root = document.getElementsByClassName(classes.root)[0];
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
-      anchor.className = classes.download;
+  const onDownloadOriginal = (photoId: string) => (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    trackEvent('download', photoId);
+    dispatch(photoActions.getOriginal(photoId))
+      .then((res: AnyAction) => {
+        if (res.type !== photoActions.getOriginal.success) return Promise.reject();
+        return fetch(res.response.downloadUrl);
+      })
+      .then((res: Response) => res.blob())
+      .then((blob: Blob) => URL.createObjectURL(blob))
+      .then((url: string) => {
+        const root = document.getElementsByClassName(classes.root)[0];
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
+        anchor.className = classes.download;
 
-      root.appendChild(anchor);
-      anchor.click();
-      root.removeChild(anchor);
-      setTimeout(() => URL.revokeObjectURL(url), 30000);
-    });
+        root.appendChild(anchor);
+        anchor.click();
+        root.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      });
+  }
 
   const moveTo = (index: number) => setIndex(() => {
     if (onChange) onChange(photos[index].id);
@@ -126,7 +132,13 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
         <div className={classes.actions}>
           {/*<IconButton><Info /></IconButton>*/}
 
-          <IconButton onClick={(e) => setDownloadMenu(e.currentTarget)}><Download /></IconButton>
+          <IconButton onClick={(e) => {
+            setDownloadMenu(e.currentTarget);
+            e.stopPropagation();
+            e.preventDefault();
+          }}>
+            <Download />
+          </IconButton>
           <Menu
             open={downloadMenu !== null}
             onClose={() => setDownloadMenu(null)}
