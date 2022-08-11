@@ -87,7 +87,7 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
   };
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TextField
         onChange={e => setValues({ ...values, name: e.target.value })}
         value={values.name}
@@ -109,41 +109,14 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
         </Select>
       </FormControl>
 
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DateTimePicker
-          renderInput={(props) => <TextField {...props} />}
-          ampm={false}
-          ampmInClock={true}
-          label="Date"
-          value={values.timestamp}
-          onChange={date => setValues({ ...values, timestamp: date as Date })}
-        />
-
-        <FormControl component="fieldset" variant="standard">
-          <FormLabel component="legend">Scheduled release</FormLabel>
-          <FormControlLabel
-            control={<Checkbox
-              checked={values.release !== null}
-              onChange={() => setValues({
-                ...values,
-                release: values.release === null
-                  ? new Date(values.timestamp.getTime() + 1000 * 60 * 60 * 24)
-                  : null
-              })}
-            />}
-            label="Enable scheduled release"
-          />
-          <DateTimePicker
-            renderInput={(props) => <TextField {...props} />}
-            ampm={false}
-            ampmInClock={true}
-            label="Release date"
-            disabled={values.release === null}
-            value={values.release === null ? values.timestamp : values.release}
-            onChange={date => setValues({ ...values, release: date as Date })}
-          />
-        </FormControl>
-      </LocalizationProvider>
+      <DateTimePicker
+        renderInput={(props) => <TextField {...props} />}
+        ampm={false}
+        ampmInClock={true}
+        label="Date"
+        value={values.timestamp}
+        onChange={date => setValues({ ...values, timestamp: date as Date })}
+      />
 
       <FormControlLabel
         control={
@@ -154,7 +127,32 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
         }
         label="Is secret album"
       />
-    </>
+
+      <FormControl component="fieldset" variant="standard">
+        <FormLabel component="legend">Scheduled release</FormLabel>
+        <FormControlLabel
+          control={<Checkbox
+            checked={values.release !== null}
+            onChange={() => setValues({
+              ...values,
+              release: values.release === null
+                ? new Date(values.timestamp.getTime() + 1000 * 60 * 60 * 24)
+                : null
+            })}
+          />}
+          label="Enable scheduled release"
+        />
+        <DateTimePicker
+          renderInput={(props) => <TextField {...props} />}
+          ampm={false}
+          ampmInClock={true}
+          label="Release date"
+          disabled={values.release === null}
+          value={values.release === null ? values.timestamp : values.release}
+          onChange={date => setValues({ ...values, release: date as Date })}
+        />
+      </FormControl>
+    </LocalizationProvider>
   );
 };
 
