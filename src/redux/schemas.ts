@@ -17,6 +17,7 @@ export const ALBUM = new schema.Entity('album', {
   }))
 }, {
   processStrategy: (value, parent, key) => Object.assign({}, value, {
+    releaseTime: value.releaseTime === null ? null : new Date(value.releaseTime),
     timestamp: new Date(value.timestamp)
   })
 });

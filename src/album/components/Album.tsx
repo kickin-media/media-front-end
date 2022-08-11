@@ -38,7 +38,10 @@ const Album: React.FC<Props> = ({ album }) => {
       spacing={1}
     >
       <Badge
-        className={clsx({ [classes.secret]: album.hiddenSecret !== null && album.hiddenSecret !== undefined })}
+        className={clsx({
+          [classes.future]: album.releaseTime !== null && album.releaseTime.getTime() >= new Date().getTime(),
+          [classes.secret]: album.hiddenSecret !== null && album.hiddenSecret !== undefined
+        })}
         invisible={!isNew}
         color="warning"
         variant="dot"

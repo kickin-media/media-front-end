@@ -136,17 +136,26 @@ const AlbumPage: React.FC = () => {
         </Region>
       )}
 
-      {album.hiddenSecret && (
-        <Alert severity="warning">
-          This is a <em>private</em> / <em>hidden</em> album, please be careful when sharing the URL or the secret.
-        </Alert>
-      )}
+      <div className={classes.alerts}>
+        {album.hiddenSecret && (
+          <Alert severity="warning">
+            This is a <em>private</em> / <em>hidden</em> album, please be careful when sharing the URL or the secret.
+          </Alert>
+        )}
 
-      {(photos.length !== processedPhotos.length && canUpload) && (
-        <Alert severity="info">
-          {photos.length - processedPhotos.length} photos are still being processed.
-        </Alert>
-      )}
+        {canCrud && album.releaseTime !== null && album.releaseTime.getTime() >= new Date().getTime() && (
+          <Alert severity="warning">
+            This album is not released yet, it will be released on {album.releaseTime.toLocaleDateString()} at{' '}
+            {album.releaseTime.toLocaleTimeString()}.
+          </Alert>
+        )}
+
+        {(photos.length !== processedPhotos.length && canUpload) && (
+          <Alert severity="info">
+            {photos.length - processedPhotos.length} photos are still being processed.
+          </Alert>
+        )}
+      </div>
 
       {(canCrud || canUpload) && (<div className={classes.actions}>
         <ButtonGroup variant="outlined">

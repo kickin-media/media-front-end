@@ -10,6 +10,10 @@
   > * { margin-left: 0.5rem !important; }
 }
 
+.alerts > :not(:first-child) {
+  margin-top: 0.5rem;
+}
+
 .sort-menu {
   > :not(:first-child) {
     margin-left: -1;
