@@ -71,6 +71,22 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
   const onDownload = (photoId: string, url: string) => (e) => {
     trackEvent('download', photoId);
+    // noinspection DuplicatedCode
+    fetch(url)
+      .then((res: Response) => res.blob())
+      .then((blob: Blob) => URL.createObjectURL(blob))
+      .then((url: string) => {
+        const root = document.getElementsByClassName(classes.root)[0];
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
+        anchor.className = classes.download;
+
+        root.appendChild(anchor);
+        anchor.click();
+        root.removeChild(anchor);
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      });
     e.stopPropagation();
     e.preventDefault();
   };
@@ -78,6 +94,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     e.stopPropagation();
     e.preventDefault();
     trackEvent('download', photoId);
+    // noinspection DuplicatedCode
     dispatch(photoActions.getOriginal(photoId))
       .then((res: AnyAction) => {
         if (res.type !== photoActions.getOriginal.success) return Promise.reject();
@@ -141,7 +158,10 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           </IconButton>
           <Menu
             open={downloadMenu !== null}
-            onClose={() => setDownloadMenu(null)}
+            onClose={(e: React.MouseEvent) => {
+              setDownloadMenu(null);
+              e.stopPropagation();
+            }}
             anchorEl={downloadMenu}
           >
             {photos[index] ? (
