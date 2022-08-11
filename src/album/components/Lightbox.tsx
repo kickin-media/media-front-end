@@ -16,16 +16,19 @@ import Close from '@mui/icons-material/Close';
 import Download from '@mui/icons-material/Download';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import PanoramaWideAngle from '@mui/icons-material/Panorama';
 import PhotoSizeSelectSmall from '@mui/icons-material/PhotoSizeSelectSmall';
 import PhotoSizeSelectLarge from '@mui/icons-material/PhotoSizeSelectLarge';
 import PhotoSizeSelectActual from '@mui/icons-material/PhotoSizeSelectActual';
 import RawOn from '@mui/icons-material/RawOn';
+import Settings from '@mui/icons-material/Settings';
 
 import classes from './Lightbox.module.scss';
 import { useDispatch, useSelector } from "react-redux";
 import { StateType } from "../../redux/reducers/reducers";
 
 import * as photoActions from '../../redux/actions/photo';
+import * as albumActions from '../../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
 import slugify from "slugify";
 import { trackEvent } from "../../util/analytics";
@@ -37,6 +40,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({});
 
   const [downloadMenu, setDownloadMenu] = useState<null | HTMLElement>(null);
+  const [settingsMenu, setSettingsMenu] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     if (open === prevOpen) return;
@@ -67,8 +71,11 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   }, [open, index, photos]);
 
   const dispatch = useDispatch();
+  const canCrud = useSelector((state: StateType) =>
+    state.auth.authenticated && state.auth.scopes.includes('albums:manage'));
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
+
   const onDownload = (photoId: string, url: string) => (e) => {
     trackEvent('download', photoId);
     // noinspection DuplicatedCode
@@ -190,6 +197,34 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
                 )}
               </>
             ) : null}
+          </Menu>
+
+          {canCrud && (
+            <IconButton onClick={(e) => {
+              setSettingsMenu(e.currentTarget);
+              e.stopPropagation();
+              e.preventDefault();
+            }}>
+              <Settings />
+            </IconButton>
+          )}
+          <Menu
+            open={settingsMenu !== null}
+            onClose={(e: React.MouseEvent) => {
+              setSettingsMenu(null);
+              e.stopPropagation();
+            }}
+            anchorEl={settingsMenu}
+          >
+            <MenuItem onClick={e => {
+              dispatch(albumActions.updateAlbumCover(album.id, photos[index].id));
+              setSettingsMenu(null);
+              e.stopPropagation();
+              if (onClose) onClose();
+            }}>
+              <ListItemIcon><PanoramaWideAngle /></ListItemIcon>
+              <ListItemText primary="Set album hero" />
+            </MenuItem>
           </Menu>
 
           <IconButton onClick={e => {

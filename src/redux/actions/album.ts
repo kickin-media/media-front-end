@@ -74,4 +74,13 @@ export const updateHiddenStatus = createAPIAction(
   schemas.ALBUM
 );
 
-
+export const updateAlbumCover = createAPIAction(
+  'ALBUM_COVER_UPDATE',
+  'PUT',
+  payload => `/album/${payload?.album_id}/cover`,
+  (album_id: string, photo_id: string) => ({
+    album_id,
+    body: { photo_id: photo_id }
+  }),
+  schemas.ALBUM
+)
