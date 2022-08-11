@@ -10,13 +10,9 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon'
-import ListItemText from '@mui/material/ListItemText';
+import MobileNav from './MobileNav';
 import Portal from '@mui/material/Portal';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
@@ -163,20 +159,12 @@ const AppUI: React.FC<Props> = ({children}) => {
         </Container>
       </AppBar>
 
-      {/* Navigation drawer (for mobile) */}
-      <Drawer anchor="left" open={drawer} onClose={() => setDrawer(false)}>
-        <List>
-          {menu.map((item, index) => (
-            <ListItem key={index} button onClick={typeof item.target === "function" ? item.target : () => {
-              if (!item.target) return;
-              history.push(item.target as string);
-            }}>
-              {item.icon ? (<ListItemIcon>{item.icon}</ListItemIcon>) : null}
-              <ListItemText primary={item.label} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
+      <MobileNav
+        open={drawer}
+        onClose={() => setDrawer(false)}
+        items={menu}
+        user={user}
+      />
 
       {/* Content */}
       <Container maxWidth="lg" className={classes.content}>
