@@ -91,9 +91,9 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
           <CollectionsIcon />
           <Typography>
             It looks like there aren't any albums here yet, take a look at the{" "}
-            <a href="/events/" onClick={(e) => {
+            <a href="/event/" onClick={(e) => {
               e.preventDefault();
-              history.push('/events/');
+              history.push('/event/');
             }}>
               Events
             </a>{" "}
