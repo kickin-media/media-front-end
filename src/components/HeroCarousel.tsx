@@ -34,11 +34,7 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
 
     // Cancel the previous interval
     setCarousel(prev => {
-      console.log(prev);
-      if (prev !== null) {
-        clearInterval(prev);
-        console.log('cleared');
-      }
+      if (prev !== null) clearInterval(prev);
       return interval;
     });
 
