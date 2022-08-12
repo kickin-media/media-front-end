@@ -1,0 +1,40 @@
+.carousel {
+  width: 100%;
+  max-height: 80vh;
+  aspect-ratio: 1.5;
+
+  position: unset !important;
+  transform: unset !important;
+
+  > :global(.react-swipeable-view-container) {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Items
+.carousel > :global(.react-swipeable-view-container) > div {
+  width: 100%;
+  height: 100%;
+  overflow-y: hidden !important;
+
+  position: relative;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  > div {
+    width: min(1200px, calc(100vw - 3rem));
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    padding: 0 1.5rem;
+
+    transform: translate(-50%, -50%);
+  }
+}

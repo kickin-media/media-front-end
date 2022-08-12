@@ -131,7 +131,7 @@ const AlbumPage: React.FC = () => {
             <Typography>{relativeDate(album.timestamp)} • {event.name}</Typography>
           </Container>
 
-          <img src={album.coverPhoto.imgUrls.large} alt="" />
+          {/*<img src={album.coverPhoto.imgUrls.large} alt="" />*/}
           <img src={album.coverPhoto.imgUrls.large} alt="" />
         </Region>
       )}

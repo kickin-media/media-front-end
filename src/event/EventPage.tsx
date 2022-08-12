@@ -17,6 +17,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import { StateType } from "../redux/reducers/reducers";
 
 import classes from './EventPage.module.scss';
+import HeroCarousel from "../components/HeroCarousel";
 
 const EventPage: React.FC<Props> = ({ eventId }) => {
   const [edit, setEdit] = useState<boolean>(false);
@@ -66,6 +67,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
 
   return (
     <>
+      <HeroCarousel eventId={event ? event.id : null} />
       <Typography variant="h3">{event.name}</Typography>
 
       {canCrud && (<div className={classes.actions}>

@@ -38,3 +38,9 @@ export const PHOTO_ARRAY = new schema.Array(PHOTO);
 export const AUTHOR = new schema.Entity('author', {
   photos: PHOTO_ARRAY
 });
+
+export const PHOTO_STREAM = new schema.Entity('photoStream', {
+  photos: PHOTO_ARRAY
+}, {
+  idAttribute: 'page'
+});

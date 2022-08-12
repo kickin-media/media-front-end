@@ -2,6 +2,7 @@ import { createReducer, Reducer } from "@reduxjs/toolkit";
 
 import * as actions from '../actions/photo';
 import * as albumActions from '../actions/album';
+import * as streamActions from '../actions/photo-stream';
 import { AuthorType } from "./author";
 
 export type PhotoStateType = { [key: string]: PhotoType };
@@ -9,6 +10,7 @@ export type PhotoStateType = { [key: string]: PhotoType };
 export interface PhotoType {
   id: string;
   author: AuthorType;
+  albums?: string[];
 
   imgUrls: {
     original: string;
@@ -34,6 +36,16 @@ const photo: Reducer<PhotoStateType> = createReducer({} as PhotoStateType, {
 
     const photos = action.response.entities.photo;
     Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
+  },
+
+  [streamActions.getPage.success]: (state, action) => {
+    const photos = action.response.entities.photo;
+    Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
+  },
+
+  [actions.get.success]: (state, action) => {
+    const photo = action.response.entities.photo[action.response.result];
+    state[photo.id] = mergePhotos(state[photo.id], photo);
   },
 
   [actions.remove.success]: (state, action) => {

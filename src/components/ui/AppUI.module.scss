@@ -72,13 +72,35 @@ div:not(:empty)~.header:not(.scrolled) {
     transform: translate(0, -50%);
   }
 
-  > img { width: 100%; }
-  > img:last-child {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    transform: translate(0, -50%);
+  > img {
+    width: 100%;
+    aspect-ratio: 1.5;
+    object-fit: cover;
   }
+
+  //max-height: 80vh;
+  //overflow-y: hidden;
+  //
+  //position: relative;
+  //
+  //color: white;
+  //text-shadow: 0 1px 3px #262626;
+  //
+  //> div {
+  //  position: absolute;
+  //  top: 50%;
+  //  z-index: 50;
+  //  transform: translate(0, -50%);
+  //}
+  //
+  //> img { width: 100%; }
+
+  //> img:last-child {
+  //  position: absolute;
+  //  top: 50%;
+  //  left: 0;
+  //  transform: translate(0, -50%);
+  //}
 }
 
 .alert {

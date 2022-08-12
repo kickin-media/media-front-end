@@ -3,9 +3,6 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import CircularProgress from '@mui/material/CircularProgress';
 import EventPage from "../event/EventPage";
-import { Region } from '../components/ui/AppUI';
-
-import hero from '../res/images/hero.jpg';
 
 import * as eventActions from '../redux/actions/event';
 import { StateType } from "../redux/reducers/reducers";
@@ -24,19 +21,10 @@ const HomePage = () => {
 
   const event = useMemo(() => events[sortedEvents[0]], [events, sortedEvents]);
 
-  return (
-    <>
-      <Region name="hero">
-        <img src={hero} alt="Hero" />
-        <img src={hero} alt="Hero" />
-      </Region>
-
-      {event ? (
-        <EventPage eventId={event.id} />
-      ) : (
-        <CircularProgress />
-      )}
-    </>
+  return event ? (
+    <EventPage eventId={event.id} />
+  ) : (
+    <CircularProgress />
   );
 }
 
