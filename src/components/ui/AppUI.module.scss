@@ -40,6 +40,10 @@
   }
 }
 
+div:empty~.header:not(.scrolled) {
+  background-color: #007c00 !important;
+}
+
 div:not(:empty)~.header:not(.scrolled) {
   background: none !important;
   backdrop-filter: none !important;
