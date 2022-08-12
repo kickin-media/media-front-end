@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
+import CircularProgress from '@mui/material/CircularProgress';
 import EventPage from "../event/EventPage";
 import { Region } from '../components/ui/AppUI';
 
@@ -30,7 +31,11 @@ const HomePage = () => {
         <img src={hero} alt="Hero" />
       </Region>
 
-      {event && <EventPage eventId={event.id} />}
+      {event ? (
+        <EventPage eventId={event.id} />
+      ) : (
+        <CircularProgress />
+      )}
     </>
   );
 }
