@@ -40,7 +40,7 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
 
     // Cancel the interval if this object is unloaded
     return () => clearInterval(interval);
-  }, [albums]);
+  }, [albums.length]);
 
   return (
     <Region name="hero">
