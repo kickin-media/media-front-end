@@ -46,6 +46,9 @@ const auth: Reducer<AuthStateType> = createReducer(loadAuth(), {
     state.authenticated = true;
     if (!state.authenticated) return;
 
+    console.log(state);
+    console.log(action);
+
     state.accessToken = action.payload.accessToken;
     state.idToken = action.payload.idToken;
     state.refreshToken = action.payload.refreshToken;
