@@ -1,13 +1,17 @@
 import React, { MutableRefObject, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
+
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import TextField from "@mui/material/TextField";
 
 import * as actions from '../../redux/actions/event';
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { StateType } from "../../redux/reducers/reducers";
-import TextField from "@mui/material/TextField";
-import fnsDateAdapter from "@mui/lab/AdapterDateFns";
-import DateTimePicker from "@mui/lab/DateTimePicker";
-import { LocalizationProvider } from "@mui/lab";
 import { AnyAction } from "@reduxjs/toolkit";
+import { StateType } from "../../redux/reducers/reducers";
 
 const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
   const dispatch = useDispatch();
@@ -59,7 +63,7 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
         variant="outlined"
       />
 
-      <LocalizationProvider dateAdapter={fnsDateAdapter}>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateTimePicker
           renderInput={(props) => <TextField {...props} />}
           label="Date"
