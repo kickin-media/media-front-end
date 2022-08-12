@@ -29,3 +29,18 @@
   flex-grow: 1;
   flex-shrink: 1;
 }
+
+.empty {
+  display: flex;
+  align-items: center;
+
+  font-size: 0.875rem;
+  font-style: italic;
+
+  svg {
+    color: #1976d2;
+    font-size: 3rem;
+
+    margin-right: 1rem;
+  }
+}

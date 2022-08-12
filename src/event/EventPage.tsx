@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { StateType } from "../redux/reducers/reducers";
+
+import Album from "../album/components/Album";
+import Button from "@mui/material/Button";
+import ButtonGroup from '@mui/material/ButtonGroup';
+import CircularProgress from '@mui/material/CircularProgress';
+import DeleteDialog from "../components/dialogs/DeleteDialog";
+import EventEditDialog from "./dialogs/EventEditDialog";
+import Typography from "@mui/material/Typography";
+
+import CollectionsIcon from '@mui/icons-material/Collections';
 
 import * as actions from '../redux/actions/event';
 import { AnyAction } from "@reduxjs/toolkit";
-import Typography from "@mui/material/Typography";
-import Album from "../album/components/Album";
-import { ButtonGroup, CircularProgress } from "@mui/material";
+import { StateType } from "../redux/reducers/reducers";
 
 import classes from './EventPage.module.scss';
-import Button from "@mui/material/Button";
-import EventEditDialog from "./dialogs/EventEditDialog";
-import DeleteDialog from "../components/dialogs/DeleteDialog";
 
 const EventPage: React.FC<Props> = ({ eventId }) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [deleteOpen, setDelete] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const history = useHistory();
   const routeMatch = useRouteMatch<RouteProps>();
@@ -51,7 +56,9 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     })())).then((res: AnyAction) => {
       if (res.type !== actions.get.success) return;
 
-      dispatch(actions.getAlbums(res.response.result));
+      dispatch(actions.getAlbums(res.response.result)).then((res: AnyAction) => {
+        if (res.type === actions.getAlbums.success) setLoading(false);
+      });
     });
   }, [dispatch, eventId, routeMatch.params.eventId])
 
@@ -77,6 +84,23 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
             .map(album => <Album key={album.id} album={album} />)
           : <CircularProgress />}
       </div>
+
+      {loading && (albums === null || albums.length === 0) && <CircularProgress />}
+      {!loading && albums !== null && albums.length === 0 && (
+        <div className={classes.empty}>
+          <CollectionsIcon />
+          <Typography>
+            It looks like there aren't any albums here yet, take a look at the{" "}
+            <a href="/events/" onClick={(e) => {
+              e.preventDefault();
+              history.push('/events/');
+            }}>
+              Events
+            </a>{" "}
+            page for older events or come back in a few days.
+          </Typography>
+        </div>
+      )}
 
       <EventEditDialog eventId={event ? event.id : undefined} open={edit} onClose={() => setEdit(false)} />
       <DeleteDialog
