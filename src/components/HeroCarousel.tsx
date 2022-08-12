@@ -48,7 +48,7 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
 
   return (
     <Region name="hero">
-      <SwipeableViews className={classes.carousel} index={albums.length > 0 ? index + 1 : 0}>
+      <SwipeableViews className={classes.carousel} index={albums.length > 0 ? index + 1 : 0} disabled>
         <img src={hero} alt="Hero" />
         {albums.map((album, index) => (
           <React.Fragment key={index}>
