@@ -22,10 +22,6 @@ const UploadAlbumForm: React.FC<Props> = ({ reference, onSubmit }) => {
     dispatch(eventActions.list());
   }, [dispatch]);
 
-  const sortedEvents = useMemo(() => Object.keys(events)
-    .sort((a, b) => events[b].timestamp.getTime() - events[a].timestamp.getTime()),
-    [events]);
-
   const categorizedAlbums = useMemo(() => Object.keys(albums)
     .sort((a, b) => albums[b].timestamp.getTime() - albums[a].timestamp.getTime())
     .map(id => albums[id])
