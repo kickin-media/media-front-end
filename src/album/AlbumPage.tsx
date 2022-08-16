@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { relativeDate } from "../util/date";
 import slugify from "slugify";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { useHistory, useLocation, useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import * as actions from '../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
@@ -68,11 +68,12 @@ const AlbumPage: React.FC = () => {
 
   // Retrieve a potential secret key from the url
   const query = useQuery();
+  const secret = query['secret'];
 
   // Load the album
   useEffect(() => {
-    dispatch(actions.get(albumId, query['secret']));
-  }, [dispatch, albumId]);
+    dispatch(actions.get(albumId, secret));
+  }, [dispatch, albumId, secret]);
 
   useEffect(() => {
     trackEvent('view_album', albumId);
