@@ -73,7 +73,7 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
           return;
         }
 
-        dispatch(actions.updateHiddenStatus(res.payload['album_id'], values.secret, false))
+        dispatch(actions.updateHiddenStatus(res.response.result, values.secret, false))
           .then((res: AnyAction) => {
             if (onSubmit) onSubmit(res.type === actions.updateHiddenStatus.success);
           });
