@@ -14,6 +14,7 @@ export const update = createAPIAction(
   'PUT',
   '/author/',
   (name: string) => ({ body: { name } }),
+  schemas.AUTHOR
 );
 
 export const remove = createAPIAction(

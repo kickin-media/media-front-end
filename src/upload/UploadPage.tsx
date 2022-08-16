@@ -1,24 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import slugify from "slugify";
 
+import Accordion from '@mui/material/Accordion';
+import AccordionActions from '@mui/material/AccordionActions';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Button from "@mui/material/Button";
+import LinearProgress from '@mui/material/LinearProgress';
+import Step from '@mui/material/Step';
+import StepContent from '@mui/material/StepContent';
+import StepLabel from '@mui/material/StepLabel';
+import Stepper from '@mui/material/Stepper';
+import TextField from '@mui/material/TextField';
+import Typography from "@mui/material/Typography";
+import UploadAlbumForm, { UploadAlbumFormRef } from "./forms/UploadAlbumForm";
 import UploadGrid from "./components/UploadGrid";
 
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
+import * as actions from '../redux/actions/photo';
+import * as authorActions from '../redux/actions/author';
+import { AnyAction } from "@reduxjs/toolkit";
+import { AuthorType } from "../redux/reducers/author";
 import { StateType } from "../redux/reducers/reducers";
-import { LinearProgress, Step, StepContent, StepLabel, Stepper } from "@mui/material";
 
 import classes from './UploadPage.module.scss';
 import uploadGraphic from '../res/graphics/upload.svg';
-import Typography from "@mui/material/Typography";
-import UploadAlbumForm, { UploadAlbumFormRef } from "./forms/UploadAlbumForm";
-
-import * as actions from '../redux/actions/photo';
-import { AnyAction } from "@reduxjs/toolkit";
-import slugify from "slugify";
-
-import * as authorActions from '../redux/actions/author';
-import AuthorDialog from "../author/dialogs/AuthorDialog";
 
 const UploadPage: React.FC = () => {
   const albumFormRef = useRef<UploadAlbumFormRef>(null);
@@ -115,21 +124,57 @@ const UploadPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, albumId, files, step]);
 
-  console.log(author);
+  // Setting the user's (nick)name
+  const [authorEdit, setAuthorEdit] = useState<boolean>(false);
+  const [authorLoaded, setAuthorLoaded] = useState<boolean>(author !== undefined && author !== null && author.name.length > 0);
+  const [name, setName] = useState<string>(author ? author.name : '');
   useEffect(() => {
     if (user === null) return;
-    dispatch(authorActions.get(user));
+    dispatch(authorActions.get(user))
+      .then((res: AnyAction) => {
+        if (res.type !== authorActions.get.success) return;
+        const author: AuthorType = res.response.entities.author[res.response.result];
+        setName(author.name);
+        setAuthorLoaded(true);
+      });
   }, [dispatch, user]);
 
   return (
     <>
-      <AuthorDialog
-        open={author === null || author === undefined}
-        onClose={() => {
-          if (user === null) return;
-          dispatch(authorActions.get(user));
-        }}
-      />
+      <Typography variant="h3">Upload Photos</Typography>
+
+      <Accordion className={classes.author} expanded={authorEdit} onChange={() => {
+        setAuthorEdit(!authorEdit);
+        setName(author ? author.name : '');
+      }}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography>
+          Author - {author ? author.name : 'NOT CONFIGURED YET'}
+        </Typography></AccordionSummary>
+        <AccordionDetails>
+          <TextField
+            disabled={!authorLoaded}
+            label={"Name"}
+            value={name}
+            onChange={e => setName(e.target.value)}
+            fullWidth
+          />
+        </AccordionDetails>
+        <AccordionActions>
+          <Button color="secondary" onClick={() => {
+            setName(author ? author.name : '');
+            setAuthorEdit(false);
+          }}>
+            Cancel
+          </Button>
+          <Button onClick={() => dispatch(authorActions.update(name)).then((res: AnyAction) => {
+            if (res.type !== authorActions.update.success) return;
+            setAuthorEdit(false);
+          })}>
+            Save
+          </Button>
+        </AccordionActions>
+      </Accordion>
+
       <Stepper orientation="vertical" activeStep={step}>
         {/* STEP 1: SELECT IMAGES */}
         <Step>

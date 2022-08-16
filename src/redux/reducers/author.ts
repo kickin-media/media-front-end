@@ -17,6 +17,11 @@ const author: Reducer<AuthorStateType> = createReducer({} as AuthorStateType, {
   [actions.get.success]: (state, action) => {
     const authors = action.response.entities.author;
     Object.keys(authors).forEach(id => state[id] = mergeAuthors(state[id], authors[id]));
+  },
+
+  [actions.update.success]: (state, action) => {
+    const authors = action.response.entities.author;
+    Object.keys(authors).forEach(id => state[id] = mergeAuthors(state[id], authors[id]));
   }
 });
 
