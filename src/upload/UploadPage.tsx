@@ -43,6 +43,7 @@ const UploadPage: React.FC = () => {
     ? null
     : state.album[albumId],
     shallowEqual);
+  const event = useSelector((state: StateType) => album ? state.event[album.eventId] : null, shallowEqual);
   const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : null);
   const author = useSelector((state: StateType) => state.auth.authenticated
     ? state.author[state.auth.user.sub]
@@ -148,7 +149,7 @@ const UploadPage: React.FC = () => {
         setName(author ? author.name : '');
       }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}><Typography>
-          Author - {author ? author.name : 'NOT CONFIGURED YET'}
+          Author - {author && author.name ? author.name : 'NOT CONFIGURED YET'}
         </Typography></AccordionSummary>
         <AccordionDetails>
           <TextField
@@ -179,7 +180,12 @@ const UploadPage: React.FC = () => {
         {/* STEP 1: SELECT IMAGES */}
         <Step>
           <StepLabel
-            optional={<Typography variant="caption">{Object.keys(files).length} images selected</Typography>}
+            error={Object.keys(files).length > 250}
+            optional={(
+              <Typography variant="caption">
+                {Object.keys(files).length}{Object.keys(files).length > 250 ? ' / 250' : ''} images selected
+              </Typography>
+            )}
           >
             Select images
           </StepLabel>
@@ -201,7 +207,7 @@ const UploadPage: React.FC = () => {
             <Button
               color="primary"
               variant="contained"
-              disabled={Object.keys(files).length === 0}
+              disabled={Object.keys(files).length === 0 || Object.keys(files).length > 250 || !(author && author.name)}
               onClick={() => setStep(1)}
             >
               Next
@@ -215,7 +221,7 @@ const UploadPage: React.FC = () => {
             <Typography variant="caption">
               {album === null
                 ? 'No album selected'
-                : album.name
+                : `${event?.name} • ${album.name}`
               }
             </Typography>
           )}>
