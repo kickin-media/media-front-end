@@ -1,0 +1,29 @@
+.alert {
+  margin-bottom: 0.5rem;
+}
+
+.copy {
+  display: flex;
+
+  margin-top: 0.5rem;
+
+  > :first-child {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  > :first-child > div {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+    border-right: 0 none;
+  }
+
+  > :last-child {
+    min-width: 0;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}

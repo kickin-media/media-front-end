@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { relativeDate } from "../util/date";
 import slugify from "slugify";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 
 import * as actions from '../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
@@ -28,9 +28,13 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './AlbumPage.module.scss';
 import { trackEvent } from "../util/analytics";
+import IconButton from "@mui/material/IconButton";
+import AlbumShareDialog from "./dialogs/AlbumShareDialog";
+import useQuery from "../util/useQuery";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
@@ -62,8 +66,12 @@ const AlbumPage: React.FC = () => {
   const canCrud = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('albums:manage'));
 
+  // Retrieve a potential secret key from the url
+  const query = useQuery();
+
+  // Load the album
   useEffect(() => {
-    dispatch(actions.get(albumId));
+    dispatch(actions.get(albumId, query['secret']));
   }, [dispatch, albumId]);
 
   useEffect(() => {
@@ -116,11 +124,34 @@ const AlbumPage: React.FC = () => {
     return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
   }, [lastSeen, sortedPhotos]);
 
+  const [shareDialog, setShareDialog] = useState<boolean>(false);
+
   if (!album || !event) return <CircularProgress />;
 
   const selectCount = selected === undefined
     ? 0
     : Object.keys(selected).filter(id => selected[id]).length;
+
+  const onShare = () => {
+    if (album.hiddenSecret || !('share' in navigator)) setShareDialog(true);
+    else doShare();
+  };
+
+  const doShare = () => {
+    if (!('share' in navigator)) {
+      console.warn('Web Share API not supported in this browser');
+      return;
+    }
+
+    setShareDialog(false);
+    navigator.share({
+      title: 'Kick-In Media - ' + album.name,
+      text: `Check out this photo album from the Kick-In: "${album.name}"`,
+      url: album.hiddenSecret
+        ? `${window.location.origin}/album/${album.id}/${slugify(album.name)}?secret=${album.hiddenSecret}`
+        : `${window.location.origin}/album/${album.id}/${slugify(album.name)}`
+    });
+  };
 
   return (
     <>
@@ -199,6 +230,8 @@ const AlbumPage: React.FC = () => {
       </div>)}
 
       <div className={classes.actions}>
+        <IconButton style={{ marginRight: 8 }} onClick={onShare}><ShareIcon /></IconButton>
+
         <ToggleButtonGroup
           onChange={(e, selected) =>
             setSortMethod((current ) => selected === null
@@ -210,7 +243,7 @@ const AlbumPage: React.FC = () => {
           size="small"
           className={classes['sort-menu']}
         >
-          {canUpload && <ToggleButton value="mine">My Photos</ToggleButton>}
+          {/*{canUpload && <ToggleButton value="mine">My Photos</ToggleButton>}*/}
           <ToggleButton value="chronological">Chronological</ToggleButton>
           {amountNew > 0 ? (
             // @ts-ignore
@@ -239,6 +272,8 @@ const AlbumPage: React.FC = () => {
         onSelect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: true }))}
         onDeselect={(id) => setSelected(prev => Object.assign({}, prev, { [id]: false }))}
       />
+
+      <AlbumShareDialog open={shareDialog} album={album} onShare={doShare} onClose={() => setShareDialog(false)} />
 
       <AlbumEditDialog albumId={albumId} open={edit} onClose={() => setEdit(false)} />
       <AlbumClearDialog albumId={albumId} open={clear} onClose={() => setClear(false)} />
