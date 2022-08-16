@@ -66,7 +66,7 @@ const AlbumShareDialog: React.FC<Props> = ({ open, album, onShare, onClose }) =>
         </div>
       </DialogContent>
       <DialogActions>
-        {canCrud && <Button color="error" onClick={onReset}>Reset Secret</Button>}
+        {album.hiddenSecret && canCrud && <Button color="error" onClick={onReset}>Reset Secret</Button>}
         <Button color="secondary" onClick={onClose}>Close</Button>
         {'share' in navigator && <Button onClick={onShare}>Share</Button>}
       </DialogActions>
