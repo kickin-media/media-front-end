@@ -17,6 +17,7 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
   const albums = useSelector((state: StateType) => Object.keys(state.album)
     .filter(albumId => state.album[albumId].eventId === eventId)
     .map(albumId => state.album[albumId])
+    .filter(album => album.coverPhoto)
     .filter(album => album.releaseTime === null || album.releaseTime.getTime() >= new Date().getTime())
     .sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
     .filter((_, index) => index < 10), shallowEqual);
