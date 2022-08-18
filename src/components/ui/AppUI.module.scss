@@ -30,10 +30,10 @@
 
 .header {
   backdrop-filter: blur(20px) !important;
-  background: rgba(255, 255, 255, 0.25) !important;
+  background: rgba(122, 194, 122, 0.25) !important;
   transition: background 300ms ease,
               box-shadow 300ms ease !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 1px solid rgba(122, 194, 122, 0.25);
 
   > * {
     filter: drop-shadow(1px 1px 1px black);
