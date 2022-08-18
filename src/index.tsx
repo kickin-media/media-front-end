@@ -15,11 +15,9 @@ const store = configureStore({});
 // Renew authentication (if needed)
 const renewAuth = () => {
   const auth = (store.getState() as StateType).auth;
-  console.log('authenticated', auth.authenticated);
   if (!auth.authenticated) return;
 
   // Check if the auth token expires within the next 5 minutes
-  console.log('expires', auth.expires);
   if (auth.expires.getTime() - new Date().getTime() > 6 * 60 * 1000) return;
 
   if (process.env.NODE_ENV === 'production') store.dispatch(authActions.renew());
