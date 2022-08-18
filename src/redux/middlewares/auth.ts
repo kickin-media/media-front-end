@@ -67,15 +67,23 @@ export const authMiddleware: Middleware = api => next => {
           redirectUri: document.location.origin,
           state: authState.state
         }, (error, res) => {
-          console.log(error);
-          console.log(res);
-          api.dispatch(auth.authenticate(res))
+          if (res) api.dispatch(auth.authenticate(res))
+
+          // Otherwise, handle the error
+          if (!error) return;
+          switch (error.error) {
+
+            // Don't do anything with these errors
+            case 'login_required':
+              break;
+
+            // Always log unknown errors
+            default:
+              console.error(error);
+          }
+
+          api.dispatch(auth.logout(window.location.origin));
         });
-        // webAuth.renewAuth({
-        //   responseType: 'token id_token'
-        // }, (error, result) => {
-        //   console.log({ error, result });
-        // });
         break;
     }
 
