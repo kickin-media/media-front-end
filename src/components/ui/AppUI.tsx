@@ -180,6 +180,8 @@ const AppUI: React.FC<Props> = ({children}) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <b>Kick-In Media App</b><br />
+              <em>If you want a photo to be removed, please send an e-mail to the <a href="mailto:">Kick-In committee</a>.</em><br />
+              <br />
               <a href="https://www.kick-in.nl">Kick-In Website</a><br />
               <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a><br />
               <a href="https://github.com/kickin-media">GitHub</a>
