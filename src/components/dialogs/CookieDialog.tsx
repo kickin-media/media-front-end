@@ -8,7 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 const CookieDialog: React.FC<Props> = ({ open, onClose }) => (
-  <Dialog open={open} onClose={onClose}>
+  <Dialog open={open}>
     <DialogTitle>We make use of cookies 🍪</DialogTitle>
     <DialogContent>
       <DialogContentText>
