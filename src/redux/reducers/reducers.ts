@@ -6,6 +6,7 @@ import author, { AuthorStateType } from "./author";
 import event, { EventStateType } from './event';
 import photo, { PhotoStateType } from './photo';
 import photoStream, { PhotoStreamType} from "./photo-stream";
+import ui, { UIStateType } from "./ui";
 
 export interface StateType {
   album: AlbumStateType;
@@ -14,6 +15,7 @@ export interface StateType {
   event: EventStateType;
   photo: PhotoStateType;
   photoStream: PhotoStreamType;
+  ui: UIStateType;
 }
 
 const reducer: Reducer<StateType> = combineReducers({
@@ -22,7 +24,8 @@ const reducer: Reducer<StateType> = combineReducers({
   author,
   event,
   photo,
-  photoStream
+  photoStream,
+  ui
 });
 
 const rootReducer: Reducer<StateType> = (state, action) => {

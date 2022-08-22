@@ -30,6 +30,7 @@ import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
 import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
 import { usePageTracking } from "../../util/analytics";
 import CookieDialog from "../dialogs/CookieDialog";
+import Notifications from "./Notifications";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -204,6 +205,7 @@ const AppUI: React.FC<Props> = ({children}) => {
         window.localStorage.setItem('cookies', 'Helemaal priem joh, doe lekker je functionele koekjes bij mij ' +
           'installeren, mij hoor je niet klagen');
       }} />
+      <Notifications />
     </RegionContext.Provider>
   );
 };

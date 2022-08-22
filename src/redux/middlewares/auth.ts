@@ -2,6 +2,7 @@ import { WebAuth } from 'auth0-js';
 import { Middleware } from "@reduxjs/toolkit";
 
 import * as auth from '../actions/auth';
+import * as ui from '../actions/ui';
 
 export const authMiddleware: Middleware = api => next => {
   const webAuth = new WebAuth({
@@ -55,6 +56,7 @@ export const authMiddleware: Middleware = api => next => {
         });
         break;
       case auth.logout.toString():
+        api.dispatch(ui.createNotification("User session expired"));
         window.localStorage.removeItem('auth');
         webAuth.logout({ returnTo: action.payload.returnTo });
         break;

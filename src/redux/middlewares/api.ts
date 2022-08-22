@@ -4,6 +4,10 @@ import { normalize, schema } from 'normalizr';
 import { StateType } from "../reducers/reducers";
 import { AuthenticatedType } from "../reducers/auth";
 import { transformResponse } from "../util/transform";
+import { API_MESSAGES } from "../../messages";
+
+
+import * as ui from '../actions/ui';
 
 export const CALL_API = 'CALL_API';
 
@@ -105,7 +109,15 @@ export const apiMiddleware: (endpoint: string) => Middleware = endpoint => api =
 
           switch (type) {
             case 'application/json':
-              return response.json().then(json => Promise.reject(json));
+              return response.json()
+                .then(json => {
+                  if (json.detail && API_MESSAGES[json.detail])
+                    api.dispatch(ui.createNotification(API_MESSAGES[json.detail]));
+                  else if (json.detail && json.detail.startsWith('missing_permission_'))
+                    api.dispatch(ui.createNotification("You do not have permission to perform this action"));
+
+                  return Promise.reject(json)
+                });
 
             default:
               return response.text().then(text => Promise.reject(text));
