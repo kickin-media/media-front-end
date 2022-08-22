@@ -15,7 +15,7 @@ export const create = createAPIAction(
   '/event/',
   (name: string, timestamp: Date) => ({ body: {
       name,
-      timestamp
+      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
     }}),
   schemas.EVENT
 );
@@ -36,7 +36,7 @@ export const update = createAPIAction(
     event_id,
     body: {
       name,
-      timestamp
+      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
     }
   }),
   schemas.EVENT

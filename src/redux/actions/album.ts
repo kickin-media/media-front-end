@@ -15,8 +15,8 @@ export const create = createAPIAction(
   '/album/',
   (name: string, timestamp: Date, release: Date | null, event_id: string) => ({ body: {
     name,
-    timestamp,
-    release_time: release,
+    timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
+    release_time: release ? new Date(release.getTime() + 1000 * 60 * 60 * 2) : null,
     event_id
   }}),
   schemas.ALBUM
@@ -40,8 +40,8 @@ export const update = createAPIAction(
     album_id,
     body: {
       name,
-      timestamp,
-      release_time: release,
+      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
+      release_time: release ? new Date(release.getTime() + 1000 * 60 * 60 * 2) : null,
       event_id
     }
   }),
