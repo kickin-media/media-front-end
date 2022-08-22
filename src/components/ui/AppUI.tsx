@@ -188,6 +188,9 @@ const AppUI: React.FC<Props> = ({children}) => {
               <a href="https://www.kick-in.nl">Kick-In Website</a><br />
               <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a><br />
               {/*<a href="https://github.com/kickin-media">GitHub</a>*/}
+              <br />
+              <em>&copy; 2022 <a href="https://github.com/jonathanjuursema">Jonathan Juursema</a> &amp;{" "}
+              <a href="https://github.com/jeffreybakker">Jeffrey Bakker</a></em>
             </Grid>
           </Grid>
         </Container>
