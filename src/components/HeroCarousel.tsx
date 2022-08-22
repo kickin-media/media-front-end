@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
-
-
-
-import hero from '../res/images/hero.jpg';
-import { Region } from "./ui/AppUI";
 import { shallowEqual, useSelector } from "react-redux";
-import { StateType } from "../redux/reducers/reducers";
+
+import { Region } from "./ui/AppUI";
 import SwipeableViews from "react-swipeable-views";
-import Typography from "@mui/material/Typography";
-import { relativeDate } from "../util/date";
+
+import { StateType } from "../redux/reducers/reducers";
 
 import classes from './HeroCarousel.module.scss';
-import { setInterval } from "timers";
+import hero from '../res/images/hero.jpg';
 
 const HeroCarousel: React.FC<Props> = ({ eventId }) => {
   const albums = useSelector((state: StateType) => Object.keys(state.album)
@@ -30,7 +26,7 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
 
     // Set the new interval
     const interval = setInterval(() => setIndex(index => {
-      return (index + 1) % albums.length;
+      return albums.length > 0 ? (index + 1) % albums.length : 0;
     }), 5000);
 
     // Cancel the previous interval
@@ -45,18 +41,19 @@ const HeroCarousel: React.FC<Props> = ({ eventId }) => {
 
   return (
     <Region name="hero">
-      <SwipeableViews className={classes.carousel} index={albums.length > 0 ? index + 1 : 0} disabled>
-        <img src={hero} alt="Hero" />
-        {albums.map((album, index) => (
-          <React.Fragment key={index}>
-            <img src={album.coverPhoto?.imgUrls.large} alt="" />
-            <div>
-              <Typography variant="h2">{album.name}</Typography>
-              <Typography>
-                {relativeDate(album.timestamp)} • {album.photosCount} photos
-              </Typography>
-            </div>
-          </React.Fragment>
+      <SwipeableViews className={classes.carousel} index={albums.length > 0 ? index : 0} disabled>
+        {albums.length === 0
+          ? (<img src={hero} alt="Hero" />)
+          : albums.map((album, index) => (
+            <React.Fragment key={index}>
+              <img src={album.coverPhoto?.imgUrls.large} alt="" />
+              {/*<div>*/}
+              {/*  <Typography variant="h2">{album.name}</Typography>*/}
+              {/*  <Typography>*/}
+              {/*    {relativeDate(album.timestamp)} • {album.photosCount} photos*/}
+              {/*  </Typography>*/}
+              {/*</div>*/}
+            </React.Fragment>
         ))}
       </SwipeableViews>
     </Region>
