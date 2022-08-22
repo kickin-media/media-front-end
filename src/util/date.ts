@@ -23,3 +23,15 @@ export const relativeDate: (date: Date) => string = (date) => {
 
   return date.toLocaleDateString();
 };
+
+export const renderDate: (date: Date) => string = (date) => {
+  const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday'][date.getDay()];
+  const dom = date.getDate();
+  const month = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ][date.getMonth()];
+  const year = date.getFullYear();
+
+  return `${day} ${month} ${dom} ${year}`;
+}

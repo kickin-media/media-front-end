@@ -7,27 +7,15 @@
   padding: 1rem 0;
 }
 
-.album-grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
+.grid-title {
+  margin-top: 1rem;
+  margin-bottom: -0.5rem;
+  padding-bottom: 0;
 
-  > a {
-    max-width: 480px;
-    flex-grow: 1;
+  &:first-child { margin-top: 0; }
+  span {
+    font-size: 1rem;
   }
-}
-
-.album-grid::after {
-  content: '';
-  width: 240px;
-  height: 1px;
-
-  display: block;
-  flex-grow: 1;
-  flex-shrink: 1;
 }
 
 .empty {

@@ -1,6 +1,5 @@
 .album {
-  width: 240px;
-  max-width: 360px;
+  width: 100%;
 
   cursor: pointer;
 
@@ -10,8 +9,7 @@
   text-decoration: none;
 
   img {
-    //width: 240px;
-    max-width: 360px;
+    width: 100%;
     aspect-ratio: 1.5;
     object-fit: cover;
   }
@@ -19,13 +17,11 @@
   > span:first-child {
     width: unset !important;
     height: unset !important;
-    max-width: 360px;
     aspect-ratio: 1.5;
 
     span:first-child {
       width: unset !important;
       height: unset !important;
-      max-width: 360px;
       aspect-ratio: 1.5;
     }
 

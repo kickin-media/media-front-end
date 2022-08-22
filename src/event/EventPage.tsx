@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
@@ -8,6 +8,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import DeleteDialog from "../components/dialogs/DeleteDialog";
 import EventEditDialog from "./dialogs/EventEditDialog";
+import Grid from '@mui/material/Unstable_Grid2';
 import Typography from "@mui/material/Typography";
 
 import CollectionsIcon from '@mui/icons-material/Collections';
@@ -18,6 +19,7 @@ import { StateType } from "../redux/reducers/reducers";
 
 import classes from './EventPage.module.scss';
 import HeroCarousel from "../components/HeroCarousel";
+import { renderDate } from "../util/date";
 
 const EventPage: React.FC<Props> = ({ eventId }) => {
   const [edit, setEdit] = useState<boolean>(false);
@@ -38,7 +40,6 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     ? Object.keys(state.album)
       .filter(albumId => state.album[albumId].eventId === event.id)
       .map(albumId  => state.album[albumId])
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
     : null, shallowEqual);
   const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
     && (state.auth.scopes.includes('albums:manage')
@@ -61,7 +62,37 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
         if (res.type === actions.getAlbums.success) setLoading(false);
       });
     });
-  }, [dispatch, eventId, routeMatch.params.eventId])
+  }, [dispatch, eventId, routeMatch.params.eventId]);
+
+  const filtered = useMemo(() => albums === null
+    ? null
+    : albums
+      .filter(album => canViewHidden
+        || (album.photosCount > 0
+          && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime()))),
+    [albums, canViewHidden]);
+
+  const sorted = useMemo(() => filtered === null
+    ? null
+    : filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
+    [filtered]);
+
+  const categorized = useMemo(() => sorted === null
+    ? null
+    : sorted.reduce((prev, album) => {
+      const rendered = renderDate(album.timestamp);
+      const res = Object.assign({}, prev);
+
+      if (res[rendered] === undefined) res[rendered] = [];
+      res[rendered] = [...res[rendered], album];
+
+      return res;
+    }, {}),
+    [sorted]);
+
+  const avgSize = categorized === null
+    ? 0
+    : Object.keys(categorized).reduce((prev, cat) => prev + categorized[cat].length, 0) / Object.keys(categorized).length;
 
   if (!event) return null;
 
@@ -77,15 +108,21 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
         </ButtonGroup>
       </div>)}
 
-      <div className={classes['album-grid']}>
-        {albums !== null
-          ? albums
-            .filter(album => canViewHidden
-              || (album.photosCount > 0
-                && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime())))
-            .map(album => <Album key={album.id} album={album} />)
-          : <CircularProgress />}
-      </div>
+      <Grid container spacing={2}>
+        {sorted === null || categorized === null
+          ? <CircularProgress />
+          : (sorted.length > 10 && avgSize > 4
+            ? Object.keys(categorized).map(cat => (
+              <React.Fragment key={cat}>
+                <Grid className={classes['grid-title']} xs={12}><Typography variant="overline">{cat}</Typography></Grid>
+                {categorized[cat].map(album => (
+                  <Grid key={album.id} xs={12} sm={6} md={3}><Album album={album} /></Grid>
+                ))}
+              </React.Fragment>
+              ))
+            : sorted.map(album => <Grid key={album.id} xs={12} sm={6} md={3}><Album album={album} /></Grid>)
+          )}
+      </Grid>
 
       {loading && (albums === null || albums.length === 0) && <CircularProgress />}
       {!loading && albums !== null && albums.length === 0 && (
