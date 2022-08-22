@@ -21,10 +21,10 @@ export const relativeDate: (date: Date) => string = (date) => {
   if (diff < 1.5 * MONTH) return `${Math.round(diff / WEEK)} weeks ago`;
   if (diff < 1.5 * YEAR) return `${Math.round(diff / MONTH)} months ago`;
 
-  return date.toLocaleDateString();
+  return renderDate(date, false);
 };
 
-export const renderDate: (date: Date) => string = (date) => {
+export const renderDate: (date: Date, includeDay?: boolean) => string = (date, includeDay = true) => {
   const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday'][date.getDay()];
   const dom = date.getDate();
   const month = [
@@ -33,5 +33,7 @@ export const renderDate: (date: Date) => string = (date) => {
   ][date.getMonth()];
   const year = date.getFullYear();
 
-  return `${day} ${month} ${dom} ${year}`;
+  return includeDay
+    ? `${day} ${month} ${dom} ${year}`
+    : `${month} ${dom} ${year}`;
 }
