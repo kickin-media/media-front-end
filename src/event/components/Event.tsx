@@ -16,10 +16,18 @@ import slugify from "slugify";
 const Event: React.FC<Props> = ({ event }) => {
   const history = useHistory();
 
+  const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
+    && (state.auth.scopes.includes('albums:manage')
+      || state.auth.scopes.includes('photos:upload')
+      || state.auth.scopes.includes('events:manage')));
+
   const albums = useSelector((state: StateType) => event !== null
     ? Object.keys(state.album)
       .filter(key => state.album[key].eventId === event.id)
       .map(key => state.album[key])
+      .filter(album => canViewHidden
+        || (album.photosCount > 0
+          && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime())))
     : [])
 
   return event ? (
