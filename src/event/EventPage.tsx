@@ -124,8 +124,8 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
           )}
       </Grid>
 
-      {loading && (albums === null || albums.length === 0) && <CircularProgress />}
-      {!loading && albums !== null && albums.length === 0 && (
+      {loading && (filtered === null || filtered.length === 0) && <CircularProgress />}
+      {!loading && filtered !== null && filtered.length === 0 && (
         <div className={classes.empty}>
           <CollectionsIcon />
           <Typography>
