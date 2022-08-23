@@ -34,6 +34,19 @@ const album: Reducer<AlbumStateType> = createReducer({} as AlbumStateType, {
     Object.keys(albums).forEach(id => state[id] = mergeAlbums(state[id], albums[id]));
   },
 
+  [photoActions.setAlbums.success]: (state: AlbumStateType, action) => {
+    const photo: PhotoType = action.response.entities.photo[action.response.result];
+    Object.keys(state)
+      .map(albumId => state[albumId])
+      .filter(album => album.photos !== undefined && album.photos.includes(photo.id))
+      .filter(album => !photo.albums || photo.albums.includes(album.id))
+      .forEach(album => {
+        if (!album.photos) return;
+
+        state[album.id] = Object.assign({}, album, { photos: album.photos.filter(photoId => photo.id !== photoId) });
+      });
+  },
+
   [photoActions.remove.success]: (state, action) => {
     const removed = action.payload['photo_id'];
 

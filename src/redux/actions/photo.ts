@@ -41,5 +41,6 @@ export const setAlbums = createAPIAction(
   'PHOTO_ALBUM_SET',
   'PUT',
   payload => `/photo/${payload?.photo_id}/albums`,
-  (photo_id: string, albums: string[]) => ({ photo_id, body: albums })
+  (photo_id: string, albums: string[]) => ({ photo_id, body: albums }),
+  schemas.PHOTO
 );

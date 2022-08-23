@@ -35,6 +35,7 @@ import { trackEvent } from "../util/analytics";
 import IconButton from "@mui/material/IconButton";
 import AlbumShareDialog from "./dialogs/AlbumShareDialog";
 import useQuery from "../util/useQuery";
+import PhotoRemoveDialog from "./dialogs/PhotoRemoveDialog";
 
 const AlbumPage: React.FC = () => {
   const [clear, setClear] = useState<boolean>(false);
@@ -42,6 +43,7 @@ const AlbumPage: React.FC = () => {
   const [deleteOpen, setDelete] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<{ [key: string]: boolean } | undefined>(undefined);
+  const [deleteSelected, setDeleteSelected] = useState<boolean>(false);
   const [removeSelected, setRemoveSelected] = useState<boolean>(false);
 
   const [sortMethod, setSortMethod] = useState<'chronological' | 'new' | 'mine'>('chronological');
@@ -218,15 +220,24 @@ const AlbumPage: React.FC = () => {
             <Button onClick={() => setDelete(true)} color="error">Delete</Button>
           </ButtonGroup>
         ) : (
-          <Button
-            onClick={() => setRemoveSelected(true)}
-            startIcon={<DeleteIcon />}
-            color="error"
-            disabled={selectCount === 0}
-            variant="contained"
-          >
-            Delete
-          </Button>
+          <ButtonGroup variant="outlined">
+            <Button
+              onClick={() => setRemoveSelected(true)}
+              color="error"
+              disabled={selectCount === 0}
+            >
+              Remove
+            </Button>
+            <Button
+              onClick={() => setDeleteSelected(true)}
+              startIcon={<DeleteIcon />}
+              color="error"
+              disabled={selectCount === 0}
+              variant="contained"
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
         )}
       </div>)}
 
@@ -288,10 +299,16 @@ const AlbumPage: React.FC = () => {
         })}
       />
 
-      <PhotoDeleteDialog
+      <PhotoRemoveDialog
+        album={albumId}
         photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
         open={removeSelected}
         onClose={() => setRemoveSelected(false)}
+      />
+      <PhotoDeleteDialog
+        photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
+        open={deleteSelected}
+        onClose={() => setDeleteSelected(false)}
       />
     </>
   );
