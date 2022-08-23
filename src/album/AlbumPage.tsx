@@ -156,7 +156,7 @@ const AlbumPage: React.FC = () => {
 
   return (
     <>
-      {album.coverPhoto && (
+      {album.coverPhoto && album.coverPhoto.uploadProcessed && (
         <Region name="hero">
           <Container maxWidth="lg">
             <Typography variant="h2">{album.name}</Typography>
