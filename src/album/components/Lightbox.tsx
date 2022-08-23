@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
-import { PhotoType } from "../../redux/reducers/photo";
-import { AlbumType } from "../../redux/reducers/album";
+import { useDispatch, useSelector } from "react-redux";
+import { trackEvent } from "../../util/analytics";
+import slugify from "slugify";
 
 import Divider from '@mui/material/Divider';
 import IconButton from "@mui/material/IconButton";
@@ -22,16 +22,16 @@ import PhotoSizeSelectLarge from '@mui/icons-material/PhotoSizeSelectLarge';
 import PhotoSizeSelectActual from '@mui/icons-material/PhotoSizeSelectActual';
 import RawOn from '@mui/icons-material/RawOn';
 import Settings from '@mui/icons-material/Settings';
+import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './Lightbox.module.scss';
-import { useDispatch, useSelector } from "react-redux";
+import { PhotoType } from "../../redux/reducers/photo";
+import { AlbumType } from "../../redux/reducers/album";
 import { StateType } from "../../redux/reducers/reducers";
 
 import * as photoActions from '../../redux/actions/photo';
 import * as albumActions from '../../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
-import slugify from "slugify";
-import { trackEvent } from "../../util/analytics";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -76,52 +76,56 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
 
+  // Download
   const onDownload = (photoId: string, url: string) => (e) => {
     trackEvent('download', photoId);
-    // noinspection DuplicatedCode
-    fetch(url)
-      .then((res: Response) => res.blob())
-      .then((blob: Blob) => URL.createObjectURL(blob))
-      .then((url: string) => {
-        const root = document.getElementsByClassName(classes.root)[0];
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
-        anchor.className = classes.download;
-
-        root.appendChild(anchor);
-        anchor.click();
-        root.removeChild(anchor);
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
-      });
+    downloadPhoto(photoId, url);
+    setDownloadMenu(null);
     e.stopPropagation();
     e.preventDefault();
   };
   const onDownloadOriginal = (photoId: string) => (e) => {
     e.stopPropagation();
     e.preventDefault();
+    setDownloadMenu(null);
     trackEvent('download', photoId);
     // noinspection DuplicatedCode
     dispatch(photoActions.getOriginal(photoId))
       .then((res: AnyAction) => {
         if (res.type !== photoActions.getOriginal.success) return Promise.reject();
-        return fetch(res.response.downloadUrl);
-      })
-      .then((res: Response) => res.blob())
-      .then((blob: Blob) => URL.createObjectURL(blob))
-      .then((url: string) => {
-        const root = document.getElementsByClassName(classes.root)[0];
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
-        anchor.className = classes.download;
-
-        root.appendChild(anchor);
-        anchor.click();
-        root.removeChild(anchor);
-        setTimeout(() => URL.revokeObjectURL(url), 30000);
+        return downloadPhoto(photoId, res.response.downloadUrl);
       });
-  }
+  };
+  const downloadPhoto = (photoId: string, url: string) => fetch(url)
+    .then((res: Response) => res.blob())
+    .then((blob: Blob) => URL.createObjectURL(blob))
+    .then((url: string) => {
+      const root = document.getElementsByClassName(classes.root)[0];
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
+      anchor.className = classes.download;
+
+      root.appendChild(anchor);
+      anchor.click();
+      root.removeChild(anchor);
+      setTimeout(() => URL.revokeObjectURL(url), 30000);
+    });
+
+  // Share
+  const onShare = (photoId: string, url: string) => fetch(url)
+    .then((res: Response) => res.blob())
+    .then(blob => new File(
+      [blob],
+      `${slugify(album.name).toLowerCase()}-${photoId}.jpg`,
+      {
+        type: "image/jpeg",
+        lastModified: new Date().getTime()
+      }))
+    .then(file => navigator.share({
+      title: 'Kick-In Media - ' + album.name,
+      files: [file]
+    }));
 
   const moveTo = (index: number) => setIndex(() => {
     if (onChange) onChange(photos[index].id);
@@ -155,6 +159,16 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       }}>
         <div className={classes.actions}>
           {/*<IconButton><Info /></IconButton>*/}
+
+          {'share' in navigator && (
+            <IconButton onClick={(e) => {
+              onShare(photos[index].id, photos[index].imgUrls.large);
+              e.stopPropagation();
+              e.preventDefault();
+            }}>
+              <ShareIcon />
+            </IconButton>
+          )}
 
           <IconButton onClick={(e) => {
             setDownloadMenu(e.currentTarget);
