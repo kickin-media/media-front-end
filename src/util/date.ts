@@ -25,7 +25,7 @@ export const relativeDate: (date: Date) => string = (date) => {
 };
 
 export const renderDate: (date: Date, includeDay?: boolean) => string = (date, includeDay = true) => {
-  const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Saturday'][date.getDay()];
+  const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
   const dom = date.getDate();
   const month = [
     'January', 'February', 'March', 'April', 'May', 'June',
