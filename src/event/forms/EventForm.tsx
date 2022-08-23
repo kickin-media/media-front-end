@@ -64,6 +64,8 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DateTimePicker
           renderInput={(props) => <TextField {...props} />}
+          ampm={false}
+          ampmInClock={true}
           label="Date"
           value={values.timestamp}
           onChange={date => setValues({ ...values, timestamp: date as Date })}
