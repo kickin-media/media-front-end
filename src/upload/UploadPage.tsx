@@ -123,7 +123,10 @@ const UploadPage: React.FC = () => {
           `/album/${albums[0].id}/${slugify(albums[0].name).toLowerCase()}`,
           { done: true }
         );
-        else history.push(`/event/${eventId}/${slugify(event ? event.name : '')}`);
+        else history.push(
+          `/event/${eventId}/${slugify(event ? event.name : '')}`,
+            { done: true }
+        );
       }, 1000));
   }, [dispatch, history, albumIds, albums, event, eventId, files, step]);
 
