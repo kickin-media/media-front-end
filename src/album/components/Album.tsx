@@ -4,9 +4,7 @@ import slugify from 'slugify';
 import { useHistory } from "react-router-dom";
 import { relativeDate } from "../../util/date";
 
-import { useSelector } from "react-redux";
 import { AlbumType } from "../../redux/reducers/album";
-import { StateType } from "../../redux/reducers/reducers";
 
 import Badge from '@mui/material/Badge';
 import Skeleton from '@mui/material/Skeleton';
@@ -18,10 +16,6 @@ import { NewReleases } from "@mui/icons-material";
 
 const Album: React.FC<Props> = ({ album }) => {
   const history = useHistory();
-
-  const event = useSelector((state: StateType) => album !== null
-    ? state.event[album.eventId]
-    : null);
 
   const storedLastSeen = album ? window.localStorage.getItem(`album-${album.id}`) : null;
   const isNew = album && storedLastSeen && parseInt(storedLastSeen.split(" ")[1]) < album.photosCount;
@@ -54,7 +48,7 @@ const Album: React.FC<Props> = ({ album }) => {
       </Badge>
 
       <Typography variant="body1"><strong>{album.name}</strong></Typography>
-      <Typography variant="caption">{relativeDate(album.timestamp)} • {event?.name}</Typography>
+      <Typography variant="caption">{relativeDate(album.timestamp)} • {album.photosCount} photos</Typography>
     </Stack>
   ) : (
     <Stack spacing={1}>
