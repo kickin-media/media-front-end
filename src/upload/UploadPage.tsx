@@ -46,12 +46,6 @@ const UploadPage: React.FC = () => {
   const albums = useSelector((state: StateType) => albumIds.map(id => state.album[id]), shallowEqual);
   const event = useSelector((state: StateType) => eventId === null ? null : state.event[eventId], shallowEqual);
 
-  const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : null);
-  const author = useSelector((state: StateType) => state.auth.authenticated
-    ? state.author[state.auth.user.sub]
-    : null,
-    shallowEqual);
-
   // Prevent users from accidentally navigating away from this page
   const history = useHistory<UploadHistoryState>();
   useEffect(() => history.block(location => {
@@ -131,6 +125,12 @@ const UploadPage: React.FC = () => {
   }, [dispatch, history, albumIds, albums, event, eventId, files, step]);
 
   // Setting the user's (nick)name
+  const user = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : null);
+  const author = useSelector((state: StateType) => state.auth.authenticated
+      ? state.author[state.auth.user.sub]
+      : null,
+    shallowEqual);
+
   const [authorEdit, setAuthorEdit] = useState<boolean>(false);
   const [authorLoaded, setAuthorLoaded] = useState<boolean>(author !== undefined && author !== null && author.name.length > 0);
   const [name, setName] = useState<string>(author ? author.name : '');
@@ -138,10 +138,13 @@ const UploadPage: React.FC = () => {
     if (user === null) return;
     dispatch(authorActions.get(user))
       .then((res: AnyAction) => {
-        if (res.type !== authorActions.get.success) return;
-        const author: AuthorType = res.response.entities.author[res.response.result];
-        setName(author.name);
-        setAuthorLoaded(true);
+        if (res.type === authorActions.get.success) {
+          const author: AuthorType = res.response.entities.author[res.response.result];
+          setName(author.name);
+          setAuthorLoaded(true);
+        } else if (res.type === authorActions.get.failure) {
+          setAuthorLoaded(true);
+        }
       });
   }, [dispatch, user]);
 
