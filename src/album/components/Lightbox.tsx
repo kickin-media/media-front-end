@@ -122,10 +122,13 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
         type: "image/jpeg",
         lastModified: new Date().getTime()
       }))
-    .then(file => navigator.share({
-      title: 'Kick-In Media - ' + album.name,
-      files: [file]
-    }));
+    .then(file => {
+      trackEvent('share', photoId);
+      navigator.share({
+        title: 'Kick-In Media - ' + album.name,
+        files: [file]
+      });
+    });
 
   const moveTo = (index: number) => setIndex(() => {
     if (onChange) onChange(photos[index].id);

@@ -31,7 +31,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './AlbumPage.module.scss';
-import { trackEvent } from "../util/analytics";
 import IconButton from "@mui/material/IconButton";
 import AlbumShareDialog from "./dialogs/AlbumShareDialog";
 import useQuery from "../util/useQuery";
@@ -76,10 +75,6 @@ const AlbumPage: React.FC = () => {
   useEffect(() => {
     dispatch(actions.get(albumId, secret));
   }, [dispatch, albumId, secret]);
-
-  useEffect(() => {
-    trackEvent('view_album', albumId);
-  }, [albumId]);
 
   const processedPhotos = useMemo(() => photos.filter(photo => photo.uploadProcessed), [photos]);
   const sortedPhotos = useMemo(() => processedPhotos
