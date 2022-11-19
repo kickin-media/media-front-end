@@ -49,6 +49,7 @@ import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './AlbumPage.module.scss';
+import AuthorFilterForm from "./forms/AuthorFilterForm";
 
 const AlbumPage: React.FC = () => {
   const [editMenu, setEditMenu] = useState<HTMLButtonElement | null>(null);
@@ -63,6 +64,7 @@ const AlbumPage: React.FC = () => {
   const [removeSelected, setRemoveSelected] = useState<boolean>(false);
   const [reprocessSelected, setReprocessSelected] = useState<boolean>(false);
 
+  const [authorFilter, setAuthorFilter] = useState<string[] | null>(null);
   const [sortMethod, setSortMethod] = useState<'chronological' | 'new' | 'mine'>('chronological');
 
   const { albumId } = useParams<{ albumId: string }>();
@@ -95,7 +97,11 @@ const AlbumPage: React.FC = () => {
   }, [dispatch, albumId, secret]);
 
   const processedPhotos = useMemo(() => photos.filter(photo => photo.uploadProcessed), [photos]);
-  const sortedPhotos = useMemo(() => processedPhotos
+  const authorPhotos = useMemo(() => authorFilter === null
+    ? processedPhotos
+    : processedPhotos.filter(photo => authorFilter.indexOf(photo.author.id) > -1),
+    [processedPhotos, authorFilter])
+  const sortedPhotos = useMemo(() => authorPhotos
     .filter(photo => sortMethod !== 'mine' || photo.author.id === uid)
     .sort((a, b) => {
       if (sortMethod === 'new') {
@@ -114,7 +120,7 @@ const AlbumPage: React.FC = () => {
         if (b.timestamp === null) return -1;
         return a.timestamp.getTime() - b.timestamp.getTime();
       }
-  }), [processedPhotos, uid, sortMethod]);
+  }), [authorPhotos, uid, sortMethod]);
   const filteredPhotos = useMemo(() => selected === undefined || canCrud
     ? sortedPhotos
     : sortedPhotos.filter(photo => photo.author.id === uid),
@@ -330,6 +336,8 @@ const AlbumPage: React.FC = () => {
       <div className={classes.actions}>
         <IconButton style={{ marginRight: 8 }} onClick={onShare}><ShareIcon /></IconButton>
 
+        <AuthorFilterForm photos={processedPhotos} onChange={authors => setAuthorFilter(authors)} />
+
         <ToggleButtonGroup
           onChange={(e, selected) =>
             setSortMethod((current ) => selected === null
@@ -341,7 +349,7 @@ const AlbumPage: React.FC = () => {
           size="small"
           className={classes['sort-menu']}
         >
-          <ToggleButton value="chronological">Chronological</ToggleButton>
+          <ToggleButton value="chronological">Original</ToggleButton>
           {amountNew > 0 ? (
             // @ts-ignore
             <Badge
@@ -354,10 +362,10 @@ const AlbumPage: React.FC = () => {
                 e.preventDefault();
               }}
             >
-              <ToggleButton value="new">New first</ToggleButton>
+              <ToggleButton value="new">New First</ToggleButton>
             </Badge>
           ) : (
-            <ToggleButton value="new">New first</ToggleButton>
+            <ToggleButton value="new">New First</ToggleButton>
           )}
         </ToggleButtonGroup>
       </div>

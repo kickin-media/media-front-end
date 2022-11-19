@@ -9,6 +9,26 @@
   margin: 0.5rem 0;
 }
 
+.actions > :global(.MuiFormControl-root) {
+  width: 100px;
+
+  margin: 0 -0.5rem 0 -0.5rem;
+
+  * {
+    border-color: rgba(0, 0, 0, 0.12);
+    border-right: 0 none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.actions > :global(.MuiFormControl-root) + :global(.MuiToggleButtonGroup-root) {
+  :first-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
 .alerts > :not(:first-child) {
   margin-top: 0.5rem;
 }
