@@ -3,22 +3,34 @@ import { relativeDate } from "../util/date";
 import slugify from "slugify";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
+import useQuery from "../util/useQuery";
 
 import * as actions from '../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
 import { StateType } from "../redux/reducers/reducers";
 
 import Alert from '@mui/material/Alert';
+import AlbumAddDialog from './dialogs/AlbumAddDialog';
 import AlbumClearDialog from "./dialogs/AlbumClearDialog";
 import AlbumEditDialog from "./dialogs/AlbumEditDialog";
 import AlbumGallery from "./components/AlbumGallery";
+import AlbumShareDialog from "./dialogs/AlbumShareDialog";
 import Badge from '@mui/material/Badge';
 import Button from "@mui/material/Button";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import Container from "@mui/material/Container";
+import Divider from '@mui/material/Divider';
 import DeleteDialog from "../components/dialogs/DeleteDialog";
+import IconButton from "@mui/material/IconButton";
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
 import PhotoDeleteDialog from "./dialogs/PhotoDeleteDialog";
+import PhotoRemoveDialog from "./dialogs/PhotoRemoveDialog";
+import PhotoReprocessDialog from "./dialogs/PhotoReprocessDialog";
+import Popover from '@mui/material/Popover';
 import { Region } from "../components/ui/AppUI";
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -28,22 +40,28 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import PanoramaWideAngleIcon from '@mui/icons-material/PanoramaWideAngle';
+import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './AlbumPage.module.scss';
-import IconButton from "@mui/material/IconButton";
-import AlbumShareDialog from "./dialogs/AlbumShareDialog";
-import useQuery from "../util/useQuery";
-import PhotoRemoveDialog from "./dialogs/PhotoRemoveDialog";
 
 const AlbumPage: React.FC = () => {
+  const [editMenu, setEditMenu] = useState<HTMLButtonElement | null>(null);
   const [clear, setClear] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const [deleteOpen, setDelete] = useState<boolean>(false);
 
   const [selected, setSelected] = useState<{ [key: string]: boolean } | undefined>(undefined);
+  const [selectMenu, setSelectMenu] = useState<HTMLButtonElement | null>(null);
+  const [addAlbums, setAddAlbums] = useState<boolean>(false);
   const [deleteSelected, setDeleteSelected] = useState<boolean>(false);
   const [removeSelected, setRemoveSelected] = useState<boolean>(false);
+  const [reprocessSelected, setReprocessSelected] = useState<boolean>(false);
 
   const [sortMethod, setSortMethod] = useState<'chronological' | 'new' | 'mine'>('chronological');
 
@@ -197,8 +215,10 @@ const AlbumPage: React.FC = () => {
           {selected !== undefined && (
             <Button
               onClick={() => {
-                if (selectCount === 0) setSelected(photos.map(photo => ({ [photo.id]: true }))
-                  .reduce((a, b) => Object.assign({}, a, b), {}));
+                if (selectCount === 0) setSelected(filteredPhotos
+                    .map(photo => ({ [photo.id]: true }))
+                    .reduce((a, b) => Object.assign({}, a, b), {})
+                  );
                 else setSelected({});
               }}
               startIcon={<ClearAllIcon />}
@@ -209,30 +229,101 @@ const AlbumPage: React.FC = () => {
         </ButtonGroup>
 
         {selected === undefined && canCrud ? (
-          <ButtonGroup variant="outlined">
-            <Button onClick={() => setEdit(true)}>Edit</Button>
-            <Button onClick={() => setClear(true)} color="error">Clear</Button>
-            <Button onClick={() => setDelete(true)} color="error">Delete</Button>
-          </ButtonGroup>
+          <>
+            <ButtonGroup color="secondary" variant="outlined">
+              <Button onClick={() => setEdit(true)}>Edit</Button>
+              <Button
+                onClick={(e) => setEditMenu(e.currentTarget)}
+              >
+                <MoreVertIcon />
+              </Button>
+            </ButtonGroup>
+            <Popover
+              open={editMenu !== null}
+              onClose={() => setEditMenu(null)}
+              anchorEl={editMenu}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuList>
+                <MenuItem onClick={() => {
+                  setEditMenu(null);
+                  setClear(true);
+                }}>
+                  <ListItemIcon><PlaylistRemoveIcon /></ListItemIcon>
+                  <ListItemText primary="Empty" secondary="Remove all photos from this album" />
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  setEditMenu(null);
+                  setDelete(true);
+                }}>
+                  <ListItemIcon><DeleteIcon /></ListItemIcon>
+                  <ListItemText primary="Delete" secondary="Delete the album" />
+                </MenuItem>
+              </MenuList>
+            </Popover>
+          </>
         ) : (
-          <ButtonGroup variant="outlined">
-            <Button
-              onClick={() => setRemoveSelected(true)}
-              color="error"
-              disabled={selectCount === 0}
+          <>
+            <ButtonGroup color="secondary" variant="outlined">
+              <Button
+                onClick={() => setAddAlbums(true)}
+                startIcon={<LibraryAddIcon />}
+                disabled={selectCount === 0}
+              >
+                Add to Albums
+              </Button>
+              <Button
+                onClick={(e) => setSelectMenu(e.currentTarget)}
+                disabled={selectCount === 0}
+              >
+                <MoreVertIcon />
+              </Button>
+            </ButtonGroup>
+            <Popover
+              open={selectMenu !== null}
+              onClose={() => setSelectMenu(null)}
+              anchorEl={selectMenu}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
             >
-              Remove
-            </Button>
-            <Button
-              onClick={() => setDeleteSelected(true)}
-              startIcon={<DeleteIcon />}
-              color="error"
-              disabled={selectCount === 0}
-              variant="contained"
-            >
-              Delete
-            </Button>
-          </ButtonGroup>
+              <MenuList>
+                <MenuItem disabled={selectCount !== 1} onClick={() => {
+                  setSelectMenu(null);
+                  if (selected === undefined) return;
+                  dispatch(actions.updateAlbumCover(
+                    albumId,
+                    Object.keys(selected).filter(key => selected[key])[0]
+                  ));
+                }}>
+                  <ListItemIcon><PanoramaWideAngleIcon /></ListItemIcon>
+                  <ListItemText primary="Set album cover" />
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={() => {
+                  setSelectMenu(null);
+                  setReprocessSelected(true);
+                }}>
+                  <ListItemIcon><RestartAltIcon /></ListItemIcon>
+                  <ListItemText primary="Re-process" secondary="Re-generates photos and watermarks" />
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  setSelectMenu(null);
+                  setRemoveSelected(true);
+                }}>
+                  <ListItemIcon><DeleteIcon /></ListItemIcon>
+                  <ListItemText primary="Remove" secondary="Remove photos from just this album" />
+                </MenuItem>
+                <MenuItem onClick={() => {
+                  setSelectMenu(null);
+                  setDeleteSelected(true);
+                }}>
+                  <ListItemIcon><DeleteForeverIcon /></ListItemIcon>
+                  <ListItemText color="error" primary="Delete" secondary="Permanently delete photos from all albums" />
+                </MenuItem>
+              </MenuList>
+            </Popover>
+          </>
         )}
       </div>)}
 
@@ -250,7 +341,6 @@ const AlbumPage: React.FC = () => {
           size="small"
           className={classes['sort-menu']}
         >
-          {/*{canUpload && <ToggleButton value="mine">My Photos</ToggleButton>}*/}
           <ToggleButton value="chronological">Chronological</ToggleButton>
           {amountNew > 0 ? (
             // @ts-ignore
@@ -294,16 +384,36 @@ const AlbumPage: React.FC = () => {
         })}
       />
 
+      <AlbumAddDialog
+        eventId={event.id}
+        photos={selected ? Object.keys(selected).filter(id => selected[id]) : []}
+        open={addAlbums}
+        onClose={() => setAddAlbums(false)}
+      />
       <PhotoRemoveDialog
         album={albumId}
         photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
         open={removeSelected}
-        onClose={() => setRemoveSelected(false)}
+        onClose={() => {
+          setRemoveSelected(false);
+          setSelected(undefined);
+        }}
       />
       <PhotoDeleteDialog
         photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
         open={deleteSelected}
-        onClose={() => setDeleteSelected(false)}
+        onClose={() => {
+          setDeleteSelected(false);
+          setSelected(undefined);
+        }}
+      />
+      <PhotoReprocessDialog
+        photos={selected === undefined ? [] : Object.keys(selected).filter(id => selected[id])}
+        open={reprocessSelected}
+        onClose={() => {
+          setReprocessSelected(false);
+          setSelected(undefined);
+        }}
       />
     </>
   );

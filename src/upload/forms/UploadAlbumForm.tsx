@@ -56,6 +56,7 @@ const UploadAlbumForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
       <FormGroup>
         {processedAlbums.map(album => (
           <FormControlLabel
+            key={album.id}
             control={<Checkbox
               onChange={e => {
                 const vals = { albums: Object.assign({}, values.albums, { [album.id]: e.target.checked }) };

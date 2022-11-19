@@ -1,0 +1,28 @@
+.content {
+  padding-bottom: 0;
+}
+
+.content div:last-child {
+  margin-top: 0.5rem;
+
+  display: block;
+  column-gap: 1rem;
+
+  @media (min-width: 900px) { columns: 2; }
+  @media (min-width: 1200px) { columns: 3; }
+
+  > label {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  > label > span:last-child {
+    display: flex;
+    flex-direction: column;
+
+    span {
+      font-size: 0.625rem;
+    }
+  }
+}

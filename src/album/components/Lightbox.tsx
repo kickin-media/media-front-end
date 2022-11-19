@@ -240,7 +240,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
               if (onClose) onClose();
             }}>
               <ListItemIcon><PanoramaWideAngle /></ListItemIcon>
-              <ListItemText primary="Set album hero" />
+              <ListItemText primary="Set album cover" />
             </MenuItem>
           </Menu>
 

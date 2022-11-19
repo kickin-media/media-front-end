@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useState } from 'react';
+import React, { MutableRefObject, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -16,6 +16,7 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 
 import * as actions from '../../redux/actions/album';
+import * as eventActions from '../../redux/actions/event';
 import { StateType } from "../../redux/reducers/reducers";
 import { AnyAction } from "@reduxjs/toolkit";
 import { AlbumType } from "../../redux/reducers/album";
@@ -25,6 +26,10 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
   const dispatch = useDispatch();
   const album: AlbumType = useSelector((state: any) => albumId ? state.album[albumId] : null, shallowEqual);
   const events: EventStateType = useSelector((state: StateType) => state.event, shallowEqual);
+
+  useEffect(() => {
+    dispatch(eventActions.list());
+  }, [dispatch]);
 
   const reset = () => {
     if (!albumId) return {

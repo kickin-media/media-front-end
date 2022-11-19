@@ -44,11 +44,9 @@
     margin-top: 0.5rem;
 
     display: block;
-    //columns: 3;
     column-gap: 1rem;
 
     @media (min-width: 900px) { columns: 2; }
-    @media (min-width: 1200px) { columns: 3; }
 
     > label {
       width: 100%;
