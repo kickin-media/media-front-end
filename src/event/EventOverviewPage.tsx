@@ -9,8 +9,9 @@ import { StateType } from "../redux/reducers/reducers";
 import * as actions from '../redux/actions/event';
 
 import Event from './components/Event';
-import Timeline from '@mui/icons-material/Timeline';
 import Typography from "@mui/material/Typography";
+
+import Timeline from '@mui/icons-material/Timeline';
 
 import classes from './EventOverviewPage.module.scss';
 
