@@ -35,6 +35,7 @@ import Notifications from "./Notifications";
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
   {label: 'Events', target: '/event/', icon: <AlbumIcon />},
+  {label: 'Stream', target: '/stream/', icon: <AlbumIcon />},
   // {label: 'Media Crew', target: '/media/', icon: <InfoIcon />},
 ];
 

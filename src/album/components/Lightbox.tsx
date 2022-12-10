@@ -16,12 +16,10 @@ import Close from '@mui/icons-material/Close';
 import Download from '@mui/icons-material/Download';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import PanoramaWideAngle from '@mui/icons-material/Panorama';
 import PhotoSizeSelectSmall from '@mui/icons-material/PhotoSizeSelectSmall';
 import PhotoSizeSelectLarge from '@mui/icons-material/PhotoSizeSelectLarge';
 import PhotoSizeSelectActual from '@mui/icons-material/PhotoSizeSelectActual';
 import RawOn from '@mui/icons-material/RawOn';
-import Settings from '@mui/icons-material/Settings';
 import ShareIcon from '@mui/icons-material/Share';
 
 import classes from './Lightbox.module.scss';
@@ -30,7 +28,6 @@ import { AlbumType } from "../../redux/reducers/album";
 import { StateType } from "../../redux/reducers/reducers";
 
 import * as photoActions from '../../redux/actions/photo';
-import * as albumActions from '../../redux/actions/album';
 import { AnyAction } from "@reduxjs/toolkit";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
@@ -40,7 +37,8 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({});
 
   const [downloadMenu, setDownloadMenu] = useState<null | HTMLElement>(null);
-  const [settingsMenu, setSettingsMenu] = useState<null | HTMLElement>(null);
+
+  const albumName = album ? slugify(album.name).toLowerCase() : 'stream';
 
   useEffect(() => {
     if (open === prevOpen) return;
@@ -71,8 +69,6 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   }, [open, index, photos]);
 
   const dispatch = useDispatch();
-  const canCrud = useSelector((state: StateType) =>
-    state.auth.authenticated && state.auth.scopes.includes('albums:manage'));
   const canDownload = useSelector((state: StateType) =>
     state.auth.authenticated && state.auth.scopes.includes('photos:download_other'));
 
@@ -103,7 +99,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
       const root = document.getElementsByClassName(classes.root)[0];
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `${slugify(album.name).toLowerCase()}-${photoId}.jpg`;
+      anchor.download = `${albumName}-${photoId}.jpg`;
       anchor.className = classes.download;
 
       root.appendChild(anchor);
@@ -117,7 +113,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     .then((res: Response) => res.blob())
     .then(blob => new File(
       [blob],
-      `${slugify(album.name).toLowerCase()}-${photoId}.jpg`,
+      `${albumName}-${photoId}.jpg`,
       {
         type: "image/jpeg",
         lastModified: new Date().getTime()
@@ -125,7 +121,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     .then(file => {
       trackEvent('share', photoId);
       navigator.share({
-        title: 'Kick-In Media - ' + album.name,
+        title: 'Kick-In Media - ' + (album ? album.name : 'Photo Stream'),
         files: [file]
       });
     });
@@ -216,34 +212,6 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
             ) : null}
           </Menu>
 
-          {canCrud && (
-            <IconButton onClick={(e) => {
-              setSettingsMenu(e.currentTarget);
-              e.stopPropagation();
-              e.preventDefault();
-            }}>
-              <Settings />
-            </IconButton>
-          )}
-          <Menu
-            open={settingsMenu !== null}
-            onClose={(e: React.MouseEvent) => {
-              setSettingsMenu(null);
-              e.stopPropagation();
-            }}
-            anchorEl={settingsMenu}
-          >
-            <MenuItem onClick={e => {
-              dispatch(albumActions.updateAlbumCover(album.id, photos[index].id));
-              setSettingsMenu(null);
-              e.stopPropagation();
-              if (onClose) onClose();
-            }}>
-              <ListItemIcon><PanoramaWideAngle /></ListItemIcon>
-              <ListItemText primary="Set album cover" />
-            </MenuItem>
-          </Menu>
-
           <IconButton onClick={e => {
             if (onClose) onClose();
             e.stopPropagation();
@@ -290,7 +258,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
 };
 
 interface Props {
-  album: AlbumType;
+  album?: AlbumType;
   photos: PhotoType[];
 
   open?: boolean;

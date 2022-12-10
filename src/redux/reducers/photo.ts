@@ -20,7 +20,7 @@ export interface PhotoType {
   }
 
   timestamp: Date | null;
-  uploadedAt: Date | null;
+  uploadedAt: Date;
 
   uploadProcessed: boolean;
 }
