@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from "react-redux";
-import { StateType } from "../../redux/reducers/reducers";
+import { StateType } from "../redux/reducers/reducers";
 
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialAction from '@mui/material/SpeedDialAction'
@@ -12,8 +12,8 @@ import UploadIcon from '@mui/icons-material/Upload';
 
 import classes from './AdminSpeedDial.module.scss';
 import { useHistory } from "react-router-dom";
-import AlbumEditDialog from "../../album/dialogs/AlbumEditDialog";
-import EventEditDialog from "../../event/dialogs/EventEditDialog";
+import AlbumEditDialog from "../album/dialogs/AlbumEditDialog";
+import EventEditDialog from "../event/dialogs/EventEditDialog";
 
 const AdminSpeedDial: React.FC = () => {
   const history = useHistory();

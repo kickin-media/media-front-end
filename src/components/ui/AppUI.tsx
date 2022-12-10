@@ -27,7 +27,7 @@ import logo from '../../res/images/logo-white.png';
 import { login, logout } from "../../redux/actions/auth";
 import { StateType } from "../../redux/reducers/reducers";
 import DropEmLikeItsHot from "../../upload/components/DropEmLikeItsHot";
-import AdminSpeedDial from "../../admin/components/AdminSpeedDial";
+import AdminSpeedDial from "../AdminSpeedDial";
 import { usePageTracking } from "../../util/analytics";
 import CookieDialog from "../dialogs/CookieDialog";
 import Notifications from "./Notifications";
