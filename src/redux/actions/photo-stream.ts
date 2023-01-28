@@ -1,6 +1,7 @@
 import { createAPIAction } from '../middlewares/api';
 import * as schemas from '../schemas';
 import { generateQuery } from "../util/query";
+import { toLocalTimezone } from "../util/date";
 
 export const getStream = createAPIAction(
   'PHOTO_STREAM_GET',
@@ -14,7 +15,7 @@ export const getStream = createAPIAction(
     sort_by: string = 'uploaded',
     next_photo: string | undefined = undefined
   ) => ({
-    timestamp: timestamp ? Math.round(timestamp.getTime() / 1000) + 60 * 60 * 2 : undefined,
+    timestamp: timestamp ? Math.round(toLocalTimezone(timestamp).getTime() / 1000) : undefined,
     direction,
     photo_id_start: next_photo,
     sort_by

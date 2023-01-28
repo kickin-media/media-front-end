@@ -1,5 +1,6 @@
 import { createAPIAction } from "../middlewares/api";
 import * as schemas from '../schemas';
+import { toLocalDateString } from "../util/date";
 
 export const list = createAPIAction(
   'ALBUM_LIST',
@@ -15,8 +16,8 @@ export const create = createAPIAction(
   '/album/',
   (name: string, timestamp: Date, release: Date | null, event_id: string) => ({ body: {
     name,
-    timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
-    release_time: release ? new Date(release.getTime() + 1000 * 60 * 60 * 2) : null,
+    timestamp: toLocalDateString(timestamp),
+    release_time: release ? toLocalDateString(release) : null,
     event_id
   }}),
   schemas.ALBUM
@@ -40,8 +41,8 @@ export const update = createAPIAction(
     album_id,
     body: {
       name,
-      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
-      release_time: release ? new Date(release.getTime() + 1000 * 60 * 60 * 2) : null,
+      timestamp: toLocalDateString(timestamp),
+      release_time: release ? toLocalDateString(release) : null,
       event_id
     }
   }),

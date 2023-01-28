@@ -1,5 +1,6 @@
 import { createAPIAction } from "../middlewares/api";
 import * as schemas from '../schemas';
+import { toLocalDateString } from "../util/date";
 
 export const list = createAPIAction(
   'EVENT_LIST',
@@ -15,7 +16,7 @@ export const create = createAPIAction(
   '/event/',
   (name: string, timestamp: Date) => ({ body: {
       name,
-      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
+      timestamp: toLocalDateString(timestamp),
     }}),
   schemas.EVENT
 );
@@ -36,7 +37,7 @@ export const update = createAPIAction(
     event_id,
     body: {
       name,
-      timestamp: new Date(timestamp.getTime() + 1000 * 60 * 60 * 2),
+      timestamp: toLocalDateString(timestamp),
     }
   }),
   schemas.EVENT
