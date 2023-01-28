@@ -3,17 +3,21 @@ import { createReducer, Reducer } from '@reduxjs/toolkit';
 import * as actions from '../actions/photo-stream';
 
 export interface PhotoStreamType {
-  upToDate?: Date;
   photos: string[];
+
+  head?: string;
+  tail?: string | null;
+  upToDate?: Date;
 }
 
 const photoStream: Reducer<PhotoStreamType> = createReducer({ photos: [] } as PhotoStreamType, {
-  [actions.getPage.success]: (state, action) => {
-    const photos: string[] = action.response.entities.photoStream.stream.photos
+  [actions.getStream.success]: (state, action) => {
+    const direction: "newer" | "older" = action.payload.direction;
+    const response = action.response.entities.photoStream.stream;
+    const photos: string[] = response.photos;
 
-    if (action.payload.timestamp === undefined) {
-      state.photos = photos;
-    } else if (action.payload.direction === 'newer') {
+    // Add the  photo's
+    if (direction === 'newer') {
       // Get the head of the current photo stream (ie. the newest local photos)
       const head = state.photos.slice(undefined, photos.length);
 
@@ -23,9 +27,7 @@ const photoStream: Reducer<PhotoStreamType> = createReducer({ photos: [] } as Ph
       // Save the reversed filtered photos to the photo stream
       // We reverse this array as the photos come in oldest first, instead of newest first
       state.photos = [...filtered.reverse(), ...state.photos];
-
-      if (photos.length < 50) state.upToDate = new Date();
-    } else if (action.payload.direction === 'older') {
+    } else {
       // Get the tail of the current photo stream (ie. the oldest local photos)
       const tail = state.photos.slice(state.photos.length - photos.length);
 
@@ -35,6 +37,24 @@ const photoStream: Reducer<PhotoStreamType> = createReducer({ photos: [] } as Ph
       // Save the filtered photos to the photo stream
       state.photos = [...state.photos, ...filtered];
     }
+
+    // Update the pointers
+    if (direction === 'newer') {
+      if (response.nextPhotoId !== "") {
+        state.head = response.nextPhotoId;
+        state.upToDate = undefined;
+      } else {
+        state.head = state.photos[0];
+        state.upToDate = new Date();
+      }
+    } else { // Searching older photos
+      if (response.nextPhotoId !== "") state.tail = response.nextPhotoId;
+      else state.tail = null;
+    }
+
+    // Set pointers if none are set
+    if (state.head === undefined) state.head = state.photos[0];
+    if (state.tail === undefined) state.tail = state.photos[state.photos.length - 1];
   }
 });
 

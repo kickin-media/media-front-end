@@ -189,10 +189,7 @@ const AppUI: React.FC<Props> = ({children}) => {
               <em>
                 If you want a photo to be removed, please send an e-mail to the{" "}
                 <a href="mailto:info@kick-in.nl">Kick-In committee</a>.
-              </em><br />
-              <br />
-              For feedback on this website, send an e-mail to:{" "}
-              <a href="mailto:feedback@kick-in.media">feedback@kick-in.media</a>
+              </em>
             </Grid>
           </Grid>
         </Container>
