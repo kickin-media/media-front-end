@@ -35,7 +35,6 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
   const mobile = useWidth() === 'xs';
 
   if (!photo) return null;
-  console.log(photo.exif);
 
   const InfoItem: React.FC<InfoProps> = ({ icon, name, value }) => value ? (
     <ListItem>
