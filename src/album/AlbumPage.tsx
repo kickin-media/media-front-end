@@ -116,8 +116,8 @@ const AlbumPage: React.FC = () => {
 
         return b.timestamp.getTime() - a.timestamp.getTime();
       } else {
-        if (a.timestamp === null) return 1;
-        if (b.timestamp === null) return -1;
+        if (a.timestamp === null) return -1;
+        if (b.timestamp === null) return 1;
         return a.timestamp.getTime() - b.timestamp.getTime();
       }
   }), [authorPhotos, uid, sortMethod]);
