@@ -12,6 +12,8 @@ export interface PhotoType {
   author: AuthorType;
   albums?: string[];
 
+  exif?: { [key: string]: string };
+
   imgUrls: {
     original: string;
     large: string; // 2048
@@ -38,8 +40,10 @@ const photo: Reducer<PhotoStateType> = createReducer({} as PhotoStateType, {
     Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
   },
 
-  [streamActions.getPage.success]: (state, action) => {
+  [streamActions.getStream.success]: (state, action) => {
     const photos = action.response.entities.photo;
+    if (photos === undefined) return;
+
     Object.keys(photos).forEach(id => state[id] = mergePhotos(state[id], photos[id]));
   },
 
