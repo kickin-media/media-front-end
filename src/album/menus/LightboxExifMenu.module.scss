@@ -1,5 +1,9 @@
 .dialog ul {
   column-count: 2;
+
+  > li {
+    break-inside: avoid;
+  }
 }
 
 .drawer {

@@ -12,7 +12,7 @@ export interface PhotoType {
   author: AuthorType;
   albums?: string[];
 
-  exif?: { [key: string]: string };
+  exif?: any;
 
   imgUrls: {
     original: string;

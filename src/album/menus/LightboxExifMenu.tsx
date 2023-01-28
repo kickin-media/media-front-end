@@ -19,10 +19,12 @@ import Typography from "@mui/material/Typography";
 
 import Aperture from '@mui/icons-material/Camera';
 import Camera from '@mui/icons-material/CameraAlt';
+import Flash from '@mui/icons-material/Bolt';
 import FocalLength from '@mui/icons-material/Landscape';
 import Info from '@mui/icons-material/Info';
 import Iso from '@mui/icons-material/Iso';
 import Lens from '@mui/icons-material/Lens';
+import Mode from '@mui/icons-material/Tune';
 import ShutterSpeed from '@mui/icons-material/ShutterSpeed';
 
 import classes from './LightboxExifMenu.module.scss';
@@ -33,6 +35,7 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
   const mobile = useWidth() === 'xs';
 
   if (!photo) return null;
+  console.log(photo.exif);
 
   const InfoItem: React.FC<InfoProps> = ({ icon, name, value }) => value ? (
     <ListItem>
@@ -41,6 +44,13 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
     </ListItem>
   ) : null;
 
+  const exposureModes = {
+    MANUAL: 'Manual',
+    NORMAL_PROGRAM: 'Auto',
+    APERTURE_PRIORITY: 'Aperture Priority',
+    SHUTTER_PRIORITY: 'Shutter Priority',
+  }
+
   const PhotoInfo = () => photo.exif ? (
     <List>
       <InfoItem icon={<Camera />} name="Camera body" value={photo.exif.model} />
@@ -48,6 +58,11 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
       <InfoItem icon={<FocalLength />} name="Focal length"
                 value={photo.exif.focalLength
                   ? photo.exif.focalLength + 'mm'
+                  : undefined} />
+
+      <InfoItem icon={<Mode />} name="Exposure program"
+                value={photo.exif.exposureProgram
+                  ? exposureModes[photo.exif.exposureProgram.split('.')[1]]
                   : undefined} />
       <InfoItem icon={<Aperture />} name="Aperture"
                 value={photo.exif.apertureValue
@@ -58,6 +73,10 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
                   ? '1 / ' + Math.pow(2, parseFloat(photo.exif.shutterSpeedValue)).toFixed(0)
                   : undefined} />
       <InfoItem icon={<Iso />} name="ISO" value={photo.exif.photographicSensitivity} />
+      <InfoItem icon={<Flash />} name="Flash"
+                value={photo.exif.flash
+                  ? (!(photo.exif.flash.flashFired || photo.exif.flash.flashFunctionNotPresent) ? 'Off' : 'Flashed')
+                  : undefined} />
     </List>
   ) : <Typography>No EXIF data in photo</Typography>;
 
