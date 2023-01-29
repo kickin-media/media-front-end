@@ -28,7 +28,7 @@ export const PHOTO = new schema.Entity('photo', {
   albums: ALBUM_ARRAY
 }, {
   processStrategy: (value, parent, key) => Object.assign({}, value, {
-    timestamp: new Date(value.timestamp),
+    timestamp: value.timestamp ? new Date(value.timestamp) : null,
     uploadedAt: new Date(value.uploadedAt)
   })
 });
