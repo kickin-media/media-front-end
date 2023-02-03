@@ -20,6 +20,7 @@ const UploadEventForm: React.FC<Props> = ({ reference, onSubmit }) => {
 
   const sortedEvents = useMemo(() => Object.keys(events)
     .map(id => events[id])
+    .filter(event => !event.locked)
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()),
     [events]);
 

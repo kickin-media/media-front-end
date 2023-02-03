@@ -14,9 +14,10 @@ export const create = createAPIAction(
   'EVENT_CREATE',
   'POST',
   '/event/',
-  (name: string, timestamp: Date) => ({ body: {
+  (name: string, timestamp: Date, locked: boolean) => ({ body: {
       name,
       timestamp: toLocalDateString(timestamp),
+      locked
     }}),
   schemas.EVENT
 );
@@ -33,11 +34,12 @@ export const update = createAPIAction(
   'EVENT_UPDATE',
   'PUT',
   payload => `/event/${payload?.event_id}`,
-  (event_id: string, name: string, timestamp: Date) => ({
+  (event_id: string, name: string, timestamp: Date, locked: boolean) => ({
     event_id,
     body: {
       name,
       timestamp: toLocalDateString(timestamp),
+      locked
     }
   }),
   schemas.EVENT

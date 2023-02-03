@@ -8,6 +8,7 @@ export type EventStateType = { [key: string]: EventType };
 export interface EventType {
   id: string;
 
+  locked: boolean;
   name: string;
   timestamp: Date;
 }

@@ -10,6 +10,8 @@ import TextField from "@mui/material/TextField";
 import * as actions from '../../redux/actions/event';
 import { AnyAction } from "@reduxjs/toolkit";
 import { StateType } from "../../redux/reducers/reducers";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 
 const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
   const dispatch = useDispatch();
@@ -20,12 +22,14 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
       eventId: '',
       name: '',
       timestamp: new Date(),
+      locked: false,
     } as FormValues;
 
     return {
       eventId: eventId,
       name: event.name,
       timestamp: event.timestamp,
+      locked: event.locked
     };
   };
 
@@ -39,8 +43,8 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
     }
 
     dispatch(eventId
-      ? actions.update(eventId, values.name, values.timestamp)
-      : actions.create(values.name, values.timestamp))
+      ? actions.update(eventId, values.name, values.timestamp, values.locked)
+      : actions.create(values.name, values.timestamp, values.locked))
       .then((res: AnyAction) => {
         if (onSubmit) onSubmit(res.type === actions.update.success || res.type === actions.create.success);
       });
@@ -71,6 +75,17 @@ const EventForm: React.FC<Props> = ({ eventId, reference, onSubmit }) => {
           onChange={date => setValues({ ...values, timestamp: date as Date })}
         />
       </LocalizationProvider>
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={values.locked}
+            onChange={() => setValues({ ...values, locked: !values.locked })}
+          />
+        }
+        label="Is locked"
+        title="A locked event cannot be edited"
+      />
     </>
   );
 }
@@ -93,6 +108,7 @@ interface FormValues {
   name: string;
   eventId: string;
 
+  locked: boolean;
   timestamp: Date;
 }
 
