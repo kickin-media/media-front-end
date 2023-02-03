@@ -20,6 +20,7 @@
     "auth0-js": "^9.17.0",
     "browser-image-resizer": "^2.2.1",
     "date-fns": "^2.28.0",
+    "exif-parser": "^0.1.12",
     "normalizr": "^3.6.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

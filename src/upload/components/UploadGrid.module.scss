@@ -32,3 +32,15 @@
   height: 100% !important;
   border-radius: 1rem;
 }
+
+.error {
+  border: 3px solid #ff9800;
+  border-radius: 1rem;
+  padding: 0.125rem;
+
+  img { border-radius: 0.75rem; }
+}
+
+.alert {
+  margin-bottom: 1rem;
+}
