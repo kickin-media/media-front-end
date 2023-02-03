@@ -59,3 +59,25 @@ export const getAlbums = createAPIAction(
   (event_id: string) => ({ event_id }),
   schemas.ALBUM_ARRAY
 );
+
+export const getWatermark = createAPIAction(
+  'EVENT_WATERMARK_GET',
+  'GET',
+  payload => `/event/${payload?.event_id}/watermark`,
+  (event_id: string) => ({ event_id }),
+  schemas.EVENT_WATERMARK
+);
+
+export const createWatermark = createAPIAction(
+  'ACTION_WATERMARK_CREATE',
+  'POST',
+  payload => `/event/${payload?.event_id}/watermark`,
+  (event_id: string) => ({ event_id })
+)
+
+export const deleteWatermark = createAPIAction(
+  'ACTION_WATERMARK_DELETE',
+  'DELETE',
+  payload => `/event/${payload?.event_id}/watermark`,
+  (event_id: string) => ({ event_id })
+)

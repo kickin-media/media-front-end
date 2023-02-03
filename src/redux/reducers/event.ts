@@ -11,12 +11,11 @@ export interface EventType {
   locked: boolean;
   name: string;
   timestamp: Date;
+
+  watermark?: string;
 }
 
-const mergeEvents = (old: EventType | undefined, current: EventType) => {
-  // TODO: Merge
-  return current;
-};
+const mergeEvents = (old: EventType | undefined, current: EventType) => Object.assign({}, old, current);
 
 const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
   [albumActions.get.success]: (state, action) => {
@@ -41,6 +40,10 @@ const event: Reducer<EventStateType> = createReducer({} as EventStateType, {
 
   [actions.remove.success]: (state, action) => {
     delete state[action.payload['event_id']];
+  },
+
+  [actions.getWatermark.success]: (state, action) => {
+    state[action.payload['event_id']].watermark = action.response.entities.eventWatermark.watermark;
   },
 });
 

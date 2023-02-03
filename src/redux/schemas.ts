@@ -5,6 +5,10 @@ export const EVENT = new schema.Entity('event', {}, {
     timestamp: new Date(value.timestamp)
   })
 });
+export const EVENT_WATERMARK = new schema.Entity('eventWatermark', {}, {
+  idAttribute: () => 'watermark',
+  processStrategy: (value, parent, key) => Object.keys(value).map(key => value[key]).join('')
+});
 export const EVENT_ARRAY = new schema.Array(EVENT);
 
 export const ALBUM = new schema.Entity('album', {
