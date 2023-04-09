@@ -97,10 +97,11 @@ const AlbumPage: React.FC = () => {
   }, [dispatch, albumId, secret]);
 
   const processedPhotos = useMemo(() => photos.filter(photo => photo.uploadProcessed), [photos]);
+  const visiblePhotos = useMemo(() => canUpload ? photos : processedPhotos, [canUpload, photos, processedPhotos]);
   const authorPhotos = useMemo(() => authorFilter === null
-    ? processedPhotos
-    : processedPhotos.filter(photo => authorFilter.indexOf(photo.author.id) > -1),
-    [processedPhotos, authorFilter])
+    ? visiblePhotos
+    : visiblePhotos.filter(photo => authorFilter.indexOf(photo.author.id) > -1),
+    [visiblePhotos, authorFilter])
   const sortedPhotos = useMemo(() => authorPhotos
     .filter(photo => sortMethod !== 'mine' || photo.author.id === uid)
     .sort((a, b) => {
