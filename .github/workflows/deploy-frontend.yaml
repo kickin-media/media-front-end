@@ -26,6 +26,7 @@ jobs:
 
       - name: Build front-end
         run: |
+          node -v
           yarn install
           REACT_APP_API_ENV=${{ matrix.environment }} yarn run build
 
