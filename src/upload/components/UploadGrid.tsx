@@ -24,9 +24,11 @@ const previewConfig = {
   maxHeight: 400,
 };
 
+type UploadErrorType = "exif" | "datetime" | "colorspace";
+
 const UploadGrid: React.FC<Props> = ({ files, onAdd, onRemove }) => {
   const [previews, setPreviews] = useState<{ [key: string]: string }>({});
-  const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [errors, setErrors] = useState<{ [key: string]: UploadErrorType }>({});
 
   // Generate previews, one at a time
   useEffect(() => {
@@ -54,7 +56,10 @@ const UploadGrid: React.FC<Props> = ({ files, onAdd, onRemove }) => {
       if (!reader.result) return;
 
       const res = ExifParser.create(reader.result).parse();
-      if (!res || !res.tags || !res.tags.DateTimeOriginal) setErrors(e => ({ ...e, [k]: true }));
+      console.log(res);
+      if (!res || !res.tags) setErrors(e => ({ ...e, [k]: 'exif' }));
+      else if (res.tags.ColorSpace !== 1) setErrors(e => ({ ...e, [k]: 'colorspace' }));
+      else if (!res.tags.DateTimeOriginal) setErrors(e => ({ ...e, [k]: 'datetime' }));
     };
     reader.readAsArrayBuffer(files[k]);
 
@@ -100,7 +105,22 @@ const UploadGrid: React.FC<Props> = ({ files, onAdd, onRemove }) => {
         ) : null}
       </ImageList>
 
-      {Object.keys(errors).some(key => errors[key]) && (
+      {Object.keys(errors).some(key => errors[key] === 'exif') && (
+        <Alert className={classes.alert} severity="error">
+          Some of your images don't include EXIF-tags. Make sure you include photo
+          metadata when exporting your photos and re-upload the highlighted photos.
+        </Alert>
+      )}
+
+      {Object.keys(errors).some(key => errors[key] === 'colorspace') && (
+        <Alert className={classes.alert} severity="error">
+          Some of your images are not exported in the sRGB color space. Even though your pictures might look okay in
+          here, things are likely going to go wrong during processing. Please re-upload your images in the proper color
+          space.
+        </Alert>
+      )}
+
+      {Object.keys(errors).some(key => errors[key] === 'datetime') && (
         <Alert className={classes.alert} severity="warning">
           Some of your images don't contain the <code>DateTimeOriginal</code> EXIF-tag. Make sure you include photo
           metadata when exporting your photos and re-upload the highlighted photos.
