@@ -1,3 +1,9 @@
+.hero div:global(.MuiChip-root) {
+  margin-right: 0.5rem;
+  background-color: rgba(18, 173, 43, 0.5);
+  backdrop-filter: blur(10px);
+}
+
 .actions {
   width: 100%;
 

@@ -19,6 +19,7 @@ import Badge from '@mui/material/Badge';
 import Button from "@mui/material/Button";
 import ButtonGroup from '@mui/material/ButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
+import Chip from '@mui/material/Chip';
 import Container from "@mui/material/Container";
 import Divider from '@mui/material/Divider';
 import DeleteDialog from "../components/dialogs/DeleteDialog";
@@ -36,6 +37,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from "@mui/material/Typography";
 
+import CalendarIcon from '@mui/icons-material/CalendarToday';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
@@ -47,9 +49,11 @@ import PanoramaWideAngleIcon from '@mui/icons-material/PanoramaWideAngle';
 import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ShareIcon from '@mui/icons-material/Share';
+import TrendIcon from '@mui/icons-material/TrendingUp';
 
 import classes from './AlbumPage.module.scss';
 import AuthorFilterForm from "./forms/AuthorFilterForm";
+import { renderNumber } from "../util/number";
 
 const AlbumPage: React.FC = () => {
   const [editMenu, setEditMenu] = useState<HTMLButtonElement | null>(null);
@@ -147,6 +151,13 @@ const AlbumPage: React.FC = () => {
     return sortedPhotos.filter(photo => photo.uploadedAt !== null && photo.uploadedAt.getTime() > lastSeen.getTime()).length;
   }, [lastSeen, sortedPhotos]);
 
+  // Update the album view count
+  const effectiveId = useMemo(() => album ? album.id : null, [album]);
+  useEffect(() => {
+    if (effectiveId === null) return;
+    dispatch(actions.increaseViewCount(effectiveId));
+  }, [dispatch, effectiveId]);
+
   const [shareDialog, setShareDialog] = useState<boolean>(false);
 
   if (!album || !event) return <CircularProgress />;
@@ -180,9 +191,11 @@ const AlbumPage: React.FC = () => {
     <>
       {album.coverPhoto && album.coverPhoto.uploadProcessed && (
         <Region name="hero">
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" className={classes.hero}>
             <Typography variant="h2">{album.name}</Typography>
-            <Typography>{relativeDate(album.timestamp)} • {event.name}</Typography>
+            <Chip label={event.name} color="primary" size="small" />
+            <Chip icon={<CalendarIcon />} label={relativeDate(album.timestamp)} color="primary" size="small" />
+            <Chip icon={<TrendIcon />} label={`${renderNumber(album.views)} views`} color="primary" size="small" />
           </Container>
 
           {/*<img src={album.coverPhoto.imgUrls.large} alt="" />*/}

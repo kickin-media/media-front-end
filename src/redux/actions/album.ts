@@ -86,4 +86,11 @@ export const updateAlbumCover = createAPIAction(
     body: { photo_id: photo_id }
   }),
   schemas.ALBUM
-)
+);
+
+export const increaseViewCount = createAPIAction(
+  'ALBUM_VIEWCOUNT_INCREASE',
+  'PUT',
+  payload => `/album/${payload?.album_id}/view`,
+  (album_id: string) => ({ album_id })
+);

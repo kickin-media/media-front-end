@@ -22,6 +22,7 @@ export interface AlbumType {
 
   releaseTime: Date | null;
   timestamp: Date;
+  views: number;
 }
 
 const mergeAlbums = (old: AlbumType | undefined, current: AlbumType) => Object.assign({}, old, current);
