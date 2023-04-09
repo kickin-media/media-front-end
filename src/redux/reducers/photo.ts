@@ -13,6 +13,7 @@ export interface PhotoType {
   albums?: string[];
 
   exif?: any;
+  views: number;
 
   imgUrls: {
     original: string;

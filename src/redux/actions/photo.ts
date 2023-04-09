@@ -44,3 +44,10 @@ export const setAlbums = createAPIAction(
   (photo_id: string, albums: string[]) => ({ photo_id, body: albums }),
   schemas.PHOTO
 );
+
+export const increaseViewCount = createAPIAction(
+  'PHOTO_VIEWCOUNT_INCREASE',
+  'PUT',
+  payload => `/photo/${payload?.photo_id}/view`,
+  (photo_id: string) => ({ photo_id })
+);

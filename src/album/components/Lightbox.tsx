@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import slugify from "slugify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import useWidth from "../../util/useWidth";
 
 import * as actions from '../../redux/actions/photo';
 import { AlbumType } from "../../redux/reducers/album";
 import { PhotoType } from "../../redux/reducers/photo";
 
+import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import LightboxDownloadMenu from "../menus/LightboxDownloadMenu";
 import LightboxExifMenu from "../menus/LightboxExifMenu";
@@ -16,8 +18,11 @@ import SwipeableViews from "react-swipeable-views";
 import Close from '@mui/icons-material/Close';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import TrendIcon from '@mui/icons-material/TrendingUp';
 
 import classes from './Lightbox.module.scss';
+import { renderNumber } from "../../util/number";
+import { StateType } from "../../redux/reducers/reducers";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -73,6 +78,21 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
     return nextIndex;
   });
 
+  // Register photo views
+  const curPhotoId = useMemo(() => index < photos.length ? photos[index].id : null, [index, photos]);
+  useEffect(() => {
+    if (!open) return;
+    if (curPhotoId === null) return;
+
+    dispatch(actions.increaseViewCount(curPhotoId));
+  }, [dispatch, open, curPhotoId]);
+
+  const canSeeViewCount = useSelector((state: StateType) =>
+    state.auth.authenticated
+    && state.auth.scopes.some(scope => scope === 'photos:read_view_count'));
+
+  const mobile = useWidth() === 'xs';
+
   return (
     <Modal
       open={prevOpen}
@@ -89,7 +109,13 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
         if (onClose) onClose();
       }}>
         <div className={classes.actions}>
-          {/*<IconButton><Info /></IconButton>*/}
+          {(canSeeViewCount && !mobile && photos[index]) && (
+            <Chip
+              icon={<TrendIcon />}
+              label={`${renderNumber(photos[index].views)} views`}
+              size="small" variant="outlined"
+            />
+          )}
 
           <LightboxExifMenu photo={photos[index]} />
           <LightboxShareMenu photo={photos[index]} album={album} albumName={albumName} />

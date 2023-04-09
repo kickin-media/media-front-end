@@ -13,12 +13,13 @@ export const authMiddleware: Middleware = api => next => {
       'openid',
       'profile',
       'email',
-      'photos:upload',
-      'albums:manage',
-      'photos:delete_other',
-      'albums:read_hidden',
       'events:manage',
+      'albums:read_hidden',
+      'albums:manage',
+      'photos:upload',
       'photos:download_other',
+      'photos:delete_other',
+      'photos:read_view_count'
     ].join(' ')
   });
 
