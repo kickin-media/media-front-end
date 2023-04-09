@@ -39,7 +39,7 @@ const Event: React.FC<Props> = ({ event }) => {
       spacing={1}
     >
       {filteredAlbums.length > 0 && filteredAlbums[0].coverPhoto && filteredAlbums[0].coverPhoto.uploadProcessed
-        ? (<img src={filteredAlbums[0].coverPhoto?.imgUrls.small} alt="" />)
+        ? (<img src={filteredAlbums[0].coverPhoto?.imgUrls.medium} alt="" />)
         : (<Skeleton variant="rectangular" width={120} height={80} />)}
       <Stack spacing={1}>
         <Typography variant="body1"><strong>{event.name}</strong></Typography>
