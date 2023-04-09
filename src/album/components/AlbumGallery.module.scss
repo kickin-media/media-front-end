@@ -30,6 +30,7 @@
 
 .gallery > .photo {
   flex-grow: calc(var(--ratio) * 100);
+  border-radius: 0.5rem;
 }
 
 .gallery::after {
@@ -51,4 +52,17 @@
 .gallery > .photo > span {
   width: 100%;
   height: 100%;
+}
+
+.photo.processing {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 0, 0, 0.3) 10px,
+    rgba(0, 0, 0, 0.15) 10px,
+    rgba(0, 0, 0, 0.15) 20px
+  );
+
+  img { filter: opacity(0.75); }
+  > span:global(.MuiSkeleton-root) { border-radius: 0.5rem; }
 }

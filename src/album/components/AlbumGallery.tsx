@@ -34,7 +34,10 @@ const AlbumGallery: React.FC<Props> = ({ album, photos, selected, onSelect, onDe
       {photos.map(photo => (
         <a
           key={photo.id}
-          className={clsx(classes.photo, { [classes.selected]: selected && selected[photo.id] })}
+          className={clsx(classes.photo, {
+            [classes.selected]: selected && selected[photo.id],
+            [classes.processing]: !photo.uploadProcessed
+          })}
           href={`/album/${album.id}/${slugify(album.name).toLowerCase()}/${photo.id}`}
           style={{ '--w': 100, '--h': 100 } as React.CSSProperties}
           onClick={e => {
