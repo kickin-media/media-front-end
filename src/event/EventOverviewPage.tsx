@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import clsx from "clsx";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -30,6 +30,11 @@ const EventOverviewPage: React.FC = () => {
       });
   }, [dispatch]);
 
+  const sortedEvents = useMemo(() => Object.keys(events)
+    .map(id => events[id])
+    .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+    ), [events]);
+
   // Determine layout rules
   const theme = useTheme();
   const multiColumn = useMediaQuery(theme.breakpoints.up('md'));
@@ -37,9 +42,8 @@ const EventOverviewPage: React.FC = () => {
   return (
     <>
       <div className={clsx(classes.grid, { [classes.large]: multiColumn })}>
-        {Object.keys(events)
-          .map(eventId => (
-            <Event key={eventId} event={events[eventId]} />
+        {sortedEvents.map(event => (
+          <Event key={event.id} event={event} />
         ))}
       </div>
       <div className={classes.backref}>
