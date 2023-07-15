@@ -97,15 +97,13 @@ const LightboxDownloadMenu: React.FC<Props> = ({ photo, albumName }) => {
           <ListItemText primary="Large" secondary="2048px" />
         </MenuItem>
 
-        {canDownload && (
-          <>
-            <Divider />
-            <MenuItem onClick={onDownloadOriginal()}>
-              <ListItemIcon><RawOn /></ListItemIcon>
-              <ListItemText primary="Original" secondary="Without watermark" />
-            </MenuItem>
-          </>
-        )}
+        {canDownload && [
+          <Divider key="divider" />,
+          <MenuItem key="original" onClick={onDownloadOriginal()}>
+            <ListItemIcon><RawOn /></ListItemIcon>
+            <ListItemText primary="Original" secondary="Without watermark" />
+          </MenuItem>
+        ]}
       </Menu>
     </>
   );
