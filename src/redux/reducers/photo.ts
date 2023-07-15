@@ -13,6 +13,10 @@ export interface PhotoType {
   albums?: string[];
 
   exif?: any;
+  gpsLat?: number;
+  gpsLon?: number;
+  gpsThumb?: string;
+
   views: number;
 
   imgUrls: {

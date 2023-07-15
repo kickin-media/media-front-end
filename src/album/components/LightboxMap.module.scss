@@ -1,0 +1,52 @@
+.root {
+  width: 120px;
+  aspect-ratio: 1.5;
+
+  position: fixed;
+  top: 5.5rem;
+  left: 1rem;
+  z-index: 5000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: grey;
+  background-position: center;
+  background-size: cover;
+  border: 1px solid rgba(122, 194, 122, 0.25);
+  border-radius: 4px;
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2),
+              0 4px 5px 0px rgba(0,0,0,0.14),
+              0 1px 10px 0px rgba(0,0,0,0.12);
+  opacity: .5;
+
+  transition: opacity 300ms ease,
+              width 300ms ease;
+}
+
+.root:hover { opacity: 1; }
+.root.open {
+  width: min(calc(50vw - 1rem), 480px);
+  opacity: 1;
+}
+
+.root > svg {
+  width: 2rem;
+  height: 2rem;
+  color: white;
+  opacity: 0;
+  transition: opacity 150ms ease;
+}
+.root:hover > svg { opacity: 1; }
+
+.root > button {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+
+  color: white;
+  opacity: 0.5;
+  transition: opacity 300ms ease;
+}
+.root > button:hover { opacity: 1; }

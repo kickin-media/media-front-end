@@ -23,6 +23,7 @@ import TrendIcon from '@mui/icons-material/TrendingUp';
 import classes from './Lightbox.module.scss';
 import { renderNumber } from "../../util/number";
 import { StateType } from "../../redux/reducers/reducers";
+import LightboxMap from "./LightboxMap";
 
 const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onClose }) => {
   const [index, setIndex] = useState(0);
@@ -126,6 +127,8 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
             e.stopPropagation();
           }}><Close /></IconButton>
         </div>
+
+        <LightboxMap photo={photos[index]} />
 
         <div className={classes.carousel}>
           <IconButton
