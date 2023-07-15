@@ -1,15 +1,15 @@
-.grid {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 1rem;
-
-  > a { width: 100%; }
-}
-
-.grid.large > a {
-  width: calc(50% - 0.5rem);
-}
+//.grid {
+//  display: flex;
+//  flex-direction: row;
+//  flex-wrap: wrap;
+//  gap: 1rem;
+//
+//  > a { width: 100%; }
+//}
+//
+//.grid.large > a {
+//  width: calc(50% - 0.5rem);
+//}
 
 .backref {
   width: 100%;

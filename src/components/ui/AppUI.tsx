@@ -182,12 +182,12 @@ const AppUI: React.FC<Props> = ({children}) => {
             </Grid>
             <Grid item xs={12} md={6}>
               <b>Kick-In Media App</b><br />
-              <em>&copy; 2022 <a href="https://hello.jonathanj.nl/">Jonathan Juursema</a> &amp;{" "}
+              <em>&copy; 2023 <a href="https://hello.jonathanj.nl/">Jonathan Juursema</a> &amp;{" "}
                 <a href="https://github.com/jeffreybakker">Jeffrey Bakker</a></em><br />
               <br />
               <a href="https://www.kick-in.nl">Kick-In Website</a><br />
               <em>
-                If you want a photo to be removed, please send an e-mail to the{" "}
+                If you want to have a photo removed, please send an e-mail to the{" "}
                 <a href="mailto:info@kick-in.nl">Kick-In committee</a>.
               </em>
             </Grid>
