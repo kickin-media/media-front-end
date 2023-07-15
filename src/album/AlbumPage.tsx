@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { relativeDate } from "../util/date";
 import slugify from "slugify";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -54,6 +54,7 @@ import TrendIcon from '@mui/icons-material/TrendingUp';
 import classes from './AlbumPage.module.scss';
 import AuthorFilterForm from "./forms/AuthorFilterForm";
 import { renderNumber } from "../util/number";
+import { BreadcrumbContext } from "../components/ui/Breadcrumb";
 
 const AlbumPage: React.FC = () => {
   const [editMenu, setEditMenu] = useState<HTMLButtonElement | null>(null);
@@ -159,6 +160,15 @@ const AlbumPage: React.FC = () => {
   }, [dispatch, effectiveId]);
 
   const [shareDialog, setShareDialog] = useState<boolean>(false);
+
+  const setBreadcrumb = useContext(BreadcrumbContext).setPath;
+  useEffect(() => {
+    if (!event || !album) return;
+    setBreadcrumb(
+      { name: event.name, href: `/event/${event.id}/${slugify(event?.name)}`},
+      { name: album.name, href: `/album/${album.id}/${slugify(album.name).toLowerCase()}`});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [album, event]);
 
   if (!album || !event) return <CircularProgress />;
 

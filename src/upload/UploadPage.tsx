@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import slugify from "slugify";
@@ -29,6 +29,7 @@ import { StateType } from "../redux/reducers/reducers";
 
 import classes from './UploadPage.module.scss';
 import uploadGraphic from '../res/graphics/upload.svg';
+import { BreadcrumbContext } from "../components/ui/Breadcrumb";
 
 const UploadPage: React.FC = () => {
   const albumFormRef = useRef<UploadAlbumFormRef>(null);
@@ -45,6 +46,10 @@ const UploadPage: React.FC = () => {
   const dispatch = useDispatch();
   const albums = useSelector((state: StateType) => albumIds.map(id => state.album[id]), shallowEqual);
   const event = useSelector((state: StateType) => eventId === null ? null : state.event[eventId], shallowEqual);
+
+  const setBreadcrumb = useContext(BreadcrumbContext).setPath;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setBreadcrumb({ name: 'Upload', href: '/upload/' }), []);
 
   // Prevent users from accidentally navigating away from this page
   const history = useHistory<UploadHistoryState>();

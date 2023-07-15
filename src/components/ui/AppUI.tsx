@@ -31,6 +31,7 @@ import AdminSpeedDial from "../AdminSpeedDial";
 import { usePageTracking } from "../../util/analytics";
 import CookieDialog from "../dialogs/CookieDialog";
 import Notifications from "./Notifications";
+import Breadcrumb from "./Breadcrumb";
 
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
@@ -170,6 +171,7 @@ const AppUI: React.FC<Props> = ({children}) => {
 
       {/* Content */}
       <Container maxWidth="lg" className={classes.content}>
+        <Breadcrumb />
         {children}
       </Container>
 

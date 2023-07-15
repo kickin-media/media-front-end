@@ -1,18 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import Routes from './routes';
+import { BreadcrumbContext } from "./components/ui/Breadcrumb";
 
-const App = () => (
-  <>
-    <CssBaseline />
-    <ThemeProvider theme={theme}>
-      <Routes />
-    </ThemeProvider>
-  </>
-);
+const App = () => {
+  const [breadcrumb, setBreadcrumb] = useState<{ name: string, href: string }[]>([]);
+
+  return (
+    <>
+      <CssBaseline />
+      <ThemeProvider theme={theme}>
+        <BreadcrumbContext.Provider value={{ path: breadcrumb, setPath: (...path) => setBreadcrumb(path) }}>
+          <Routes />
+        </BreadcrumbContext.Provider>
+      </ThemeProvider>
+    </>
+  );
+}
 
 const theme = createTheme({
   mixins: { toolbar: { minHeight: 73 } },

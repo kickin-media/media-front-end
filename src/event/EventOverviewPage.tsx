@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import clsx from "clsx";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
@@ -14,10 +14,15 @@ import Typography from "@mui/material/Typography";
 import Timeline from '@mui/icons-material/Timeline';
 
 import classes from './EventOverviewPage.module.scss';
+import { BreadcrumbContext } from "../components/ui/Breadcrumb";
 
 const EventOverviewPage: React.FC = () => {
   const dispatch = useDispatch();
   const events = useSelector((state: StateType) => state.event, shallowEqual);
+
+  const setBreadcrumb = useContext(BreadcrumbContext).setPath;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setBreadcrumb({ name: 'Events', href: '/event/' }), []);
 
   // Load all data on mount
   useEffect(() => {

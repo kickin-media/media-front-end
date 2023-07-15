@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
 import { StateType } from '../redux/reducers/reducers';
@@ -9,6 +9,7 @@ import { AnyAction } from "@reduxjs/toolkit";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import classes from './StreamOverviewPage.module.scss';
+import { BreadcrumbContext } from "../components/ui/Breadcrumb";
 
 const StreamOverviewPage: React.FC = () => {
   const photoIds = useSelector((state: StateType) => state.photoStream.photos, shallowEqual);
@@ -18,6 +19,10 @@ const StreamOverviewPage: React.FC = () => {
     head: state.photoStream.head,
     tail: state.photoStream.tail
   }));
+
+  const setBreadcrumb = useContext(BreadcrumbContext).setPath;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setBreadcrumb({ name: 'Photo stream', href: '/stream/' }), []);
 
   const stream: PhotoType[] = useMemo(
     () => photoIds.map(id => photos[id] ? photos[id] : null)

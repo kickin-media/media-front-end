@@ -48,7 +48,7 @@ const Event: React.FC<Props> = ({ event }) => {
       <div className={clsx(classes.gallery, {[classes.tiny]: width === 'xs'})}>
         {new Array(width === 'xs' || width === 'sm' ? 1 : 3)
           .fill(0)
-          .map((_, index) => <Album album={index < sortedAlbums.length ? sortedAlbums[index] : null} />)}
+          .map((_, index) => <Album key={index} album={index < sortedAlbums.length ? sortedAlbums[index] : null} />)}
         <Stack className={classes.more} spacing={1}>
           <div>
             <Skeleton variant="rectangular" width={240} height={160} animation={false} />

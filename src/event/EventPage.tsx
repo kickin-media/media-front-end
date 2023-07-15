@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useHistory, useRouteMatch } from "react-router-dom";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 
@@ -20,6 +20,8 @@ import { StateType } from "../redux/reducers/reducers";
 import classes from './EventPage.module.scss';
 import HeroCarousel from "../components/HeroCarousel";
 import { renderDate } from "../util/date";
+import { BreadcrumbContext } from "../components/ui/Breadcrumb";
+import slugify from "slugify";
 
 const EventPage: React.FC<Props> = ({ eventId }) => {
   const [edit, setEdit] = useState<boolean>(false);
@@ -36,11 +38,20 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
 
     return null;
   }, shallowEqual);
+
+  const setBreadcrumb = useContext(BreadcrumbContext).setPath;
+  useEffect(() => {
+    if (!event) return;
+    setBreadcrumb(event ? { name: event.name, href: `/event/${event.id}/${slugify(event?.name)}`} : { name: 'Events', href: '/event/' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event]);
+
   const albums = useSelector((state: StateType) => event
     ? Object.keys(state.album)
       .filter(albumId => state.album[albumId].eventId === event.id)
       .map(albumId  => state.album[albumId])
     : null, shallowEqual);
+
   const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
     && (state.auth.scopes.includes('albums:manage')
       || state.auth.scopes.includes('photos:upload')
