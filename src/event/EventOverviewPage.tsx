@@ -1,8 +1,5 @@
 import React, { useContext, useEffect, useMemo } from 'react';
-import clsx from "clsx";
-import useMediaQuery from "@mui/material/useMediaQuery";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { useTheme } from "@mui/material/styles";
 
 import { AnyAction } from "@reduxjs/toolkit";
 import { StateType } from "../redux/reducers/reducers";
@@ -40,13 +37,9 @@ const EventOverviewPage: React.FC = () => {
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime()
     ), [events]);
 
-  // Determine layout rules
-  const theme = useTheme();
-  const multiColumn = useMediaQuery(theme.breakpoints.up('md'));
-
   return (
     <>
-      <div className={clsx(classes.grid, { [classes.large]: multiColumn })}>
+      <div className={classes.list}>
         {sortedEvents.map(event => (
           <Event key={event.id} event={event} />
         ))}
