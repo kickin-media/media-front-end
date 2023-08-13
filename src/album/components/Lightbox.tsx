@@ -123,12 +123,14 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           )}
 
           <LightboxExifMenu photo={photos[index]} />
-          <IconButton onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setGeo(!showGeo);
-            window.localStorage.setItem('lightbox-geo', String(!showGeo));
-          }}>{showGeo ? <LocationOnIcon /> : <LocationOffIcon />}</IconButton>
+          {photos[index] && typeof photos[index].gpsThumb === "string" &&
+            <IconButton onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setGeo(!showGeo);
+              window.localStorage.setItem('lightbox-geo', String(!showGeo));
+            }}>{showGeo ? <LocationOnIcon /> : <LocationOffIcon />}</IconButton>
+          }
           <LightboxShareMenu photo={photos[index]} album={album} albumName={albumName} />
           <LightboxDownloadMenu photo={photos[index]} albumName={albumName} />
 
