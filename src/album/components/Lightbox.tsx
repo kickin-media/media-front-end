@@ -18,6 +18,8 @@ import SwipeableViews from "react-swipeable-views";
 import Close from '@mui/icons-material/Close';
 import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import LocationOffIcon from '@mui/icons-material/LocationOff';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
 import TrendIcon from '@mui/icons-material/TrendingUp';
 
 import classes from './Lightbox.module.scss';
@@ -30,6 +32,8 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   const [prevOpen, setOpen] = useState(open !== undefined ? open: false);
 
   const [loaded, setLoaded] = useState<{ [key: string]: boolean }>({});
+
+  const [showGeo, setGeo] = useState<boolean>(window.localStorage.getItem('lightbox-geo') === 'true');
 
   const albumName = album ? slugify(album.name).toLowerCase() : 'stream';
 
@@ -119,6 +123,12 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           )}
 
           <LightboxExifMenu photo={photos[index]} />
+          <IconButton onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setGeo(!showGeo);
+            window.localStorage.setItem('lightbox-geo', String(!showGeo));
+          }}>{showGeo ? <LocationOnIcon /> : <LocationOffIcon />}</IconButton>
           <LightboxShareMenu photo={photos[index]} album={album} albumName={albumName} />
           <LightboxDownloadMenu photo={photos[index]} albumName={albumName} />
 
@@ -128,7 +138,9 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           }}><Close /></IconButton>
         </div>
 
-        <LightboxMap photo={photos[index]} />
+        {showGeo
+          && photos[index] && typeof photos[index].gpsThumb === "string"
+          && <LightboxMap photo={photos[index]} />}
 
         <div className={classes.carousel}>
           <IconButton

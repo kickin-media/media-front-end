@@ -15,7 +15,7 @@ export interface PhotoType {
   exif?: any;
   gpsLat?: number;
   gpsLon?: number;
-  gpsThumb?: string;
+  gpsThumb?: string | null;
 
   views: number;
 
