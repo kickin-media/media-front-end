@@ -51,7 +51,7 @@ const Album: React.FC<Props> = ({ album }) => {
       <Typography variant="caption">{relativeDate(album.timestamp)} • {album.photosCount} photos</Typography>
     </Stack>
   ) : (
-    <Stack spacing={1}>
+    <Stack spacing={1} className={classes.placeholder}>
       <Skeleton variant="rectangular" width={240} height={160} />
       <Typography variant="body1"><Skeleton /></Typography>
       <Typography variant="caption"><Skeleton /></Typography>

@@ -97,3 +97,9 @@
   mask-size: contain;
   mask-type: alpha;
 }
+
+.placeholder > span:first-child {
+  width: 100% !important;
+  height: unset !important;
+  aspect-ratio: 1.5;
+}
