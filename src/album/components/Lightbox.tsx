@@ -98,6 +98,7 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
 
   const mobile = useWidth() === 'xs';
 
+  // @ts-ignore
   return (
     <Modal
       open={prevOpen}
@@ -157,6 +158,9 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
           <SwipeableViews
             index={index}
             onChangeIndex={index => moveTo(index)}
+            onClick={e => {
+              e.stopPropagation();
+            }}
             enableMouseEvents
           >
             {photos.map(photo => loaded[photo.id] ? (
