@@ -41,7 +41,7 @@ const Album: React.FC<Props> = ({ album }) => {
         variant="dot"
       >
         {album.coverPhoto && album.coverPhoto.uploadProcessed
-          ? (<img src={album.coverPhoto.imgUrls.small} alt="" />)
+          ? (<img src={album.coverPhoto.imgUrls.medium} alt="" />)
           : (<Skeleton variant="rectangular" width={240} height={160} />)}
 
         {isNew && <NewReleases />}
