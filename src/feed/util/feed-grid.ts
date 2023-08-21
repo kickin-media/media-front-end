@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useReducer } from "react";
 import { PhotoType } from "../../redux/reducers/photo";
+import { shuffleArray } from "../../util/shuffle";
 
 export const useFeed = (rows: number, cols: number, run: boolean = true) => {
   const [feed, dispatch] = useReducer<React.Reducer<FeedType, FeedActionType>>(feedReducer, {
@@ -35,7 +36,7 @@ export const useFeed = (rows: number, cols: number, run: boolean = true) => {
   const gridList = feed.grid
     .filter(cell => !cell.startsWith("filled-"))
     .map(cell => cell === "empty" ? null : cell);
-  const queueSize = useMemo(() => feed.queue.length, [feed.queue]);
+  const queueSize = useMemo(() => feed.queue.length, [feed]);
 
   return [gridList, feed.currentPhotos, queueSize, addToQueue];
 };
@@ -48,87 +49,130 @@ const feedReducer: React.Reducer<FeedType, FeedActionType> = (state, action) => 
       if (state.currentPhotos[action.photo.id]) break;
 
       // Skip if this photo is already in the queue
-      if (state.queue.indexOf(action.photo) >= 0) break;
+      if (state.queue.map(photo => photo.id).indexOf(action.photo.id) >= 0) break;
 
       // Otherwise, add the photo to the queue
       state.queue = [...state.queue, action.photo];
 
       // Cache the photo in the playground
-      const image = document.createElement("img");
-      image.src = action.photo.imgUrls.large;
-      image.id = `feed-${action.photo.id}`;
-      document.getElementById("feed-playground")?.appendChild(image);
+      const img = document.createElement("img");
+      img.src = action.photo.imgUrls.large;
+      img.id = `feed-${action.photo.id}`;
+      document.getElementById("feed-playground")?.appendChild(img);
       break;
     case "update":
+      // Get a photo from the front of the queue
+      let photo = state.queue.shift();
+      if (!photo) break;
+
+      if (state.currentPhotos[photo.id]) {
+        console.warn("Came across a photo that was already in rotation: " + photo.id)
+        break;
+      }
+
+      // Get and remove image from playground
+      let image = document.getElementById(`feed-${photo.id}`) as HTMLImageElement | null;
+      if (!image) break;
+      const ratio = image.width / image.height;
+      image.remove();
+
+      let x, y, w, h;
+      const cellRatio = (window.innerWidth / state.cols) / (window.innerHeight / state.rows);
+      let relativeRatio = ratio / cellRatio;
+
       // Check if we have empty cells
-      let empties = state.grid
+      const empties = state.grid
         .map((cell, index) => cell === "empty" ? index : null)
-        .filter(idx => idx !== null);
+        .filter(idx => idx !== null) as number[];
+      shuffleArray(empties);
 
-      // Fill those first
-      if (empties.length > 0) {
-        // Select a random cell to fill
-        let idx = empties[Math.floor(Math.random() * empties.length)];
-        if (idx === null) break;
-
-        // Get a photo from the front of the queue
-        let photo = state.queue.shift();
-        if (!photo) break;
-
-        // Get and remove image from playground
-        let image = document.getElementById(`feed-${photo.id}`);
-        if (!image) break;
-        image.remove();
-
-        state.grid[idx] = photo.id;
-        state.currentPhotos[photo.id] = { photo, x: Math.floor(idx / state.cols), y: idx % state.cols, width: 1, height: 1 };
-      } else {
-        // Otherwise just insert somewhere
-        let photo = state.queue.shift();
-        if (!photo) break;
-
-        // Get and remove image from playground
-        let image = document.getElementById(`feed-${photo.id}`) as HTMLImageElement | null;
-        if (!image) break;
-        let ratio = image.width / image.height;
-        image.remove();
-
+      const selectSize = (x: number, y: number) => {
         let w = 1;
         let h = 1;
 
-        if (ratio < 1 && Math.random() > 0.6) h = 2;
-        if (ratio > 1.5 && Math.random() > 0.6) {
+        if (relativeRatio >= 1.5 && x + 1 < state.cols) w = 2;
+        if (relativeRatio <= 0.75 && y + 1 < state.rows) h = 2;
+        if (x + 1 < state.cols && y + 1 < state.rows && Math.random() >= 0.7) {
           w = 2;
           h = 2;
         }
 
-        let x = Math.floor(Math.random() * (state.cols - w + 1));
-        let y = Math.floor(Math.random() * (state.rows - h + 1));
+        return {w, h};
+      }
 
-        state.currentPhotos[photo.id] = {
-          photo,
-          x, y,
-          width: w, height: h
-        };
+      if (empties.length > 0) {
+        let success = false;
+        for (let i = 0; i < Math.min(5, empties.length); i++) {
+          let idx = empties[i];
+          x = idx % state.cols;
+          y = Math.floor(idx / state.cols);
 
-        for (let xx = x; xx < x + w; xx++) for (let yy = y; yy < y + h; yy++) {
-          let current = state.grid[yy * state.cols + xx];
-          if (current !== "empty" && current.startsWith("filled-")) {
-            let curImg = state.currentPhotos[current.substring(7)];
-            for (let i = curImg.x; i < curImg.x + curImg.width; i++)
-              for (let j = curImg.y; j < curImg.y + curImg.height; j++)
-                state.grid[j * state.cols + i] = 'empty';
-          } else if (current !== "empty") state.grid[yy * state.cols + xx] = 'empty';
+          let size = selectSize(x, y);
+          w = size.w;
+          h = size.h;
 
-          state.grid[yy * state.cols + xx] = `filled-${photo.id}`;
+          if (w === 1 && h === 2) {
+            let target = state.grid[idx+state.cols];
+            if (target === "empty" || (state.currentPhotos[target] && state.currentPhotos[target].width === 1 && state.currentPhotos[target].height === 1)) {
+              success = true;
+              break;
+            }
+          } else if (w === 2 && h === 1) {
+            let target = state.grid[idx+1];
+            if (target === "empty" || (state.currentPhotos[target] && state.currentPhotos[target].width === 1 && state.currentPhotos[target].height === 1)) {
+              success = true;
+              break;
+            }
+          } else if (w === 2 && h === 2) {
+            let fail = false;
+            for (let i = x; i < x + w; i++) for (let j = y; j < y + h; j++) {
+              let target = state.grid[j * state.cols + i];
+              if (target === "empty") continue;
+              if (!state.currentPhotos[target] || state.currentPhotos[target].width > 1 || state.currentPhotos[target].height > 1) {
+                fail = true;
+                break;
+              }
+            }
+            if (!fail) {
+              success = true;
+              break;
+            }
+          }
         }
 
-        state.grid[y * state.cols + x] = photo.id;
+        if (!success) {
+          w = 1;
+          h = 1;
+        }
+      } else {
+        x = Math.floor(Math.random() * state.cols);
+        y = Math.floor(Math.random() * state.rows);
+        let size = selectSize(x, y);
+        w = size.w;
+        h = size.h;
       }
+
+      for (let xx = x; xx < x + w; xx++) for (let yy = y; yy < y + h; yy++) {
+        let current = state.grid[yy * state.cols + xx];
+        if (current !== "empty") {
+          let curImgId = current.startsWith("filled-") ? current.substring(7) : current;
+          let curImg = state.currentPhotos[curImgId];
+          for (let i = curImg.x; i < curImg.x + curImg.width; i++)
+            for (let j = curImg.y; j < curImg.y + curImg.height; j++)
+              state.grid[j * state.cols + i] = 'empty';
+
+          delete state.currentPhotos[curImgId];
+        }
+
+        state.grid[yy * state.cols + xx] = `filled-${photo.id}`;
+      }
+
+      state.grid[y * state.cols + x] = photo.id;
+      state.currentPhotos[photo.id] = { photo, x, y, width: w, height: h };
       break;
     case "start":
       if (state.cron) break;
-      state.cron = setInterval(action.iter, 5000);
+      state.cron = setInterval(action.iter, 500);
 
       break;
     case "stop":

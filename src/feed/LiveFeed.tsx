@@ -40,8 +40,10 @@ const LiveFeed: React.FC = () => {
   // Compute grid size
   const [cols, rows, rowHeight] = useMemo(() => {
     let cols = Math.floor((window.innerWidth - 8) / 240);
-    let rowHeight = (window.innerHeight - 8) / cols - 4;
-    let rows = Math.floor((window.innerHeight - 8) / rowHeight);
+    let colWidth = window.innerHeight / cols;
+
+    let rowHeight = colWidth / 4 * 3;
+    let rows = Math.round((window.innerHeight - 8) / rowHeight);
     rowHeight = (window.innerHeight - 8) / rows - (rows - 1) * 4 / rows;
     return [cols, rows, rowHeight];
   }, []);
@@ -90,7 +92,7 @@ const LiveFeed: React.FC = () => {
       shuffleArray(photos);
 
       // @ts-ignore
-      photos.slice(0, Math.min(10, photos.length)).forEach(photo => addToQueue(photo));
+      photos.slice(0, Math.min(20, photos.length)).forEach(photo => addToQueue(photo));
 
       setLoading(false);
     });
@@ -128,7 +130,7 @@ const LiveFeed: React.FC = () => {
         >
           {(gridList as any).map((photoId, index) => (
             <ImageListItem
-              key={photoId ? photoId : index}
+              key={photoId ? `${photoId}-${index}` : index}
               rows={photoId ? gridPhotos[photoId].height : 1}
               cols={photoId ? gridPhotos[photoId].width : 1}
             >
