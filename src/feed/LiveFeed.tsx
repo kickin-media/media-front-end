@@ -40,10 +40,11 @@ const LiveFeed: React.FC = () => {
   // Compute grid size
   const [cols, rows, rowHeight] = useMemo(() => {
     let cols = Math.floor((window.innerWidth - 8) / 240);
-    let colWidth = window.innerHeight / cols;
+    cols = Math.min(9, cols);
+    let colWidth = window.innerWidth / cols - 4 * cols - 4;
 
-    let rowHeight = colWidth / 4 * 3;
-    let rows = Math.round((window.innerHeight - 8) / rowHeight);
+    let rowHeight = colWidth / 4 * 3 + 4;
+    let rows = Math.ceil((window.innerHeight - 4) / rowHeight);
     rowHeight = (window.innerHeight - 8) / rows - (rows - 1) * 4 / rows;
     return [cols, rows, rowHeight];
   }, []);
