@@ -172,7 +172,7 @@ const feedReducer: React.Reducer<FeedType, FeedActionType> = (state, action) => 
       break;
     case "start":
       if (state.cron) break;
-      state.cron = setInterval(action.iter, 500);
+      state.cron = setInterval(action.iter, 4000);
 
       break;
     case "stop":
