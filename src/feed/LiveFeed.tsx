@@ -40,7 +40,8 @@ const LiveFeed: React.FC = () => {
   // Compute grid size
   const [cols, rows, rowHeight] = useMemo(() => {
     let cols = Math.floor((window.innerWidth - 8) / 240);
-    cols = Math.min(9, cols);
+    cols = Math.min(9, cols); // Maximal 9 columns
+    cols = Math.max(2, cols); // Minimal 2 columns
     let colWidth = window.innerWidth / cols - 4 * cols - 4;
 
     let rowHeight = colWidth / 4 * 3 + 4;
