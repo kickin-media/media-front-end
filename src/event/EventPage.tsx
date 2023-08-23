@@ -77,8 +77,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     ? null
     : albums
       .filter(album => canViewHidden
-        || (album.photosCount > 0
-          && !(album.releaseTime !== null && new Date(album.releaseTime).getTime() > new Date().getTime()))),
+        || album.photosCount > 0),
     [albums, canViewHidden]);
 
   const sorted = useMemo(() => filtered === null

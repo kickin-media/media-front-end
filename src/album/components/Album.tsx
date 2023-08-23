@@ -6,7 +6,6 @@ import { relativeDate } from "../../util/date";
 
 import { AlbumType } from "../../redux/reducers/album";
 
-import Badge from '@mui/material/Badge';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from "@mui/material/Typography";
@@ -20,6 +19,10 @@ const Album: React.FC<Props> = ({ album }) => {
   const storedLastSeen = album ? window.localStorage.getItem(`album-${album.id}`) : null;
   const isNew = album && storedLastSeen && parseInt(storedLastSeen.split(" ")[1]) < album.photosCount;
 
+  const timeDiff = album && album.releaseTime
+    ? album.releaseTime.getTime() - new Date().getTime()
+    : null;
+
   return album ? (
     <Stack
       onClick={(e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -28,24 +31,26 @@ const Album: React.FC<Props> = ({ album }) => {
       }}
       component="a"
       href={`/album/${album.id}/${slugify(album.name).toLowerCase()}`}
-      className={classes.album}
+      className={clsx(classes.album, {[classes.timer]: timeDiff && timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000})}
       spacing={1}
     >
-      <Badge
-        className={clsx({
-          [classes.future]: album.releaseTime !== null && album.releaseTime.getTime() >= new Date().getTime(),
-          [classes.secret]: album.hiddenSecret !== null && album.hiddenSecret !== undefined
-        })}
-        invisible={!isNew}
-        color="warning"
-        variant="dot"
-      >
+      <div className={clsx(classes.cover, {
+        [classes.future]: timeDiff && timeDiff >= 24 * 60 * 60 * 1000,
+        [classes.secret]: album.hiddenSecret !== null && album.hiddenSecret !== undefined
+      })}>
         {album.coverPhoto && album.coverPhoto.uploadProcessed
           ? (<img src={album.coverPhoto.imgUrls.medium} alt="" />)
           : (<Skeleton variant="rectangular" width={240} height={160} />)}
 
+        {timeDiff && timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000 && (
+          <span className={classes.timer}>
+            {(album.releaseTime as Date).getDate() === new Date().getDate() ? "Today" : "Tomorrow"}<br />
+            {`${(album.releaseTime as Date).getHours().toString().padStart(2, '0')}:${(album.releaseTime as Date).getMinutes().toString().padStart(2, '0')}`}
+          </span>
+        )}
+
         {isNew && <NewReleases />}
-      </Badge>
+      </div>
 
       <Typography variant="body1"><strong>{album.name}</strong></Typography>
       <Typography variant="caption">{relativeDate(album.timestamp)} • {album.photosCount} photos</Typography>

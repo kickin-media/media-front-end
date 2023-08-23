@@ -14,16 +14,19 @@
     object-fit: cover;
   }
 
-  > span:first-child {
-    width: unset !important;
+  &.timer {
+    pointer-events: none;
+  }
+
+  &.timer .cover {
+    filter: grayscale(1) opacity(0.8);
+  }
+
+  .cover {
+    width: 100%;
     height: unset !important;
     aspect-ratio: 1.5;
-
-    span:first-child {
-      width: unset !important;
-      height: unset !important;
-      aspect-ratio: 1.5;
-    }
+    position: relative;
 
     img {
       width: 100%;
@@ -31,14 +34,41 @@
       object-fit: cover;
     }
 
-    //span {
-    //  top: 0.5rem;
-    //  right: 0.5rem;
-    //  //width: 12px;
-    //  //height: 12px;
-    //  border-radius: 50%;
-    //  background-color: white;
-    //}
+    .timer {
+      width: 100%;
+      height: 100%;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 50;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: black;
+      font-size: 2rem;
+      line-height: 2rem;
+
+      //filter: contrast(0) brightness(500) contrast(100) drop-shadow(0px 1px 10px rgba(0,0,0,0.12));
+      filter: contrast(0) brightness(500) contrast(100) drop-shadow(0px 0px 2px rgba(0,0,0,1));
+    }
+
+    .timer::before {
+      content: '';
+      width: 3rem;
+      height: 3rem;
+      display: block;
+
+      margin-right: 0.5rem;
+      margin-bottom: 0.2rem;
+
+      background-image: url('../../res/graphics/clock-outline.svg');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
 
     svg {
       color: white;
@@ -55,31 +85,10 @@
       from {transform: translate(-125%, 25%) rotate(-5deg);}
       to {transform: translate(-125%, 25%) rotate(5deg);}
     }
-
-    span:last-child {
-      display: none;
-    }
   }
 }
 
-.album .secret::after {
-  content: '';
-  width: 100%;
-  height: 100%;
-  display: block;
-
-  position: absolute;
-  left: 0;
-
-  background-color: rgba(0, 0, 0, 0.5);
-  mask-image: url('../../res/graphics/eye-off.svg');
-  mask-mode: alpha;
-  mask-position: center;
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-type: alpha;
-}
-
+.album .secret::after,
 .album .future::after {
   content: '';
   width: 100%;
@@ -87,15 +96,23 @@
   display: block;
 
   position: absolute;
+  top: 0;
   left: 0;
 
   background-color: rgba(0, 0, 0, 0.5);
-  mask-image: url('../../res/graphics/clock-outline.svg');
   mask-mode: alpha;
   mask-position: center;
   mask-repeat: no-repeat;
   mask-size: contain;
   mask-type: alpha;
+}
+
+.album .secret::after {
+  mask-image: url('../../res/graphics/eye-off.svg');
+}
+
+.album .future::after {
+  mask-image: url('../../res/graphics/clock-outline.svg');
 }
 
 .placeholder > span:first-child {
