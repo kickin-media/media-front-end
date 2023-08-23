@@ -21,6 +21,7 @@ import PhotoSizeSelectSmall from "@mui/icons-material/PhotoSizeSelectSmall";
 import RawOn from "@mui/icons-material/RawOn";
 
 import classes from "../components/Lightbox.module.scss";
+import slugify from "slugify";
 
 const LightboxDownloadMenu: React.FC<Props> = ({ photo, albumName }) => {
   const [open, setOpen] = useState<null | HTMLElement>(null);
@@ -34,7 +35,7 @@ const LightboxDownloadMenu: React.FC<Props> = ({ photo, albumName }) => {
   // Download
   const onDownload = (url: string) => (e) => {
     trackEvent('download', photo.id);
-    downloadPhoto(photo.id, url);
+    downloadPhoto(photo.id, url, photo?.author.name);
     setOpen(null);
     e.stopPropagation();
     e.preventDefault();
@@ -48,17 +49,17 @@ const LightboxDownloadMenu: React.FC<Props> = ({ photo, albumName }) => {
     dispatch(photoActions.getOriginal(photo.id))
       .then((res: AnyAction) => {
         if (res.type !== photoActions.getOriginal.success) return Promise.reject();
-        return downloadPhoto(photo.id, res.response.downloadUrl);
+        return downloadPhoto(photo.id, res.response.downloadUrl, photo?.author.name);
       });
   };
-  const downloadPhoto = (photoId: string, url: string) => fetch(url)
+  const downloadPhoto = (photoId: string, url: string, author: string) => fetch(url)
     .then((res: Response) => res.blob())
     .then((blob: Blob) => URL.createObjectURL(blob))
     .then((url: string) => {
       const root = document.getElementsByClassName(classes.root)[0];
       const anchor = document.createElement('a');
       anchor.href = url;
-      anchor.download = `${albumName}-${photoId}.jpg`;
+      anchor.download = `${albumName}--${slugify(author)}--${photoId}.jpg`;
       anchor.className = classes.download;
 
       root.appendChild(anchor);
