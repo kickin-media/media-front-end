@@ -120,14 +120,26 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
         ampmInClock={true}
         label="Date"
         value={values.timestamp}
-        onChange={date => setValues({ ...values, timestamp: date as Date })}
+        onChange={date => {
+          if (!date) {
+            setValues({ ...values, timestamp: date as any });
+            return;
+          }
+          date.setSeconds(0);
+          date.setMilliseconds(0);
+          setValues({ ...values, timestamp: date });
+        }}
       />
 
       <FormControlLabel
         control={
           <Switch
             checked={values.secret}
-            onChange={() => setValues({ ...values, secret: !values.secret })}
+            onChange={() => setValues({
+              ...values,
+              secret: !values.secret,
+              release: null
+            })}
           />
         }
         label="Is secret album"
@@ -142,7 +154,8 @@ const AlbumForm: React.FC<Props> = ({ albumId, reference, onSubmit }) => {
               ...values,
               release: values.release === null
                 ? new Date(values.timestamp.getTime() + 1000 * 60 * 60 * 24)
-                : null
+                : null,
+              secret: false
             })}
           />}
           label="Enable scheduled release"
