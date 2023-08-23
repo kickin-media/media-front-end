@@ -36,7 +36,7 @@ import Breadcrumb from "./Breadcrumb";
 const menu: { label: string, target: string, icon?: React.ReactNode }[] = [
   {label: 'Home', target: '/', icon: <HomeIcon />},
   {label: 'Events', target: '/event/', icon: <AlbumIcon />},
-  {label: 'Feed', target: '/feed/', icon: <AlbumIcon />},
+  // {label: 'Feed', target: '/feed/', icon: <AlbumIcon />},
   // {label: 'Media Crew', target: '/media/', icon: <InfoIcon />},
 ];
 
