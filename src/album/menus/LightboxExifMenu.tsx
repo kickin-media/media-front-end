@@ -50,6 +50,8 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
     SHUTTER_PRIORITY: 'Shutter Priority',
   }
 
+  console.log(photo.exif)
+
   const PhotoInfo = () => photo.exif ? (
     <List>
       <InfoItem icon={<Camera />} name="Camera body" value={photo.exif.model} />
@@ -70,7 +72,9 @@ const LightboxExifMenu: React.FC<Props> = ({ photo }) => {
       <InfoItem icon={<ShutterSpeed />} name="Shutter speed"
                 value={photo.exif.shutterSpeedValue
                   ? '1 / ' + Math.pow(2, parseFloat(photo.exif.shutterSpeedValue)).toFixed(0)
-                  : undefined} />
+                  : photo.exif.exposureTime
+                    ? '1 / ' + (1 / parseFloat(photo.exif.exposureTime)).toFixed(0)
+                    : undefined } />
       <InfoItem icon={<Iso />} name="ISO" value={photo.exif.photographicSensitivity} />
       <InfoItem icon={<Flash />} name="Flash"
                 value={photo.exif.flash

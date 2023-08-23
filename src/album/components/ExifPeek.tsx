@@ -36,7 +36,9 @@ const ExifPeek: React.FC<Props> = ({ photo, onClick }) => {
       <InfoItem icon={<ShutterSpeed />}
                 value={photo.exif.shutterSpeedValue
                   ? '1 / ' + Math.pow(2, parseFloat(photo.exif.shutterSpeedValue)).toFixed(0)
-                  : undefined} />
+                  : photo.exif.exposureTime
+                    ? '1 / ' + (1 / parseFloat(photo.exif.exposureTime)).toFixed(0)
+                    : undefined} />
       <InfoItem icon={<Iso />} value={photo.exif.photographicSensitivity} />
     </>
   );
