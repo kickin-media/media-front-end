@@ -53,9 +53,7 @@ const EventPage: React.FC<Props> = ({ eventId }) => {
     : null, shallowEqual);
 
   const canViewHidden = useSelector((state: StateType) => state.auth.authenticated
-    && (state.auth.scopes.includes('albums:manage')
-      || state.auth.scopes.includes('photos:upload')
-      || state.auth.scopes.includes('events:manage')));
+    && state.auth.scopes.includes('albums:read_hidden'));
 
   const canCrud = useSelector((state: StateType) => state.auth.authenticated
     && state.auth.scopes.includes('events:manage'));
