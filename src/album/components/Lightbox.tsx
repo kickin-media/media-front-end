@@ -84,13 +84,15 @@ const Lightbox: React.FC<Props> = ({ open, album, photos, startId, onChange, onC
   });
 
   // Register photo views
+  const isLoggedIn = useSelector((state: StateType) => state.auth.authenticated);
   const curPhotoId = useMemo(() => index < photos.length ? photos[index].id : null, [index, photos]);
   useEffect(() => {
     if (!open) return;
     if (curPhotoId === null) return;
+    if (isLoggedIn) return;
 
     dispatch(actions.increaseViewCount(curPhotoId));
-  }, [dispatch, open, curPhotoId]);
+  }, [dispatch, open, curPhotoId, isLoggedIn]);
 
   const canSeeViewCount = useSelector((state: StateType) =>
     state.auth.authenticated

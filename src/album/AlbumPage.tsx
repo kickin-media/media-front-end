@@ -84,6 +84,7 @@ const AlbumPage: React.FC = () => {
     ? album.photos.map(photo => state.photo[photo])
     : [], shallowEqual);
 
+  const isLoggedIn = useSelector((state: StateType) => state.auth.authenticated);
   const uid = useSelector((state: StateType) => state.auth.authenticated ? state.auth.user.sub : 'nonexisting');
 
   const canUpload = useSelector((state: StateType) =>
@@ -156,8 +157,9 @@ const AlbumPage: React.FC = () => {
   const effectiveId = useMemo(() => album ? album.id : null, [album]);
   useEffect(() => {
     if (effectiveId === null) return;
+    if (isLoggedIn) return;
     dispatch(actions.increaseViewCount(effectiveId));
-  }, [dispatch, effectiveId]);
+  }, [dispatch, effectiveId, isLoggedIn]);
 
   const [shareDialog, setShareDialog] = useState<boolean>(false);
 
