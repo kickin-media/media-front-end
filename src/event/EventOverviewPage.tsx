@@ -6,9 +6,6 @@ import { StateType } from "../redux/reducers/reducers";
 import * as actions from '../redux/actions/event';
 
 import Event from './components/Event';
-import Typography from "@mui/material/Typography";
-
-import Timeline from '@mui/icons-material/Timeline';
 
 import classes from './EventOverviewPage.module.scss';
 import { BreadcrumbContext } from "../components/ui/Breadcrumb";
@@ -40,7 +37,7 @@ const EventOverviewPage: React.FC = () => {
   return (
     <div className={classes.list}>
       {sortedEvents.map(event => (
-        <Event key={event.id} event={event} />
+        <Event key={event.id} event={event}/>
       ))}
     </div>
   );
