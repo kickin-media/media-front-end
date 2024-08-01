@@ -26,8 +26,8 @@ jobs:
 
       - name: Build front-end
         run: |
-          yarn install
-          REACT_APP_API_ENV=${{ matrix.environment }} yarn run build
+          npm install
+          npm run ng -- build kick-in
 
       - name: Deploy front-end to S3
         uses: jakejarvis/s3-sync-action@master
@@ -38,7 +38,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-west-1
-          SOURCE_DIR: build
+          SOURCE_DIR: dist/kick-in/browser
 
       - name: Invalidate front-end cache
         uses: chetan/invalidate-cloudfront-action@v2

@@ -44,7 +44,8 @@ export class EventPageComponent {
   ) {
     this.albums$ = this.eventService.albums.data$.pipe(
       map(albums => {
-        const categorized = groupBy()
+        // const categorized = groupBy()
+        return {};
       }),
     );
     eventService.id$.subscribe(console.log);

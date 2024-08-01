@@ -5,7 +5,7 @@ import { Config } from "./config";
 
 export * from "./config";
 
-export const bootstrapMediaApp = (config: Config) => {
+export const bootstrapMediaApp = (config: Config<any>) => {
   bootstrapApplication(AppComponent, createAngularConfig(config))
     .catch((err) => console.error(err));
 };
