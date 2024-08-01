@@ -1,72 +1,46 @@
 {
-  "name": "media-front-end",
-  "version": "0.1.0",
+  "name": "media-tool",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve kick-in",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "api-spec": "openapi-typescript https://api.dev.kick-in.media/openapi.json -o src/util/back-end.d.ts"
+  },
   "private": true,
   "dependencies": {
-    "@emotion/react": "^11.4.1",
-    "@emotion/styled": "^11.3.0",
-    "@mui/icons-material": "^5.0.3",
-    "@mui/lab": "^5.0.0-alpha.63",
-    "@mui/material": "^5.0.3",
-    "@mui/x-date-pickers": "^5.0.0-beta.2",
-    "@reduxjs/toolkit": "^1.6.1",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "auth0-js": "^9.17.0",
-    "browser-image-resizer": "^2.2.1",
-    "date-fns": "^2.28.0",
-    "exif-parser": "^0.1.12",
-    "normalizr": "^3.6.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-redux": "^7.2.5",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "5.0.1",
-    "react-swipeable-views": "^0.14.0",
-    "react-swipeable-views-utils": "^0.14.0",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.3.0",
-    "sass": "^1.42.1",
-    "slugify": "^1.6.5",
-    "timers-browserify": "^2.0.12",
-    "typescript": "^4.4.2",
-    "web-vitals": "^2.1.0"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@angular/animations": "^18.1.0",
+    "@angular/cdk": "^18.1.1",
+    "@angular/common": "^18.1.0",
+    "@angular/compiler": "^18.1.0",
+    "@angular/core": "^18.1.0",
+    "@angular/forms": "^18.1.0",
+    "@angular/material": "^18.1.1",
+    "@angular/platform-browser": "^18.1.0",
+    "@angular/platform-browser-dynamic": "^18.1.0",
+    "@angular/router": "^18.1.0",
+    "@auth0/auth0-angular": "^2.2.3",
+    "browser-image-resizer": "^2.4.1",
+    "rxjs": "~7.8.0",
+    "slugify": "^1.6.6",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.14.3"
   },
   "devDependencies": {
-    "@types/auth0-js": "^9.14.5",
-    "@types/react-router-dom": "^5.3.0",
-    "@types/react-swipeable-views": "^0.13.1",
-    "@types/react-swipeable-views-utils": "^0.13.3",
-    "@types/redux-logger": "^3.0.9",
-    "yarn-audit-fix": "^9.3.2"
+    "@angular-devkit/build-angular": "^18.1.0",
+    "@angular/cli": "^18.1.0",
+    "@angular/compiler-cli": "^18.1.0",
+    "@types/jasmine": "~5.1.0",
+    "jasmine-core": "~5.1.0",
+    "karma": "~6.4.0",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.0",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^18.1.0",
+    "openapi-typescript": "^7.0.2",
+    "typescript": "~5.5.2"
   }
 }

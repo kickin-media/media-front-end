@@ -1,0 +1,10 @@
+<title-section title="Events">
+  <button mat-stroked-button (click)="createEvent()">
+    <mat-icon>add</mat-icon>
+    NEW
+  </button>
+</title-section>
+
+<cdk-virtual-scroll-viewport scrollWindow [itemSize]="308" appendOnly>
+  <event *cdkVirtualFor="let item of dataSource" [event]="item.event" [albums]="item.albums" />
+</cdk-virtual-scroll-viewport>

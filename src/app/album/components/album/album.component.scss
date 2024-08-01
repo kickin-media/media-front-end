@@ -1,0 +1,43 @@
+a {
+  display: block;
+  width: 100%;
+  height: fit-content;
+
+  color: black;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.cover-photo {
+  // Optimal size (flexible width):
+  //    width: (1000px - 3 * 1 rem) / 4   = 15rem
+  //    height: width / 3 * 2             = 10rem
+  height: 10rem;
+
+  position: relative;
+
+  background-color: rgba(0, 0, 0, 0.1);
+
+  img {
+    pointer-events: none;
+    object-fit: cover;
+  }
+}
+
+h4, span.detail {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+h4 {
+  width: 100%;
+
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+span.detail {
+  font-size: .875rem;
+  font-weight: 300;
+}

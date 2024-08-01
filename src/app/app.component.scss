@@ -1,0 +1,170 @@
+@use "@angular/material" as mat;
+
+:host {
+  min-height: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  // Width optimized to fit 4 albums next to each other in the overview with 1rem gaps:
+  //    4 * 15rem + 3rem = 63rem = 1008px
+  width: min(100% - 2rem, 1008px);
+  margin: 0 auto;
+}
+
+mat-toolbar {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+
+  padding: 0;
+
+  background: var(--primary-transparent);
+  border-bottom: 1px solid var(--primary-transparent);
+  backdrop-filter: blur(20px);
+}
+
+nav {
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  filter: drop-shadow(1px 1px 1px black);
+
+  .menu-toggle {
+    display: none;
+  }
+
+  a.logo {
+    height: 70%;
+
+    img {
+      height: 100%;
+    }
+  }
+
+  a, button, mat-icon {
+    color: white;
+  }
+
+  span.spacing {
+    flex-grow: 1;
+  }
+
+  div.menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @media (max-width: 400px) {
+    position: relative;
+
+    a.logo {
+      position: absolute;
+      right: 50%;
+      transform: translateX(50%);
+    }
+
+    div.menu, .spacing {
+      display: none;
+    }
+
+    .menu-toggle {
+      display: inline;
+    }
+  }
+}
+
+div#nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.75);
+
+  img {
+    height: 6rem;
+    margin-bottom: 1rem;
+  }
+
+  a {
+    color: var(--primary);
+  }
+
+  button, mat-icon {
+    color: var(--secondary);
+  }
+
+  button {
+    margin-top: 1rem;
+  }
+}
+
+#content {
+  margin-top: 4rem;
+  flex-grow: 1;
+}
+
+#footer-wrapper {
+  width: 100%;
+
+  background-color: var(--primary);
+}
+
+#footer {
+  padding: 1rem;
+
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+
+  img {
+    height: 6rem;
+  }
+
+  > div {
+    flex-basis: 300px;
+    flex-grow: 1;
+    flex-shrink: 1;
+
+    color: #eee;
+
+    a { color: white; }
+  }
+}
+
+#credits-wrapper {
+  width: 100%;
+
+  background-color: var(--primary-dark);
+}
+
+#credits {
+  padding: 0.5rem 0;
+
+  color: #ddd;
+  font-size: .75rem;
+  font-weight: 100;
+  text-align: center;
+
+  a {
+    color: #eee;
+  }
+}

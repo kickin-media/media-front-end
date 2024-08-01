@@ -1,0 +1,110 @@
+<mat-toolbar>
+  <nav class="container">
+    <button mat-icon-button class="menu-toggle" (click)="menu.set(true)">
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <a routerLink="/" class="logo">
+      <!--suppress AngularNgOptimizedImage -->
+      <img [src]="config.config.logo" alt="{{ config.config.title }} logo" />
+    </a>
+
+    <span class="spacing"></span>
+
+    <div class="menu">
+      <a
+        *ngFor="let link of menuLinks"
+        [routerLink]="link.url"
+        mat-button
+      >
+        {{ link.title.toUpperCase() }}
+      </a>
+
+      <button
+        *ngIf="!(account.user$ | async)"
+        mat-icon-button
+        (click)="account.login()"
+      >
+        <mat-icon>account_circle</mat-icon>
+      </button>
+
+      <button
+        *ngIf="account.user$ | async as user"
+        mat-stroked-button
+        (click)="account.logout()"
+      >
+        {{ user.name }}
+      </button>
+    </div>
+  </nav>
+</mat-toolbar>
+
+<div id="nav-overlay" *ngIf="menu()">
+  <!--suppress AngularNgOptimizedImage -->
+  <img [src]="config.config.logo" alt="{{ config.config.title }} logo" />
+
+  <a
+    *ngFor="let link of menuLinks"
+    [routerLink]="link.url"
+    mat-button
+  >
+    {{ link.title.toUpperCase() }}
+  </a>
+
+  <button
+    *ngIf="!(account.user$ | async)"
+    mat-icon-button
+    (click)="account.login()"
+  >
+    <mat-icon>account_circle</mat-icon>
+  </button>
+
+  <button
+    *ngIf="account.user$ | async as user"
+    mat-stroked-button
+    (click)="account.logout()"
+  >
+    {{ user.name }}
+  </button>
+
+  <button mat-button (click)="menu.set(false)">
+    <mat-icon>close</mat-icon> CLOSE MENU
+  </button>
+</div>
+
+<div id="content" class="container">
+  <router-outlet />
+</div>
+
+<div id="footer-wrapper">
+  <div id="footer" class="container">
+    <!--suppress AngularNgOptimizedImage -->
+    <img [src]="config.config.logo" alt="{{ config.config.title }} logo" />
+
+    <div>
+      <b>{{ config.config.title }} Media App</b><br />
+      Photos are copyrighted by their respective authors; contact the
+      <a href="mailto:{{ config.config.contact.email }}">{{ config.config.contact.name }}</a>
+      if you want to use one of these photos.
+      <br />
+      <br />
+      <a [href]="config.config.website">{{ config.config.title }} website</a>
+      <br />
+      <br />
+      If you want to have a photo removed, please send an e-mail to the
+      <a href="mailto:{{ config.config.contact.email }}">{{ config.config.contact.name }}</a>.
+    </div>
+  </div>
+</div>
+
+<div id="credits-wrapper">
+  <div id="credits" class="container">
+    {{ config.config.title }} Media App
+    <em>
+      &copy; 2024
+      <a href="https://hello.jonathanj.nl/">Jonathan Juursema</a>
+      &amp;
+      <a href="https://github.com/jeffreybakker">Jeffrey Bakker</a>
+    </em>
+  </div>
+</div>

@@ -1,0 +1,26 @@
+:host {
+  width: 100%;
+
+  margin-top: 1rem;
+
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.breadcrumb {
+  width: 100%;
+}
+
+h1 {
+  margin: 0;
+}
+
+.actions {
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

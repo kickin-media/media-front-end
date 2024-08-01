@@ -1,0 +1,22 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+@use "./kick-in.scssm3-theme";
+
+@include mat.core();
+
+html {
+  @include mat.core-theme(kick-in.$theme);
+  @include mat.all-component-themes(kick-in.$theme);
+
+  @include kick-in.theme-colors();
+}
+
+@include mat.typography-hierarchy(kick-in.$theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* { box-sizing: border-box; }
+
+.secondary-button {
+  @include mat.button-color(kick-in.$theme, $color-variant: secondary);
+}

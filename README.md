@@ -1,25 +1,27 @@
-# Kick-In Media Front-end
-_Front-end for the Kick-In Media App. Communicates with the corresponding back-end
-in this GitHub organization._
+# MediaTool
 
-#### Requirements
+This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.1.0.
 
-- [Back-end](https://github.com/kickin-media/media-back-end/)
-- [Auth0 App Token](https://auth0.com/)
-- [yarn](https://yarnpkg.com/)
-- [NodeJS](https://nodejs.org/en/) _(developed on NodeJS v18.7.0)_
+## Development server
 
-## Usage
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-#### 1. Installing packages
-Use `yarn install` in order to install all the requirements locally.
+## Code scaffolding
 
-#### 2. Run development instance
-Run a local development instance with `npm start`.
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
-#### 3. Create production build
-Create a production-ready build with `npm run build`, the application accepts the
-following environment variables:
-- `REACT_APP_API_ENV=<"prod" | string>`
-  Specifies which API environment the front-end should use for its communication
-  with the back-end.
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+
+## Running unit tests
+
+Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+
+## Running end-to-end tests
+
+Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+
+## Further help
+
+To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

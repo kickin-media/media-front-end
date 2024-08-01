@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>
+  @if (data.event) { Edit } @else { Create } event
+</h2>
+
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput [formControl]="nameField" />
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Start date</mat-label>
+    <input matInput [matDatepicker]="picker" />
+    <mat-hint>DD/MM/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker" />
+    <mat-datepicker #picker />
+  </mat-form-field>
+
+  <h4>Watermark</h4>
+  <mat-hint>
+    Upload a custom watermark to overlay on all images uploaded to this event.
+    If none is set, a generic watermark will be used.
+  </mat-hint>
+  <div class="watermark">
+    <div class="preview">
+      <!--suppress AngularNgOptimizedImage -->
+      <img
+        *ngIf="preview$ | async as url"
+        [src]="url"
+        alt=""
+      />
+    </div>
+
+    <button-group *ngIf="preview$ | async">
+      <button
+        mat-stroked-button
+        (click)="upload.click()"
+        class="secondary-button"
+      >
+        <mat-icon>upload</mat-icon>
+        UPLOAD
+      </button>
+      <button
+        mat-stroked-button
+        (click)="watermarkField.setValue(false)"
+        class="secondary-button icon-button"
+      >
+        <mat-icon>delete</mat-icon>
+      </button>
+    </button-group>
+
+    <button
+      mat-flat-button
+      *ngIf="!(preview$ | async)"
+      (click)="upload.click()"
+      class="secondary-button"
+    >
+      <mat-icon>upload</mat-icon>
+      UPLOAD
+    </button>
+
+    <input
+      #upload
+      type="file"
+      accept="image/png"
+      (change)="onUpload($event)"
+    />
+  </div>
+
+  <h4>Lock event</h4>
+  <mat-hint>
+    Locking an event prevents users from uploading new pictures or creating new
+    albums. This setting may be undone at any time.
+  </mat-hint>
+  <mat-checkbox [formControl]="lockField">Is locked</mat-checkbox>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button [matDialogClose]="null">CANCEL</button>
+  <button mat-flat-button [disabled]="!canSubmit()" (click)="submit()">SAVE</button>
+</mat-dialog-actions>

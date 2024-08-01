@@ -1,0 +1,21 @@
+<title-section [title]="(eventService.event.data$ | async)?.name">
+  <button mat-stroked-button>
+    <mat-icon>add</mat-icon>
+    ALBUM
+  </button>
+
+  <button mat-icon-button [matMenuTriggerFor]="eventMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #eventMenu="matMenu">
+    <button mat-menu-item (click)="editEvent()"><mat-icon>edit</mat-icon>EDIT EVENT</button>
+    <button mat-menu-item (click)="deleteEvent()"><mat-icon>delete</mat-icon>DELETE EVENT</button>
+  </mat-menu>
+</title-section>
+
+<div
+  *ngIf="eventService.albums.data$ | async as albums"
+  class="album-list"
+>
+  <p *ngFor="let album of albums">{{ album.name }}</p>
+</div>

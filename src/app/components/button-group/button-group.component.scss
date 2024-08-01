@@ -1,0 +1,16 @@
+:host ::ng-deep > button {
+  &:not(:first-child) {
+    padding-left: 1rem;
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  &:not(:last-child) {
+    padding-right: 1rem;
+
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

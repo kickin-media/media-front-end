@@ -1,0 +1,21 @@
+<a [routerLink]="getAlbumUrl()">
+  <div class="cover-photo">
+    <img
+      *ngIf="getCoverPhoto() as photoSrc"
+      [ngSrc]="photoSrc"
+      class="cover-photo"
+      alt=""
+      fill
+    />
+  </div>
+
+  @if (album !== undefined) {
+    <h4>{{ album.name }}</h4>
+    <span class="detail">
+      {{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos
+    </span>
+  } @else {
+    <h4><skeleton-line /></h4>
+    <span class="detail"><skeleton-line /></span>
+  }
+</a>

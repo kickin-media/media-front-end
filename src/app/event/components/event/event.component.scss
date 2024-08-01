@@ -1,0 +1,83 @@
+:host {
+  display: block;
+  padding-top: 1rem;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: normal;
+}
+
+h2 a {
+  color: black;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  mat-icon {
+    scale: 0.75;
+    transform: translateY(20%) translateX(-25%);
+  }
+}
+
+.albums {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+
+  album {
+    width: calc((100% - 3rem) / 4);
+  }
+
+  // Max width = container width = 1008px   (add 2rem for margins)
+  // (Optimal) album width = 15rem
+
+  // 3 albums: 3 * 15rem + 2 * 1rem = 47rem = 752px
+  @media (max-width: 912px) {
+    album {
+      width: calc((100% - 2rem) / 3);
+    }
+
+    album:nth-child(4) {
+      display: none;
+    }
+  }
+
+  // 2 albums: 2 * 15rem + 1 * 1rem = 31rem = 496px
+  @media (max-width: 656px) {
+    album {
+      width: calc((100% - 1rem) / 2);
+    }
+
+    album:nth-child(3) {
+      display: none;
+    }
+  }
+
+  // 1 albums: 1 * 15rem + 0 * 1rem = 15rem = 240px
+  @media (max-width: 400px) {
+    album {
+      width: 100%;
+    }
+
+    album:nth-child(2) {
+      display: none;
+    }
+  }
+}
+
+.actions {
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+[mat-button] mat-icon {
+  order: 10;
+  margin-right: 0;
+  margin-left: 0.5rem;
+
+  color: var(--primary)
+}

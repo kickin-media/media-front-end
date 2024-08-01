@@ -1,0 +1,23 @@
+<h2>
+  <a routerLink="/event/{{ event.id }}/{{ event.name | slug }}">
+    {{ event.name }}
+    <mat-icon>chevron_right</mat-icon>
+  </a>
+</h2>
+
+<div class="albums">
+  <album
+    *ngFor="let album of sortedAlbums"
+    [album]="album"
+  />
+</div>
+
+<div class="actions">
+  <a
+    mat-button
+    routerLink="/event/{{ event.id }}/{{ event.name | slug }}"
+  >
+    VIEW MORE
+    <mat-icon>chevron_right</mat-icon>
+  </a>
+</div>
