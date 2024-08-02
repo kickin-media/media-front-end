@@ -1,0 +1,46 @@
+:host {
+  width: 100%;
+
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  &::after {
+    --w: 2;
+    --h: 1;
+    content: '';
+    flex-grow: 1000000;
+  }
+}
+
+:host.select-mode a {
+  border-radius: 1rem;
+  transform: scale(0.95);
+  filter: opacity(0.5);
+}
+
+a, :host::after {
+  --ratio: calc(var(--w) / var(--h));
+  --row-height: 12rem;
+  flex-basis: calc(var(--ratio) * var(--row-height));
+
+  @media (max-width: 32rem) {
+    --row-height: 7rem;
+  }
+}
+
+a {
+  flex-grow: calc(var(--ratio) * 100);
+
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+
+  transition: filter ease 300ms, border-radius ease 300ms, transform ease 300ms;
+}
+
+img {
+  display: block;
+  width: 100%;
+
+  border-radius: inherit;
+}

@@ -1,0 +1,11 @@
+<a
+  *ngFor="let photo of photos"
+  style="--w: 100; --h: 100"
+>
+  <!--suppress AngularNgOptimizedImage -->
+  <img
+    [src]="photo.img_urls.small"
+    loading="lazy"
+    (load)="onImageLoad($event)"
+  />
+</a>

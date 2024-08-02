@@ -26,3 +26,5 @@
     <button mat-menu-item (click)="deleteAlbum()"><mat-icon>delete</mat-icon>DELETE ALBUM</button>
   </mat-menu>
 </title-section>
+
+<album-gallery [photos]="photos$ | async" [select]="null" />
