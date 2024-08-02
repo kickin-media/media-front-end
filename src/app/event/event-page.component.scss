@@ -1,0 +1,57 @@
+div.album-list {
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  h3 {
+    width: 100%;
+
+    margin-bottom: -0.5rem;
+
+    color: #444;
+    font-variant: small-caps;
+  }
+
+  album {
+    width: calc((100% - 3rem) / 4);
+  }
+
+  // Max width = container width = 1008px   (add 2rem for margins)
+  // (Optimal) album width = 15rem
+
+  // 3 albums: 3 * 15rem + 2 * 1rem = 47rem = 752px
+  @media (max-width: 912px) {
+    album {
+      width: calc((100% - 2rem) / 3);
+    }
+
+    album:nth-child(4) {
+      display: none;
+    }
+  }
+
+  // 2 albums: 2 * 15rem + 1 * 1rem = 31rem = 496px
+  @media (max-width: 656px) {
+    album {
+      width: calc((100% - 1rem) / 2);
+    }
+
+    album:nth-child(3) {
+      display: none;
+    }
+  }
+
+  // 1 albums: 1 * 15rem + 0 * 1rem = 15rem = 240px
+  @media (max-width: 400px) {
+    album {
+      width: 100%;
+    }
+
+    album:nth-child(2) {
+      display: none;
+    }
+  }
+}

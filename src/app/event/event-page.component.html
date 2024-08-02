@@ -1,5 +1,14 @@
-<title-section [title]="(eventService.event.data$ | async)?.name">
-  <button mat-stroked-button>
+<title-section
+  [breadcrumb]="[
+    { title: 'Events', url: '/event' },
+    {
+      title: (eventService.event.data$ | async)!.name,
+      url: '/event/' + (eventService.id$ | async) + '/' + ((eventService.event.data$ | async)!.name | slug)
+    },
+  ]"
+  [title]="(eventService.event.data$ | async)?.name"
+>
+  <button mat-stroked-button (click)="createAlbum()">
     <mat-icon>add</mat-icon>
     ALBUM
   </button>
@@ -14,8 +23,11 @@
 </title-section>
 
 <div
-  *ngIf="eventService.albums.data$ | async as albums"
+  *ngIf="albums$ | async as albums"
   class="album-list"
 >
-  <p *ngFor="let album of albums">{{ album.name }}</p>
+  <ng-container *ngFor="let index of getAlbumGroupIndices(albums)">
+    <h3 *ngIf="index">{{ configService.config.albums.groupName(index) }}</h3>
+    <album *ngFor="let album of albums[index]" [album]="album" />
+  </ng-container>
 </div>

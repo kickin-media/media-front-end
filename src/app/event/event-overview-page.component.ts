@@ -7,16 +7,17 @@ import {
   CdkVirtualScrollViewport
 } from "@angular/cdk/scrolling";
 import { EventComponent } from "./components/event/event.component";
-import { AsyncPipe } from "@angular/common";
+import { AsyncPipe, NgIf } from "@angular/common";
 import { TitleSectionComponent } from "../components/title-section/title-section.component";
-import { MatIcon, MatIconModule } from "@angular/material/icon";
-import { MatButton, MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
 import { EventOverviewDataSource } from "./lib/event-overview.datasource";
 import { MatDialog } from "@angular/material/dialog";
 import { EventDialogComponent } from "./components/event-dialog/event-dialog.component";
 import { Router } from "@angular/router";
 import { PhotoEvent } from "../../util/types";
 import slugify from "slugify";
+import { AccountService } from "../../services/account.service";
 
 @Component({
   selector: 'event-overview-page',
@@ -33,6 +34,7 @@ import slugify from "slugify";
 
     EventComponent,
     TitleSectionComponent,
+    NgIf,
   ],
   templateUrl: './event-overview-page.component.html',
   styleUrl: './event-overview-page.component.scss'
@@ -44,7 +46,7 @@ export class EventOverviewPageComponent {
   constructor(
     protected dialog: MatDialog,
     protected router: Router,
-
+    protected accountService: AccountService,
     protected eventService: EventService,
   ) {
     this.dataSource = new EventOverviewDataSource(eventService);

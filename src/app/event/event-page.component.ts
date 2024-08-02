@@ -5,13 +5,17 @@ import { TitleSectionComponent } from "../components/title-section/title-section
 import { EventService } from "../../services/api/event.service";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
-import { filter, first, map, Observable, of, switchMap } from "rxjs";
+import { filter, first, map, Observable, of, shareReplay, switchMap } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { EventDialogComponent, EventDialogProps } from "./components/event-dialog/event-dialog.component";
 import { Router } from "@angular/router";
-import { Album, EventDetailed } from "../../util/types";
-import { renderDate } from "../../util/timestamp.pipe";
+import { Album, AlbumDetailed, EventDetailed } from "../../util/types";
 import { ConfigService } from "../../services/config.service";
+import { groupBy } from "../../util/groupby";
+import { AlbumComponent } from "../album/components/album/album.component";
+import { AlbumDialogComponent } from "../album/components/album-dialog/album-dialog.component";
+import { SlugPipe } from "../../util/slug.pipe";
+import slugify from "slugify";
 
 @Component({
   selector: 'event-page',
@@ -26,6 +30,8 @@ import { ConfigService } from "../../services/config.service";
     MatMenuModule,
 
     TitleSectionComponent,
+    AlbumComponent,
+    SlugPipe,
   ],
   templateUrl: './event-page.component.html',
   styleUrl: './event-page.component.scss'
@@ -38,17 +44,41 @@ export class EventPageComponent {
   constructor(
     protected dialog: MatDialog,
     protected router: Router,
-
     protected configService: ConfigService,
     protected eventService: EventService,
   ) {
     this.albums$ = this.eventService.albums.data$.pipe(
-      map(albums => {
-        // const categorized = groupBy()
-        return {};
+      map((albums: Album[]) => albums.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())),
+      map((albums: Album[]) => groupBy(albums, configService.config.albums.groupIndex)),
+      map(groups => {
+        const albums = Object.values(groups).flatMap(albums => albums);
+        const albumsPerGroup = albums.length / Object.keys(groups).length;
+
+        if (albums.length > 10 && albumsPerGroup > 4) return groups;
+        else return ({ [""]: albums });
       }),
+      shareReplay(1),
     );
     eventService.id$.subscribe(console.log);
+  }
+
+  createAlbum() {
+    this.eventService.event.data$.pipe(
+      filter(event => event !== null),
+      first(),
+      switchMap(event => {
+        if (!event) return of(null);
+
+        const dialogRef = this.dialog.open(
+          AlbumDialogComponent,
+          { data: { event } as EventDialogProps }
+        );
+        return dialogRef.afterClosed() as Observable<AlbumDetailed | null>;
+      }),
+    ).subscribe(album => {
+      if (!album) return;
+      this.router.navigate([`/album/${album.id}/${slugify(album.name)}`]);
+    });
   }
 
   editEvent() {
@@ -59,7 +89,7 @@ export class EventPageComponent {
         if (!event) return of(null);
 
         const dialogRef = this.dialog.open(EventDialogComponent, { data: { event } as EventDialogProps });
-        return dialogRef.afterClosed() as Observable<EventDetailed | null>
+        return dialogRef.afterClosed() as Observable<EventDetailed | null>;
       }),
     ).subscribe(event => {
       if (!event) return;
@@ -78,6 +108,10 @@ export class EventPageComponent {
       if (!result) return;
       this.router.navigate(['/event']);
     });
+  }
+
+  protected getAlbumGroupIndices(groups: { [key: string]: Album[] }): string[] {
+    return Object.keys(groups).sort(this.configService.config.albums.groupSort);
   }
 
 }

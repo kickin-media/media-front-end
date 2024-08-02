@@ -1,0 +1,32 @@
+mat-dialog-content {
+  max-width: min(calc(100vw - 4rem), 500px);
+  min-width: min(calc(100vw - 4rem), 300px);
+
+  display: flex;
+  flex-direction: column;
+
+  > :first-child {
+    margin-top: 0.5rem;
+  }
+}
+
+h4 {
+  margin-bottom: 0;
+}
+
+:host mat-form-field ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  pointer-events: none;
+}
+
+.scheduled-hint {
+  margin-bottom: 0.5rem;
+}
+
+.reset {
+  position: absolute;
+  right: -0.75rem;
+  bottom: calc(-100% - 0.25rem);
+  z-index: 1000;
+
+  scale: 0.75;
+}

@@ -1,11 +1,14 @@
 import { Component, Input } from '@angular/core';
-import { NgIf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
+import { RouterLink } from "@angular/router";
 
 @Component({
   selector: 'title-section',
   standalone: true,
   imports: [
-    NgIf
+    NgIf,
+    NgForOf,
+    RouterLink
   ],
   templateUrl: './title-section.component.html',
   styleUrl: './title-section.component.scss'

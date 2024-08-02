@@ -24,6 +24,8 @@ h2 a {
 }
 
 .albums {
+  width: 100%;
+
   display: flex;
   flex-direction: row;
   gap: 1rem;

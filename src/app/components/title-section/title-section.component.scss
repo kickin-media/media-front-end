@@ -2,6 +2,7 @@
   width: 100%;
 
   margin-top: 1rem;
+  margin-bottom: 1rem;
 
   display: flex;
   align-items: flex-end;
@@ -11,6 +12,24 @@
 
 .breadcrumb {
   width: 100%;
+
+  a, span {
+    color: #777;
+    font-size: 0.875rem;
+    font-variant: small-caps;
+  }
+
+  a:hover {
+    color: #444;
+  }
+
+  a:last-child:not(:hover) {
+    text-decoration: none;
+  }
+
+  span {
+    margin: 0 0.25rem;
+  }
 }
 
 h1 {

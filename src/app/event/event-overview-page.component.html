@@ -1,10 +1,14 @@
 <title-section title="Events">
-  <button mat-stroked-button (click)="createEvent()">
+  <button
+    mat-stroked-button
+    *ngIf="accountService.hasPermissions('events:manage') | async"
+    (click)="createEvent()"
+  >
     <mat-icon>add</mat-icon>
     NEW
   </button>
 </title-section>
 
-<cdk-virtual-scroll-viewport scrollWindow [itemSize]="308" appendOnly>
+<cdk-virtual-scroll-viewport scrollWindow [itemSize]="309" appendOnly>
   <event *cdkVirtualFor="let item of dataSource" [event]="item.event" [albums]="item.albums" />
 </cdk-virtual-scroll-viewport>

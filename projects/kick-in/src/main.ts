@@ -20,8 +20,11 @@ bootstrapMediaApp({
     "www.kick-in.media": "api.kick-in.media",
   },
 
-  albumGroupIndex: (album: Album) => new Date(album.timestamp).toDateString(),
-  albumGroupName: (index: string) => index,
+  albums: {
+    groupIndex: (album: Album) => new Date(album.timestamp).toDateString(),
+    groupName: (index: string) => index,
+    groupSort: (a: string, b: string) => new Date(b).getTime() - new Date(a).getTime(),
+  },
 
   auth0: {
     domain: "kickin-media.eu.auth0.com",

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BaseService, FetchedObject } from "../base.service";
-import { Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { map, Observable, of } from "rxjs";
 import { Album, AlbumCreate, AlbumDetailed, AlbumUpdate, Photo } from "../../util/types";
@@ -15,13 +15,14 @@ export class AlbumService extends BaseService {
 
   constructor(
     router: Router,
+    activatedRoute: ActivatedRoute,
 
     protected http: HttpClient,
   ) {
-    super(router);
+    super(router, activatedRoute);
 
     // TODO: Get the album ID from the window location
-    this.id$ = of("52d332ba-0273-4e0a-be1c-178597205479");
+    this.id$ = this.trackRouteParam("album_id");
 
     // Retrieve the current album
     this.album = this.fetchOnChange(

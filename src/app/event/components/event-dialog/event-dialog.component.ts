@@ -26,6 +26,7 @@ const previewConfig: PreviewConfig = {
   selector: 'event-dialog',
   standalone: true,
   imports: [
+    AsyncPipe,
     NgIf,
     ReactiveFormsModule,
 
@@ -38,7 +39,6 @@ const previewConfig: PreviewConfig = {
     MatInputModule,
 
     ButtonGroupComponent,
-    AsyncPipe,
   ],
   templateUrl: './event-dialog.component.html',
   styleUrl: './event-dialog.component.scss'

@@ -1,7 +1,7 @@
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, Router } from "@angular/router";
 import {
   catchError,
-  combineLatest,
+  combineLatest, distinctUntilChanged,
   filter,
   first,
   map,
@@ -34,7 +34,6 @@ export abstract class BaseService {
 
       // Initialize and fetch the innermost child
       startWith(activatedRoute.snapshot),
-      tap(console.log),
       map(route => {
         while (route.firstChild !== null) route = route.firstChild;
         return route;
@@ -47,9 +46,9 @@ export abstract class BaseService {
 
   protected trackRouteParam(name: string): Observable<string | null> {
     return this.route$.pipe(
-      // tap(console.log),
       map(route => route.paramMap.get(name)),
-      // tap(console.log),
+      distinctUntilChanged(),
+      shareReplay(1),
     );
   }
 

@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -10,7 +10,9 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
 import { ConfigService } from "../services/config.service";
 import { authHttpInterceptorFn, provideAuth0 } from "@auth0/auth0-angular";
-import { provideNativeDateAdapter } from "@angular/material/core";
+import { provideMomentDateAdapter } from "@angular/material-moment-adapter";
+import { MAT_MOMENT_DATETIME_FORMATS, MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
+import { MAT_DATETIME_FORMATS, MatDatetimeFormats } from "@mat-datetimepicker/core";
 
 export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (config) => ({
   providers: [
@@ -32,7 +34,20 @@ export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (
 
     // Material UI
     provideAnimationsAsync(),
-    provideNativeDateAdapter(),
+    provideMomentDateAdapter(),
+    importProvidersFrom(MatMomentDatetimeModule),
+    {
+      provide: MAT_DATETIME_FORMATS,
+      useValue: {
+        parse: {
+          datetimeInput: "DD-MM-YYYY HH:mm"
+        },
+        display: {
+          popupHeaderDateLabel: "ddd MMM, Do",
+          datetimeInput: "ddd DD-MM-YYYY HH:mm",
+        }
+      } as MatDatetimeFormats,
+    },
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: "outline" } },
     {
       provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,

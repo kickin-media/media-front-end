@@ -1,0 +1,28 @@
+<title-section
+  [breadcrumb]="[
+    { title: 'Events', url: '/event' },
+    {
+      title: (albumService.album.data$ | async)!.event.name,
+      url: '/event/' + (albumService.album.data$ | async)!.event_id + '/' + ((albumService.album.data$ | async)!.event.name | slug)
+    },
+    {
+      title: (albumService.album.data$ | async)!.name,
+      url: '/album/' + (albumService.id$ | async) + '/' + ((albumService.album.data$ | async)!.name | slug)
+    },
+  ]"
+  [title]="(albumService.album.data$ | async)?.name"
+>
+<!--  <button mat-stroked-button (click)="createAlbum()">-->
+<!--    <mat-icon>add</mat-icon>-->
+<!--    ALBUM-->
+<!--  </button>-->
+
+  <button mat-icon-button [matMenuTriggerFor]="eventMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #eventMenu="matMenu">
+    <button mat-menu-item (click)="editAlbum()"><mat-icon>edit</mat-icon>EDIT ALBUM</button>
+    <button mat-menu-item (click)="emptyAlbum()"><mat-icon>clear</mat-icon>EMPTY ALBUM</button>
+    <button mat-menu-item (click)="deleteAlbum()"><mat-icon>delete</mat-icon>DELETE ALBUM</button>
+  </mat-menu>
+</title-section>

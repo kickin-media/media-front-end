@@ -10,7 +10,7 @@
 
   <mat-form-field>
     <mat-label>Start date</mat-label>
-    <input matInput [matDatepicker]="picker" />
+    <input matInput [matDatepicker]="picker" [formControl]="dateField" />
     <mat-hint>DD/MM/YYYY</mat-hint>
     <mat-datepicker-toggle matIconSuffix [for]="picker" />
     <mat-datepicker #picker />

@@ -2,7 +2,6 @@ import { ApiConfig } from "./util/api.interceptor";
 import { InjectionToken } from "@angular/core";
 import { AuthConfig } from "@auth0/auth0-angular";
 import { Album } from "./util/types";
-import { T } from "@angular/cdk/keycodes";
 
 export interface Config<T extends string | number | symbol> {
 
@@ -24,8 +23,11 @@ export interface Config<T extends string | number | symbol> {
   };
 
   // Album grouping (for event page)
-  albumGroupIndex: (album: Album) => T;
-  albumGroupName: (index: T) => string;
+  albums: {
+    groupIndex: (album: Album) => T,
+    groupName: (index: T) => string,
+    groupSort: (a: T, b: T) => number,
+  }
 
 }
 
@@ -38,8 +40,11 @@ const defaultConfig: Config<string> = {
 
   contact: { name: "Unknown", email: "unknown@example.com" },
 
-  albumGroupIndex: (album: Album) => new Date(album.timestamp).toDateString(),
-  albumGroupName: (index: string) => index,
+  albums: {
+    groupIndex: (album: Album) => new Date(album.timestamp).toDateString(),
+    groupName: (index: string) => index,
+    groupSort: (a: string, b: string) => new Date(b).getTime() - new Date(a).getTime(),
+  },
 };
 
 export const APP_CONFIG = new InjectionToken<Config<any>>(

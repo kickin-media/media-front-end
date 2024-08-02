@@ -2,11 +2,14 @@
 @use "@angular/material" as mat;
 @use "./kick-in.scssm3-theme";
 
+//@import '@mat-datetimepicker/core/datetimepicker/datetimepicker-theme.scss';
+
 @include mat.core();
 
 html {
   @include mat.core-theme(kick-in.$theme);
   @include mat.all-component-themes(kick-in.$theme);
+  //@include mat-datetimepicker-theme(kick-in.$theme);
 
   @include kick-in.theme-colors();
 }
