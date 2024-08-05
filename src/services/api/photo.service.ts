@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { BaseService } from "../base.service";
-import { Router } from "@angular/router";
+import { BaseService, FetchedObject } from "../base.service";
+import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { Observable, of } from "rxjs";
+import { BehaviorSubject, Observable, of } from "rxjs";
+import { Photo, PhotoDetailed } from "../../util/types";
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +11,36 @@ import { Observable, of } from "rxjs";
 export class PhotoService extends BaseService {
 
   readonly id$: Observable<string | null>;
+  protected readonly idSubject$ = new BehaviorSubject<string | null>(null);
+
+  readonly photo: FetchedObject<PhotoDetailed | null>;
 
   constructor(
     router: Router,
+    activatedRoute: ActivatedRoute,
 
     protected http: HttpClient,
   ) {
-    super(router);
+    super(router, activatedRoute);
 
-    // TODO: Get the album ID from the window location
-    this.id$ = of("dbcfd4bc-e66b-496f-b8fe-c1b811610d17");
+    this.id$ = this.idSubject$.asObservable();
+
+    // Retrieve the current photo
+    this.photo = this.fetchOnChange(
+      this.id$,
+      id => this.fetchPhoto(id),
+      null,
+    );
   }
+
+  setCurrentPhoto(photoId: Photo["id"] | null) {
+    this.idSubject$.next(photoId);
+  }
+
+  // TODO: Other CRUD actions
+
+  protected fetchPhoto(photoId: string): Observable<PhotoDetailed> {
+    return this.http.get<PhotoDetailed>(`/photo/${photoId}`);
+  }
+
 }

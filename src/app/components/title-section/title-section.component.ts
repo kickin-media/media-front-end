@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { NgForOf, NgIf } from "@angular/common";
 import { RouterLink } from "@angular/router";
+import { SkeletonLineComponent } from "../skeleton-line/skeleton-line.component";
 
 @Component({
   selector: 'title-section',
@@ -8,7 +9,8 @@ import { RouterLink } from "@angular/router";
   imports: [
     NgIf,
     NgForOf,
-    RouterLink
+    RouterLink,
+    SkeletonLineComponent
   ],
   templateUrl: './title-section.component.html',
   styleUrl: './title-section.component.scss'
@@ -16,11 +18,11 @@ import { RouterLink } from "@angular/router";
 export class TitleSectionComponent {
 
   @Input() title?: string;
-  @Input() breadcrumb?: Breadcrumb[];
+  @Input() breadcrumb?: Breadcrumb[] | null;
 
 }
 
 export interface Breadcrumb {
-  title: string;
-  url: string;
+  title?: string;
+  url?: string;
 }

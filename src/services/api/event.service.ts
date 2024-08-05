@@ -27,12 +27,11 @@ export class EventService extends BaseService {
     super(router, activatedRoute);
 
     // Fetch all events
-    const allEvents = this.fetch(() => this.fetchEvents(), [], true);
+    const allEvents = this.fetch(() => this.fetchEvents(), []);
     this.allEvents = this.transformFetchedObject(
       allEvents,
       events => events.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()),
       [],
-      true,
     );
 
     // Get the event ID from the window location
@@ -43,7 +42,6 @@ export class EventService extends BaseService {
       this.id$,
       id => this.fetchEvent(id),
       null,
-      true,
     );
 
     // Fetch this event's albums

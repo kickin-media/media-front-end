@@ -121,13 +121,13 @@ export abstract class BaseService {
 
           // Start with an empty state
           startWith({ data: defaultValue, loading: false, error: true }),
-
-          // Multicast result with optional cache
-          cache === false
-            ? share()
-            : shareReplay(1, typeof cache === "number" ? cache : undefined),
         );
       }),
+
+      // Multicast result with optional cache
+      cache === false
+        ? share()
+        : shareReplay(1, typeof cache === "number" ? cache : undefined),
     );
 
     return Object.freeze({

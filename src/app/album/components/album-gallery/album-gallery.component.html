@@ -1,5 +1,7 @@
 <a
   *ngFor="let photo of photos"
+  [routerLink]="getPhotoUrl(photo)"
+  (click)="onClickPhoto(photo, $event)"
   style="--w: 100; --h: 100"
 >
   <!--suppress AngularNgOptimizedImage -->

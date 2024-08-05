@@ -10,6 +10,22 @@
   flex-wrap: wrap;
 }
 
+h1 {
+  margin: 0;
+
+  skeleton-line {
+    width: 20ch;
+  }
+}
+
+.actions {
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .breadcrumb {
   width: 100%;
 
@@ -30,16 +46,8 @@
   span {
     margin: 0 0.25rem;
   }
-}
 
-h1 {
-  margin: 0;
-}
-
-.actions {
-  flex-grow: 1;
-
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
+  skeleton-line {
+    width: 10ch
+  }
 }

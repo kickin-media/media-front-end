@@ -1,15 +1,5 @@
 <title-section
-  [breadcrumb]="[
-    { title: 'Events', url: '/event' },
-    {
-      title: (albumService.album.data$ | async)!.event.name,
-      url: '/event/' + (albumService.album.data$ | async)!.event_id + '/' + ((albumService.album.data$ | async)!.event.name | slug)
-    },
-    {
-      title: (albumService.album.data$ | async)!.name,
-      url: '/album/' + (albumService.id$ | async) + '/' + ((albumService.album.data$ | async)!.name | slug)
-    },
-  ]"
+  [breadcrumb]="breadcrumb$ | async"
   [title]="(albumService.album.data$ | async)?.name"
 >
 <!--  <button mat-stroked-button (click)="createAlbum()">-->
@@ -27,4 +17,4 @@
   </mat-menu>
 </title-section>
 
-<album-gallery [photos]="photos$ | async" [select]="null" />
+<album-gallery [album]="albumService.album.data$ | async" [photos]="photos$ | async" [select]="null" />

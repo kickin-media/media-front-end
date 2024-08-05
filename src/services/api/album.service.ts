@@ -21,7 +21,6 @@ export class AlbumService extends BaseService {
   ) {
     super(router, activatedRoute);
 
-    // TODO: Get the album ID from the window location
     this.id$ = this.trackRouteParam("album_id");
 
     // Retrieve the current album

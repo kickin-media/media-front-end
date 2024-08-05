@@ -1,0 +1,20 @@
+<mat-toolbar>
+  <mat-chip><mat-icon matChipAvatar>trending_up</mat-icon>500 views</mat-chip>
+  <mat-chip matTooltip="Focal length"><mat-icon matChipAvatar>terrain</mat-icon>200mm</mat-chip>
+  <mat-chip matTooltip="Aperture"><mat-icon matChipAvatar>camera</mat-icon>f/1.4</mat-chip>
+  <mat-chip matTooltip="Shutter speed"><mat-icon matChipAvatar>shutter_speed</mat-icon>1 / 125</mat-chip>
+  <mat-chip matTooltip="ISO"><mat-icon matChipAvatar>exposure</mat-icon>800</mat-chip>
+
+  <button mat-icon-button matTooltip="View EXIF data"><mat-icon>info</mat-icon></button>
+  <button mat-icon-button matTooltip="Share photo..."><mat-icon>share</mat-icon></button>
+  <button mat-icon-button matTooltip="Download photo..."><mat-icon>download</mat-icon></button>
+  <button mat-icon-button matTooltip="Configure viewer..."><mat-icon>tune</mat-icon></button>
+  <button mat-icon-button matTooltip="Photo settings..."><mat-icon>settings</mat-icon></button>
+
+  <!-- Close the photo viewer -->
+  <button mat-icon-button (click)="close()" matTooltip="[ESC] Close photo viewer"><mat-icon>close</mat-icon></button>
+</mat-toolbar>
+
+<div class="content">
+  <p>lightbox works!</p>
+</div>

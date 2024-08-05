@@ -1,0 +1,43 @@
+:host {
+  width: 100%;
+  top: 0;
+  bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.2);
+  background: radial-gradient(circle, transparent 0, rgba(0, 0, 0, .4) 60%, rgba(0, 0, 0, .8) 100%);
+}
+
+mat-toolbar {
+  padding: 0 1rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  background: rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  filter: drop-shadow(1px 1px 1px black);
+
+  button, mat-chip, mat-chip mat-icon {
+    color: white;
+  }
+
+  mat-chip {
+    margin-right: 0.5rem;
+    &:last-of-type {
+      margin-right: 1rem;
+    }
+  }
+}
+
+:host mat-toolbar mat-chip ::ng-deep span {
+  color: white;
+}
+
+div.content {
+  flex-grow: 1;
+}
