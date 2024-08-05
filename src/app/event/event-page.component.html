@@ -1,11 +1,5 @@
 <title-section
-  [breadcrumb]="[
-    { title: 'Events', url: '/event' },
-    {
-      title: (eventService.event.data$ | async)!.name,
-      url: '/event/' + (eventService.id$ | async) + '/' + ((eventService.event.data$ | async)!.name | slug)
-    },
-  ]"
+  [breadcrumb]="breadcrumb$ | async"
   [title]="(eventService.event.data$ | async)?.name"
 >
   <button mat-stroked-button (click)="createAlbum()">

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { TitleSectionComponent } from "../components/title-section/title-section.component";
+import { Breadcrumb, TitleSectionComponent } from "../components/title-section/title-section.component";
 import { EventService } from "../../services/api/event.service";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
@@ -38,6 +38,8 @@ import slugify from "slugify";
 })
 export class EventPageComponent {
 
+  protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
+
   // Yields albums indexed by date-strings or ""
   protected albums$: Observable<{ [key: string]: Album[] }>;
 
@@ -47,6 +49,18 @@ export class EventPageComponent {
     protected configService: ConfigService,
     protected eventService: EventService,
   ) {
+    this.breadcrumb$ = this.eventService.event.data$.pipe(
+      map(event => {
+        return [
+          { title: 'Events', url: '/event' },
+          {
+            title: event?.name,
+            url: event ? `/event/${event.id}/${slugify(event.name)}` : undefined
+          },
+        ];
+      }),
+    );
+
     this.albums$ = this.eventService.albums.data$.pipe(
       map((albums: Album[]) => albums.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())),
       map((albums: Album[]) => groupBy(albums, configService.config.albums.groupIndex)),

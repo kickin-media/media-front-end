@@ -48,15 +48,6 @@ export class AlbumPageComponent {
     protected overlay: Overlay,
     protected albumService: AlbumService,
   ) {
-    // Open lightbox whenever the `lightbox` query param appears in the URL
-    activatedRoute.queryParamMap.pipe(
-      map(params => params.get("lightbox")),
-      startWith(null),
-      pairwise(),
-    ).subscribe(([prev, next]) => {
-      if (next && !prev) this.openLightbox(next);
-    });
-
     this.breadcrumb$ = this.albumService.album.data$.pipe(
       map(album => {
         return [
@@ -76,6 +67,15 @@ export class AlbumPageComponent {
     this.photos$ = albumService.album.data$.pipe(
       map(album => album ? album.photos : null),
     );
+
+    // Open lightbox whenever the `lightbox` query param appears in the URL
+    activatedRoute.queryParamMap.pipe(
+      map(params => params.get("lightbox")),
+      startWith(null),
+      pairwise(),
+    ).subscribe(([prev, next]) => {
+      if (next && !prev) this.openLightbox(next);
+    });
   }
 
   editAlbum() {

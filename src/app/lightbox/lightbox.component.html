@@ -16,5 +16,46 @@
 </mat-toolbar>
 
 <div class="content">
-  <p>lightbox works!</p>
+  <!-- Go through photo album... -->
+  <button
+    *ngIf="photos && index > 0"
+    mat-icon-button
+    class="previous"
+    (click)="go(-1)"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button
+    *ngIf="photos && index < photos.length - 1"
+    mat-icon-button
+    class="next"
+    (click)="go(1)"
+  >
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <!-- Current image -->
+  <!--suppress AngularNgOptimizedImage -->
+  <img
+    *ngIf="photo"
+    class="current mat-elevation-z8"
+    [src]="getPhotoSrc(photo)"
+    loading="eager"
+  />
+
+  <!-- Preload previous and next images -->
+  <!--suppress AngularNgOptimizedImage -->
+  <img
+    *ngIf="photos && index >= 1"
+    class="preview"
+    [src]="getPhotoSrc(photos[index-1])"
+    loading="eager"
+  />
+  <!--suppress AngularNgOptimizedImage -->
+  <img
+    *ngIf="photos && index < photos.length - 1"
+    class="preview"
+    [src]="getPhotoSrc(photos[index+1])"
+    loading="eager"
+  />
 </div>

@@ -28,6 +28,7 @@ export class AlbumService extends BaseService {
       this.id$,
       id => this.fetchAlbum(id),
       null,
+      true,
     );
   }
 

@@ -12,4 +12,8 @@ export class ImageQualityService {
     return "small";
   }
 
+  get lightboxQuality(): Exclude<keyof Photo["img_urls"], "original"> {
+    return "large";
+  }
+
 }
