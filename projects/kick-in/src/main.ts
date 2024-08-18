@@ -46,6 +46,7 @@ bootstrapMediaApp({
         'photos:upload',
         'photos:download_other',
         'photos:delete_other',
+        'photos:manage_other',
         'photos:read_view_count'
       ].join(' '),
     },

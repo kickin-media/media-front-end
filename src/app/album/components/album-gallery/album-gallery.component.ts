@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostBinding, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SelectionModel } from "@angular/cdk/collections";
 import { AlbumDetailed, Photo } from "../../../../util/types";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
@@ -25,7 +25,8 @@ export class AlbumGalleryComponent implements OnChanges {
 
   @HostBinding("class.select-mode") selectMode: boolean = false;
 
-  constructor(protected router: Router) {}
+  constructor(protected router: Router) {
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["select"]) {
@@ -49,7 +50,13 @@ export class AlbumGalleryComponent implements OnChanges {
 
   getPhotoUrl(photo: Photo): UrlTree | undefined {
     if (!this.album) return undefined;
-    return this.router.parseUrl(`/album/${this.album.id}/${slugify(this.album.name)}?lightbox=${photo.id}`);
+    return this.router.createUrlTree(
+      [`/album/${this.album.id}/${slugify(this.album.name)}`],
+      {
+        queryParams: { lightbox: photo.id },
+        queryParamsHandling: "merge",
+      }
+    );
   }
 
 }

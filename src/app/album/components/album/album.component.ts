@@ -4,8 +4,8 @@ import { ImageQualityService } from "../../../../services/image-quality.service"
 import { NgIf, NgOptimizedImage } from "@angular/common";
 import { SkeletonComponent } from "../../../components/skeleton/skeleton.component";
 import { SkeletonLineComponent } from "../../../components/skeleton-line/skeleton-line.component";
-import { TimestampPipe } from "../../../../util/timestamp.pipe";
-import { SlugPipe } from "../../../../util/slug.pipe";
+import { TimestampPipe } from "../../../../pipes/timestamp.pipe";
+import { SlugPipe } from "../../../../pipes/slug.pipe";
 import { RouterLink } from "@angular/router";
 import slugify from "slugify";
 

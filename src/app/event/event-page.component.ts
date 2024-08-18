@@ -14,7 +14,7 @@ import { ConfigService } from "../../services/config.service";
 import { groupBy } from "../../util/groupby";
 import { AlbumComponent } from "../album/components/album/album.component";
 import { AlbumDialogComponent } from "../album/components/album-dialog/album-dialog.component";
-import { SlugPipe } from "../../util/slug.pipe";
+import { SlugPipe } from "../../pipes/slug.pipe";
 import slugify from "slugify";
 
 @Component({

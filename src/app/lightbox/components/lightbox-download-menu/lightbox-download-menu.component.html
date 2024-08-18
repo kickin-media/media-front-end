@@ -1,0 +1,49 @@
+<ng-container *ngIf="photo">
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="menu"
+    matTooltip="Download photo..."
+  >
+    <mat-icon>download</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button
+      mat-menu-item
+      (click)="downloadService.downloadPhoto(photo, 'small', filename)"
+    >
+      <mat-icon>photo_size_select_small</mat-icon>
+      Small
+      <span>400px</span>
+    </button>
+
+    <button
+      mat-menu-item
+      (click)="downloadService.downloadPhoto(photo, 'medium', filename)"
+    >
+      <mat-icon>photo_size_select_large</mat-icon>
+      Medium
+      <span>800px</span>
+    </button>
+
+    <button
+      mat-menu-item
+      (click)="downloadService.downloadPhoto(photo, 'large', filename)"
+    >
+      <mat-icon>photo_size_select_actual</mat-icon>
+      Large
+      <span>2048px</span>
+    </button>
+
+    <ng-container *ngIf="canDownload$ | async">
+      <mat-divider />
+      <button
+        mat-menu-item
+        (click)="downloadService.downloadOriginal(photo, filename)"
+      >
+        <mat-icon>raw_on</mat-icon>
+        Original
+        <span>Without watermark</span>
+      </button>
+    </ng-container>
+  </mat-menu>
+</ng-container>

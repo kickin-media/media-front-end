@@ -13,7 +13,7 @@ export type EventCreate = components["schemas"]["EventCreate"];
 export type EventUpdate = EventCreate;
 
 // Photos
-export type Photo = components["schemas"]["PhotoReadList"];
+export type Photo = components["schemas"]["PhotoReadSingleStub"];
 export type PhotoDetailed = components["schemas"]["PhotoReadSingle"];
 
 // S3

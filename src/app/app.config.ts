@@ -13,6 +13,7 @@ import { authHttpInterceptorFn, provideAuth0 } from "@auth0/auth0-angular";
 import { provideMomentDateAdapter } from "@angular/material-moment-adapter";
 import { MAT_MOMENT_DATETIME_FORMATS, MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
 import { MAT_DATETIME_FORMATS, MatDatetimeFormats } from "@mat-datetimepicker/core";
+import { IMAGE_CONFIG } from "@angular/common";
 
 export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (config) => ({
   providers: [
@@ -22,6 +23,13 @@ export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (
     // Angular config
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
+    {
+      provide: IMAGE_CONFIG,
+      useValue: {
+        disableImageSizeWarning: true,
+        disableImageLazyLoadWarning: true,
+      }
+    },
 
     // Auth0
     provideAuth0(config.auth0),

@@ -1,18 +1,63 @@
 <mat-toolbar>
-  <mat-chip><mat-icon matChipAvatar>trending_up</mat-icon>500 views</mat-chip>
-  <mat-chip matTooltip="Focal length"><mat-icon matChipAvatar>terrain</mat-icon>200mm</mat-chip>
-  <mat-chip matTooltip="Aperture"><mat-icon matChipAvatar>camera</mat-icon>f/1.4</mat-chip>
-  <mat-chip matTooltip="Shutter speed"><mat-icon matChipAvatar>shutter_speed</mat-icon>1 / 125</mat-chip>
-  <mat-chip matTooltip="ISO"><mat-icon matChipAvatar>exposure</mat-icon>800</mat-chip>
+  <!-- Quick peek photo info -->
+  <mat-chip *ngIf="photo && photo.views">
+    <mat-icon matChipAvatar>trending_up</mat-icon>
+    {{ photo.views }} views
+  </mat-chip>
 
-  <button mat-icon-button matTooltip="View EXIF data"><mat-icon>info</mat-icon></button>
-  <button mat-icon-button matTooltip="Share photo..."><mat-icon>share</mat-icon></button>
-  <button mat-icon-button matTooltip="Download photo..."><mat-icon>download</mat-icon></button>
-  <button mat-icon-button matTooltip="Configure viewer..."><mat-icon>tune</mat-icon></button>
-  <button mat-icon-button matTooltip="Photo settings..."><mat-icon>settings</mat-icon></button>
+  <mat-chip
+    *ngIf="photo | exif: 'focal_length' as value"
+    matTooltip="Focal length"
+  >
+    <mat-icon matChipAvatar>terrain</mat-icon>
+    {{ value | number }}mm
+  </mat-chip>
+
+  <mat-chip
+    *ngIf="photo | exif: 'aperture_value' as value"
+    matTooltip="Aperture"
+  >
+    <mat-icon matChipAvatar>camera</mat-icon>
+    f/{{ value | number: '1.1-1' }}
+  </mat-chip>
+
+  <mat-chip
+    *ngIf="photo | exifShutterSpeed as value"
+    matTooltip="Shutter speed"
+  >
+    <mat-icon matChipAvatar>shutter_speed</mat-icon>
+    {{ value }}
+  </mat-chip>
+
+  <mat-chip
+    *ngIf="photo | exif: 'photographic_sensitivity' as value"
+    matTooltip="ISO"
+  >
+    <mat-icon matChipAvatar>exposure</mat-icon>
+    {{ value | number }}
+  </mat-chip>
+
+  <!-- Menus -->
+  <!--<button mat-icon-button matTooltip="View EXIF data"><mat-icon>info</mat-icon></button>-->
+  <button
+    mat-icon-button
+    matTooltip="Share photo"
+    *ngIf="album && photo"
+    (click)="shareService.sharePhoto(album, photo)"
+  >
+    <mat-icon>share</mat-icon>
+  </button>
+  <lightbox-download-menu [album]="album" [photo]="photo" />
+  <lightbox-photo-options [album]="album" [photo]="photo" [closeViewer]="close" />
 
   <!-- Close the photo viewer -->
-  <button mat-icon-button (click)="close()" matTooltip="[ESC] Close photo viewer"><mat-icon>close</mat-icon></button>
+  <button
+    mat-icon-button
+    (click)="close()"
+    matTooltip="[ESC] Close photo viewer"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
 </mat-toolbar>
 
 <div class="content">
@@ -38,8 +83,9 @@
   <!--suppress AngularNgOptimizedImage -->
   <img
     *ngIf="photo"
-    class="current mat-elevation-z8"
     [src]="getPhotoSrc(photo)"
+    alt=""
+    class="current mat-elevation-z8"
     loading="eager"
   />
 
@@ -47,15 +93,17 @@
   <!--suppress AngularNgOptimizedImage -->
   <img
     *ngIf="photos && index >= 1"
-    class="preview"
     [src]="getPhotoSrc(photos[index-1])"
+    alt=""
+    class="preview"
     loading="eager"
   />
   <!--suppress AngularNgOptimizedImage -->
   <img
     *ngIf="photos && index < photos.length - 1"
-    class="preview"
     [src]="getPhotoSrc(photos[index+1])"
+    alt=""
+    class="preview"
     loading="eager"
   />
 </div>

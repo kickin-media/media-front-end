@@ -4,7 +4,7 @@ import { Album, PhotoEvent } from '../../../../util/types';
 import { MatIcon, MatIconModule } from "@angular/material/icon";
 import { MatButton, MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { SlugPipe } from "../../../../util/slug.pipe";
+import { SlugPipe } from "../../../../pipes/slug.pipe";
 import { DatePipe, NgForOf } from "@angular/common";
 import { AlbumComponent } from "../../../album/components/album/album.component";
 

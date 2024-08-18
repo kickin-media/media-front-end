@@ -3,7 +3,7 @@ import { AsyncPipe } from "@angular/common";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
-import { SlugPipe } from "../../util/slug.pipe";
+import { SlugPipe } from "../../pipes/slug.pipe";
 import { Breadcrumb, TitleSectionComponent } from "../components/title-section/title-section.component";
 import { AlbumService } from "../../services/api/album.service";
 import { filter, first, map, Observable, of, pairwise, startWith, switchMap } from "rxjs";
