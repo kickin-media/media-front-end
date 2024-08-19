@@ -1,7 +1,8 @@
 import { ActivatedRoute, ActivatedRouteSnapshot, ActivationEnd, Router } from "@angular/router";
 import {
   catchError,
-  combineLatest, distinctUntilChanged,
+  combineLatest,
+  distinctUntilChanged,
   filter,
   first,
   map,
@@ -12,8 +13,7 @@ import {
   shareReplay,
   startWith,
   Subject,
-  switchMap,
-  tap
+  switchMap
 } from "rxjs";
 
 export abstract class BaseService {
@@ -42,6 +42,9 @@ export abstract class BaseService {
       // Cache the latest route snapshot
       shareReplay(1),
     );
+
+    // Prime the observable
+    this.route$.pipe(first()).subscribe();
   }
 
   protected trackRouteParam(name: string): Observable<string | null> {

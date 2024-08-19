@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { combineLatest, expand, map, Observable, switchMap } from "rxjs";
-import { Album, PhotoEvent, EventCreate, EventDetailed, EventUpdate, S3PreSignedUrl } from "../../util/types";
+import { combineLatest, map, Observable, switchMap } from "rxjs";
+import { Album, EventCreate, EventDetailed, EventUpdate, PhotoEvent, S3PreSignedUrl } from "../../util/types";
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { S3Service } from "../s3.service";
@@ -22,10 +22,8 @@ export class EventService extends BaseService {
   constructor(
     router: Router,
     activatedRoute: ActivatedRoute,
-
     protected http: HttpClient,
     protected s3: S3Service,
-
     protected albumService: AlbumService,
   ) {
     super(router, activatedRoute);
