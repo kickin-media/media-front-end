@@ -130,7 +130,6 @@ export class EventPageComponent {
       {
         data: {
           title: "Are you sure you want to delete this event?",
-          detail: "This action is irreversible and the photos in this album may be deleted.",
           buttonClass: "error-button",
           buttonNames: ["CANCEL", "DELETE"],
         } as ConfirmationDialogProps
