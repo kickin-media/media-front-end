@@ -13,7 +13,7 @@
   }
 }
 
-:host.select-mode a {
+:host.select-mode a:not(.selected) {
   border-radius: 1rem;
   transform: scale(0.95);
   filter: opacity(0.5);
@@ -34,6 +34,7 @@ a {
 
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 0.5rem;
+  cursor: pointer;
 
   transition: filter ease 300ms, border-radius ease 300ms, transform ease 300ms;
 }

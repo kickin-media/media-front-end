@@ -1,7 +1,7 @@
 import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SelectionModel } from "@angular/cdk/collections";
 import { AlbumDetailed, Photo } from "../../../../util/types";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import slugify from "slugify";
 import { Router, RouterLink, UrlTree } from "@angular/router";
 
@@ -12,7 +12,8 @@ import { Router, RouterLink, UrlTree } from "@angular/router";
     AsyncPipe,
     NgIf,
     NgForOf,
-    RouterLink
+    RouterLink,
+    NgClass
   ],
   templateUrl: './album-gallery.component.html',
   styleUrl: './album-gallery.component.scss'
@@ -36,6 +37,7 @@ export class AlbumGalleryComponent implements OnChanges {
 
   onClickPhoto(photo: Photo, e: MouseEvent) {
     e.preventDefault();
+    e.stopImmediatePropagation();
     e.stopPropagation();
 
     if (this.select) this.select.toggle(photo.id);

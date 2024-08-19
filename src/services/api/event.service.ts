@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { expand, map, Observable, switchMap } from "rxjs";
+import { combineLatest, expand, map, Observable, switchMap } from "rxjs";
 import { Album, PhotoEvent, EventCreate, EventDetailed, EventUpdate, S3PreSignedUrl } from "../../util/types";
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { S3Service } from "../s3.service";
+import { AlbumService } from "./album.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,8 +22,11 @@ export class EventService extends BaseService {
   constructor(
     router: Router,
     activatedRoute: ActivatedRoute,
+
     protected http: HttpClient,
     protected s3: S3Service,
+
+    protected albumService: AlbumService,
   ) {
     super(router, activatedRoute);
 
@@ -34,8 +38,13 @@ export class EventService extends BaseService {
       [],
     );
 
-    // Get the event ID from the window location
-    this.id$ = this.trackRouteParam("event_id");
+    // Get the event ID from the window location (or the album, if available)
+    this.id$ = combineLatest([
+      this.trackRouteParam("event_id"),
+      albumService.album.data$
+    ]).pipe(
+      map(([urlId, album]) => urlId ?? (album ? album.event_id : null)),
+    );
 
     // Fetch event details
     this.event = this.fetchOnChange(

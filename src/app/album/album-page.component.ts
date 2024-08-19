@@ -1,14 +1,26 @@
 import { Component } from '@angular/core';
 import { AsyncPipe, NgIf } from "@angular/common";
-import { MatButton, MatIconButton } from "@angular/material/button";
-import { MatIcon } from "@angular/material/icon";
-import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatMenuModule } from "@angular/material/menu";
 import { SlugPipe } from "../../pipes/slug.pipe";
 import { Breadcrumb, TitleSectionComponent } from "../components/title-section/title-section.component";
 import { AlbumService } from "../../services/api/album.service";
-import { combineLatest, filter, first, map, Observable, of, pairwise, shareReplay, startWith, switchMap } from "rxjs";
+import {
+  combineLatest, concatAll, EMPTY,
+  expand,
+  filter,
+  first,
+  map,
+  Observable,
+  of,
+  pairwise,
+  shareReplay,
+  startWith,
+  switchMap, tap
+} from "rxjs";
 import { AlbumDialogComponent, AlbumDialogProps } from "./components/album-dialog/album-dialog.component";
-import { AlbumDetailed, Photo } from "../../util/types";
+import { Album, AlbumDetailed, Photo } from "../../util/types";
 import { MatDialog } from "@angular/material/dialog";
 import { AlbumGalleryComponent } from "./components/album-gallery/album-gallery.component";
 import slugify from "slugify";
@@ -17,34 +29,46 @@ import { Overlay } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AccountService } from "../../services/account.service";
-import { MatTooltip } from "@angular/material/tooltip";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogProps
 } from "../components/confirmation-dialog/confirmation-dialog.component";
+import { ShareService } from "../../services/share.service";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { SelectionModel } from "@angular/cdk/collections";
+import { ButtonGroupComponent } from "../components/button-group/button-group.component";
+import { PhotoService } from "../../services/api/photo.service";
+import { AlbumSelectionDialogComponent } from "./components/album-selection-dialog/album-selection-dialog.component";
 
 @Component({
   selector: 'album-page',
   standalone: true,
   imports: [
     AsyncPipe,
-    MatButton,
-    MatIcon,
-    MatIconButton,
-    MatMenu,
-    MatMenuItem,
+    NgIf,
+    ReactiveFormsModule,
+
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatIconModule,
+    MatMenuModule,
+    MatTooltipModule,
+
+    AlbumGalleryComponent,
+    ButtonGroupComponent,
+    LightboxComponent,
     SlugPipe,
     TitleSectionComponent,
-    MatMenuTrigger,
-    AlbumGalleryComponent,
-    LightboxComponent,
-    NgIf,
-    MatTooltip
   ],
   templateUrl: './album-page.component.html',
   styleUrl: './album-page.component.scss'
 })
 export class AlbumPageComponent {
+
+  protected photoSortField = new FormControl<"taken" | "upload">("taken");
+  protected selected: null | SelectionModel<Photo["id"]> = null;
 
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
   protected photos$: Observable<Photo[] | null>;
@@ -54,9 +78,10 @@ export class AlbumPageComponent {
     protected router: Router,
     protected dialog: MatDialog,
     protected overlay: Overlay,
-
     protected accountService: AccountService,
     protected albumService: AlbumService,
+    protected photoService: PhotoService,
+    protected shareService: ShareService,
   ) {
     this.breadcrumb$ = this.albumService.album.data$.pipe(
       map(album => {
@@ -74,8 +99,55 @@ export class AlbumPageComponent {
       }),
     );
 
-    this.photos$ = albumService.album.data$.pipe(
+    // Extract photos from album
+    let photos$ = albumService.album.data$.pipe(
       map(album => album ? album.photos : null),
+    );
+
+    // Filter photo's by author ID if in select mode
+    photos$ = combineLatest([
+      photos$,
+      accountService.user$,
+      accountService.canManageOther$,
+    ]).pipe(
+      map(([photos, user, canManageOther]) => {
+        if (photos === null) return null;
+        if (this.selected !== null) return photos;
+
+        // Check permissions to return the correct set of photos in selection mode
+        if (!user) return photos;
+        if (canManageOther) return photos;
+
+        // Otherwise, only return the subset of photos created by the current user
+        const userId = user.sub;
+        return photos.filter(photo => photo.author.id === userId);
+      }),
+    );
+
+    // Sort the photos by the preferred sorting method...
+    this.photos$ = combineLatest([
+      photos$,
+      this.photoSortField.valueChanges.pipe(startWith(null)),
+    ]).pipe(
+      map(([photos, sort]) => {
+        if (photos === null) return null;
+
+        const field = sort === "upload" ? "uploaded_at" : "timestamp";
+        return photos.sort((a, b) => {
+          // Ensure the selected field is defined
+          if (!a[field]) return -1;
+          if (!b[field]) return 1;
+
+          // Convert to date objects
+          const aa = new Date(a[field]);
+          const bb = new Date(b[field]);
+
+          // Sort newest to oldest for "upload"-sort, but oldest to newest for "taken"-sort
+          if (sort === "upload") return bb.getTime() - aa.getTime();
+          else return aa.getTime() - bb.getTime();
+        });
+      }),
+      shareReplay(1),
     );
 
     // Open lightbox whenever the `lightbox` query param appears in the URL
@@ -159,6 +231,107 @@ export class AlbumPageComponent {
 
     // Initialize the lightbox
     componentRef.instance.onOpen(close, photoId, this.photos$);
+  }
+
+  selectMode(start: boolean) {
+    this.selected = start ? new SelectionModel(true) : null;
+  }
+
+  selectAll() {
+    this.photos$.pipe(first()).subscribe(photos => {
+      if (photos === null) return;
+      if (this.selected === null) return;
+
+      this.selected.setSelection(...photos.map(photo => photo.id));
+    });
+  }
+
+  addSelectedToOther() {
+    const selected = this.selected;
+    if (selected === null) return;
+
+    const dialogRef = this.dialog.open(AlbumSelectionDialogComponent);
+    const onClose = dialogRef.afterClosed() as Observable<Album | null>;
+
+    combineLatest([
+      onClose,
+      this.photos$,
+    ]).pipe(
+      // Filter invalid states
+      filter(([album, photos]) => album !== null && photos !== null),
+      map(input => input as [Album, Photo[]]),
+
+      // Only listen for the first (valid) trigger
+      first(),
+
+      // Filter only the selected photos
+      map(([album, photos]) => [album, photos.filter(photo => selected.isSelected(photo.id))] as [Album, Photo[]]),
+
+      // Trigger an "event" per selected photo
+      map(([album, photos]) => [null, album, photos] as [null, Album, Photo[]]),
+      expand(([_, album, photos]) => {
+        if (photos.length === 0) return EMPTY;
+        return of([photos[0], album, photos.slice(1)] as [Photo, Album, Photo[]]);
+      }),
+      filter(([photo, _1, _2]) => photo !== null),
+      map(([photo, album, _]) => [photo, album] as [Photo, Album]),
+
+      // And trigger re-processing per photo
+      map(([photo, album]) => {
+        return this.photoService.fetchPhoto(photo.id).pipe(
+          switchMap(photo => this.photoService.setPhotoAlbums(
+            photo.id,
+            [...photo.albums.map(album => album.id), album.id]
+          )),
+        );
+      }),
+      concatAll(),
+    ).subscribe();
+  }
+
+  reprocessSelected() {
+    const selected = this.selected;
+    if (selected === null) return;
+
+    const selectCount = selected.selected.length;
+    const dialogRef = this.dialog.open(
+      ConfirmationDialogComponent,
+      {
+        data: {
+          title: `Are you sure you want to re-process ${selectCount} photos?`,
+          detail: "Re-processing photos will only update the watermarks and may take a long time.",
+        } as ConfirmationDialogProps
+      },
+    );
+
+    const onClose = dialogRef.afterClosed() as Observable<boolean>;
+    combineLatest([
+      onClose,
+      this.photos$,
+    ]).pipe(
+      // Filter invalid states
+      filter(([confirmed, photos]) => confirmed && photos !== null),
+      map(([_, photos]) => photos as Photo[]),
+
+      // Only listen for the first (valid) trigger
+      first(),
+
+      // Filter only the selected photos
+      map(photos => photos.filter(photo => selected.isSelected(photo.id))),
+
+      // Trigger an "event" per selected photo
+      map(photos => [null, photos] as [null, Photo[]]),
+      expand(([_, photos]) => {
+        if (photos.length === 0) return EMPTY;
+        return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
+      }),
+      filter(([photo, _]) => photo !== null),
+      map(([photo, _]) => photo),
+
+      // And trigger re-processing per photo
+      map(photo => this.photoService.reprocess(photo.id)),
+      concatAll(),
+    ).subscribe();
   }
 
 }

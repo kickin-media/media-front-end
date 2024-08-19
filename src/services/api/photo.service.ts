@@ -54,10 +54,10 @@ export class PhotoService extends BaseService {
   }
 
   setPhotoAlbums(photoId: Photo["id"], albumIds: Album["id"][]): Observable<Photo> {
-    return this.http.post<Photo>(`/photo/${photoId}/reprocess`, albumIds);
+    return this.http.put<Photo>(`/photo/${photoId}/albums`, albumIds);
   }
 
-  protected fetchPhoto(photoId: Photo["id"]): Observable<PhotoDetailed> {
+  fetchPhoto(photoId: Photo["id"]): Observable<PhotoDetailed> {
     return this.http.get<PhotoDetailed>(`/photo/${photoId}`);
   }
 

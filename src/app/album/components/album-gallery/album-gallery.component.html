@@ -1,7 +1,8 @@
 <a
   *ngFor="let photo of photos"
-  [routerLink]="getPhotoUrl(photo)"
+  [routerLink]="select ? undefined : getPhotoUrl(photo)"
   (click)="onClickPhoto(photo, $event)"
+  [ngClass]="{ selected: select !== null && select.isSelected(photo.id) }"
   style="--w: 100; --h: 100"
 >
   <!--suppress AngularNgOptimizedImage -->
