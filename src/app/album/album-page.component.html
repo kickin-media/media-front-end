@@ -26,7 +26,11 @@
     </mat-button-toggle-group>
 
     @if (selected === null) {
-      <button mat-stroked-button (click)="selectMode(true)">
+      <button
+        *ngIf="(accountService.canUpload$ | async) || (accountService.canManageOther$ | async)"
+        mat-stroked-button
+        (click)="selectMode(true)"
+      >
         <mat-icon>check_box_outline_blank</mat-icon>
         SELECT
       </button>

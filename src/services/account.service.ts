@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from "@auth0/auth0-angular";
-import { map, Observable, shareReplay, startWith } from "rxjs";
+import { catchError, map, Observable, of, shareReplay, startWith } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +19,13 @@ export class AccountService {
   constructor(
     protected auth: AuthService,
   ) {
-    this.user$ = auth.user$;
+    this.user$ = auth.user$.pipe(catchError(() => of(null)));
 
     // Extract the scopes
     this.scopes$ = auth.getAccessTokenSilently({detailedResponse: true}).pipe(
       map(res => res.scope),
       map(scope => scope ? scope.split(" ") : []),
+      catchError(() => of([])),
       startWith([]),
       shareReplay(1),
     );
