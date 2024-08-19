@@ -42,7 +42,7 @@
         </button>
         <button
           mat-stroked-button
-          *ngIf="selected.selected.length === 0"
+          *ngIf="selected!.selected.length === 0"
           (click)="selectAll()"
         >
           <mat-icon>clear_all</mat-icon>
@@ -50,7 +50,7 @@
         </button>
         <button
           mat-stroked-button
-          *ngIf="selected.selected.length > 0"
+          *ngIf="selected!.selected.length > 0"
           (click)="selectMode(true)"
         >
           <mat-icon>clear_all</mat-icon>
@@ -67,7 +67,7 @@
         <button
           mat-menu-item
           (click)="addSelectedToOther()"
-          [disabled]="selected.selected.length === 0"
+          [disabled]="selected!.selected.length === 0"
         >
           <mat-icon>library_add</mat-icon>
           Add to other albums
@@ -75,7 +75,7 @@
         <button
           mat-menu-item
           (click)="reprocessSelected()"
-          [disabled]="selected.selected.length === 0"
+          [disabled]="selected!.selected.length === 0"
         >
           <mat-icon>autorenew</mat-icon> Re-process
           <span class="hint">Re-generates photos and watermarks</span>
