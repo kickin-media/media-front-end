@@ -2,12 +2,20 @@
   [breadcrumb]="breadcrumb$ | async"
   [title]="(eventService.event.data$ | async)?.name"
 >
-  <button mat-stroked-button (click)="createAlbum()">
+  <button
+    *ngIf="accountService.canManageAlbums$ | async"
+    mat-stroked-button
+    (click)="createAlbum()"
+  >
     <mat-icon>add</mat-icon>
     ALBUM
   </button>
 
-  <button mat-icon-button [matMenuTriggerFor]="eventMenu">
+  <button
+    *ngIf="accountService.canManageEvents$ | async"
+    mat-icon-button
+    [matMenuTriggerFor]="eventMenu"
+  >
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #eventMenu="matMenu">

@@ -21,6 +21,7 @@ import {
   ConfirmationDialogProps
 } from "../components/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { AccountService } from "../../services/account.service";
 
 @Component({
   selector: 'event-page',
@@ -54,6 +55,7 @@ export class EventPageComponent {
   constructor(
     protected dialog: MatDialog,
     protected router: Router,
+    protected accountService: AccountService,
     protected configService: ConfigService,
     protected eventService: EventService,
   ) {
