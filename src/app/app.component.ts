@@ -42,4 +42,9 @@ export class AppComponent {
   ) {
   }
 
+  protected logout() {
+    this.account.logout();
+    window.location.reload();
+  }
+
 }

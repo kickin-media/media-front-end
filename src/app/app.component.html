@@ -31,7 +31,7 @@
       <button
         *ngIf="account.user$ | async as user"
         mat-stroked-button
-        (click)="account.logout()"
+        (click)="logout()"
       >
         {{ user.name }}
       </button>
