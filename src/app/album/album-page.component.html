@@ -7,14 +7,29 @@
 <!--    ALBUM-->
 <!--  </button>-->
 
-  <button mat-icon-button [matMenuTriggerFor]="albumMenu">
-    <mat-icon>more_vert</mat-icon>
-  </button>
-  <mat-menu #albumMenu="matMenu">
-    <button mat-menu-item (click)="editAlbum()"><mat-icon>edit</mat-icon>EDIT ALBUM</button>
-    <button mat-menu-item (click)="emptyAlbum()"><mat-icon>clear</mat-icon>EMPTY ALBUM</button>
-    <button mat-menu-item (click)="deleteAlbum()"><mat-icon>delete</mat-icon>DELETE ALBUM</button>
-  </mat-menu>
+  <ng-container *ngIf="albumService.album.data$ | async as album">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="albumMenu"
+      *ngIf="accountService.canManageAlbums$ | async"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #albumMenu="matMenu">
+      <button
+        mat-menu-item
+        (click)="editAlbum()"
+      >
+        <mat-icon>edit</mat-icon> EDIT ALBUM
+      </button>
+      <button
+        mat-menu-item
+        (click)="deleteAlbum()"
+      >
+        <mat-icon>delete</mat-icon> DELETE ALBUM
+      </button>
+    </mat-menu>
+  </ng-container>
 </title-section>
 
 <album-gallery [album]="albumService.album.data$ | async" [photos]="photos$ | async" [select]="null" />

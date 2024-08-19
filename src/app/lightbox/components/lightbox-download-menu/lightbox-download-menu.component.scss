@@ -1,3 +1,8 @@
 button[mat-icon-button] {
   color: white;
 }
+
+button span.hint {
+  display: block;
+  color: #777;
+}

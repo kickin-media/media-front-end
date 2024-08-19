@@ -13,7 +13,7 @@
     >
       <mat-icon>photo_size_select_small</mat-icon>
       Small
-      <span>400px</span>
+      <span class="hint">400px</span>
     </button>
 
     <button
@@ -22,7 +22,7 @@
     >
       <mat-icon>photo_size_select_large</mat-icon>
       Medium
-      <span>800px</span>
+      <span class="hint">800px</span>
     </button>
 
     <button
@@ -31,7 +31,7 @@
     >
       <mat-icon>photo_size_select_actual</mat-icon>
       Large
-      <span>2048px</span>
+      <span class="hint">2048px</span>
     </button>
 
     <ng-container *ngIf="canDownload$ | async">
@@ -42,7 +42,7 @@
       >
         <mat-icon>raw_on</mat-icon>
         Original
-        <span>Without watermark</span>
+        <span class="hint">Without watermark</span>
       </button>
     </ng-container>
   </mat-menu>

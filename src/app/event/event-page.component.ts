@@ -16,6 +16,11 @@ import { AlbumComponent } from "../album/components/album/album.component";
 import { AlbumDialogComponent } from "../album/components/album-dialog/album-dialog.component";
 import { SlugPipe } from "../../pipes/slug.pipe";
 import slugify from "slugify";
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogProps
+} from "../components/confirmation-dialog/confirmation-dialog.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: 'event-page',
@@ -28,9 +33,10 @@ import slugify from "slugify";
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatTooltipModule,
 
-    TitleSectionComponent,
     AlbumComponent,
+    TitleSectionComponent,
     SlugPipe,
   ],
   templateUrl: './event-page.component.html',
@@ -42,6 +48,8 @@ export class EventPageComponent {
 
   // Yields albums indexed by date-strings or ""
   protected albums$: Observable<{ [key: string]: Album[] }>;
+
+  protected canDelete$: Observable<boolean>;
 
   constructor(
     protected dialog: MatDialog,
@@ -73,7 +81,10 @@ export class EventPageComponent {
       }),
       shareReplay(1),
     );
-    eventService.id$.subscribe(console.log);
+
+    this.canDelete$ = this.eventService.albums.data$.pipe(
+      map(albums => albums.length === 0),
+    );
   }
 
   createAlbum() {
@@ -112,15 +123,28 @@ export class EventPageComponent {
   }
 
   deleteEvent() {
-    this.eventService.id$.pipe(
-      first(),
-      switchMap(eventId => {
-        if (!eventId) return of(false);
-        return this.eventService.delete(eventId);
-      })
+    const eventId$ = this.eventService.id$.pipe(first());
+
+    const dialogRef = this.dialog.open(
+      ConfirmationDialogComponent,
+      {
+        data: {
+          title: "Are you sure you want to delete this event?",
+          detail: "This action is irreversible and the photos in this album may be deleted.",
+          buttonClass: "error-button",
+          buttonNames: ["CANCEL", "DELETE"],
+        } as ConfirmationDialogProps
+      },
+    );
+
+    (dialogRef.afterClosed() as Observable<boolean>).pipe(
+      filter(result => result),
+      switchMap(() => eventId$),
+      filter(eventId => eventId !== null),
+      switchMap(eventId => this.eventService.delete(eventId)),
     ).subscribe(result => {
       if (!result) return;
-      this.router.navigate(['/event']);
+      this.router.navigate([`/event`]);
     });
   }
 

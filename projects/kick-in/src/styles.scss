@@ -23,3 +23,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .secondary-button {
   @include mat.button-color(kick-in.$theme, $color-variant: secondary);
 }
+
+.error-button {
+  @include mat.button-color(kick-in.$theme, $color-variant: error);
+}

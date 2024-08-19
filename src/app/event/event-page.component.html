@@ -11,8 +11,23 @@
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #eventMenu="matMenu">
-    <button mat-menu-item (click)="editEvent()"><mat-icon>edit</mat-icon>EDIT EVENT</button>
-    <button mat-menu-item (click)="deleteEvent()"><mat-icon>delete</mat-icon>DELETE EVENT</button>
+    <button mat-menu-item (click)="editEvent()">
+      <mat-icon>edit</mat-icon>
+      EDIT EVENT
+    </button>
+    <button
+      mat-menu-item
+      (click)="deleteEvent()"
+      [disabled]="!(canDelete$ | async)"
+      [matTooltip]="
+        (canDelete$ | async)
+        ? ''
+        : 'You can only delete an event after all of its albums have been deleted.'"
+      matTooltipPosition="left"
+    >
+      <mat-icon>delete</mat-icon>
+      DELETE EVENT
+    </button>
   </mat-menu>
 </title-section>
 
@@ -22,6 +37,6 @@
 >
   <ng-container *ngFor="let index of getAlbumGroupIndices(albums)">
     <h3 *ngIf="index">{{ configService.config.albums.groupName(index) }}</h3>
-    <album *ngFor="let album of albums[index]" [album]="album" />
+    <album *ngFor="let album of albums[index]" [album]="album"/>
   </ng-container>
 </div>
