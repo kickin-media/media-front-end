@@ -33,10 +33,10 @@ export class ShareService {
       // Otherwise fall back on the Clipboard API
       const clipboardItem = new ClipboardItem({ "text/plain": albumUrl });
       (navigator as Navigator).clipboard.write([clipboardItem])
-        .then(() => this.snackbar.open("Photo copied to clipboard."))
+        .then(() => this.snackbar.open("Album URL copied to clipboard."))
         .catch(error => {
           console.error(error);
-          this.snackbar.open("Could not copy the photo; please check your browser settings...")
+          this.snackbar.open("Could not copy the album URL; please check your browser settings...")
         });
     } else {
       this.snackbar.open("Could not share the album automatically, please share the URL manually...");
