@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from "@auth0/auth0-angular";
-import { catchError, map, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
+import { catchError, map, Observable, of, shareReplay, switchMap } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class AccountService {
     this.scopes$ = auth.isAuthenticated$.pipe(
       switchMap(authenticated => {
         if (!authenticated) return of([]);
-        return auth.getAccessTokenSilently({detailedResponse: true}).pipe(
+        return auth.getAccessTokenSilently({ detailedResponse: true }).pipe(
           map(res => res.scope),
           map(scope => scope ? scope.split(" ") : []),
           catchError(() => of([])),
