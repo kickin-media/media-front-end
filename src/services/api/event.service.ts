@@ -49,6 +49,7 @@ export class EventService extends BaseService {
       this.id$,
       id => this.fetchEvent(id),
       null,
+      true,
     );
 
     // Fetch this event's albums
