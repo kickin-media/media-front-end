@@ -8,7 +8,7 @@ import {
 } from "@angular/cdk/scrolling";
 import { EventComponent } from "./components/event/event.component";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { TitleSectionComponent } from "../components/title-section/title-section.component";
+import { TitleSectionComponent } from "../../components/title-section/title-section.component";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { EventOverviewDataSource } from "./lib/event-overview.datasource";

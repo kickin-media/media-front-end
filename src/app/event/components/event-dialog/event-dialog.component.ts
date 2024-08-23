@@ -7,7 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { ButtonGroupComponent } from "../../../components/button-group/button-group.component";
+import { ButtonGroupComponent } from "../../../../components/button-group/button-group.component";
 import { MatIconModule } from "@angular/material/icon";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";

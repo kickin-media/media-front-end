@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
-import { Breadcrumb, TitleSectionComponent } from "../components/title-section/title-section.component";
+import { Breadcrumb, TitleSectionComponent } from "../../components/title-section/title-section.component";
 import { EventService } from "../../services/api/event.service";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
@@ -19,7 +19,7 @@ import slugify from "slugify";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogProps
-} from "../components/confirmation-dialog/confirmation-dialog.component";
+} from "../../components/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AccountService } from "../../services/account.service";
 

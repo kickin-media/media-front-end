@@ -15,7 +15,7 @@ import { AlbumService } from "../../../../services/api/album.service";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogProps
-} from "../../../components/confirmation-dialog/confirmation-dialog.component";
+} from "../../../../components/confirmation-dialog/confirmation-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
 
 @Component({

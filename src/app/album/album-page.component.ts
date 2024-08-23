@@ -4,7 +4,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { SlugPipe } from "../../pipes/slug.pipe";
-import { Breadcrumb, TitleSectionComponent } from "../components/title-section/title-section.component";
+import { Breadcrumb, TitleSectionComponent } from "../../components/title-section/title-section.component";
 import { AlbumService } from "../../services/api/album.service";
 import {
   combineLatest, concatAll, EMPTY,
@@ -33,12 +33,12 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogProps
-} from "../components/confirmation-dialog/confirmation-dialog.component";
+} from "../../components/confirmation-dialog/confirmation-dialog.component";
 import { ShareService } from "../../services/share.service";
 import { MatButtonToggleModule } from "@angular/material/button-toggle";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { SelectionModel } from "@angular/cdk/collections";
-import { ButtonGroupComponent } from "../components/button-group/button-group.component";
+import { ButtonGroupComponent } from "../../components/button-group/button-group.component";
 import { PhotoService } from "../../services/api/photo.service";
 import { AlbumSelectionDialogComponent } from "./components/album-selection-dialog/album-selection-dialog.component";
 
