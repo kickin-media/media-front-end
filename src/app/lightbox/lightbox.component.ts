@@ -115,6 +115,18 @@ export class LightboxComponent {
     this.closeOverlay();
   }
 
+  @HostListener("document:keydown.arrowleft")
+  goBack() {
+    if (this.index <= 0) return;
+    this.go(-1);
+  }
+
+  @HostListener("document:keydown.arrowright")
+  goNext() {
+    if (!this.photos || this.index + 1 >= this.photos.length) return;
+    this.go(1);
+  }
+
   protected getPhotoSrc(photo: Photo): string | null {
     return photo.img_urls[this.imageQualityService.lightboxQuality];
   }
