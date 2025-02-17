@@ -5,7 +5,7 @@ import { Breadcrumb, TitleSectionComponent } from "../../components/title-sectio
 import { EventService } from "../../services/api/event.service";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatMenuModule } from "@angular/material/menu";
-import { filter, first, map, Observable, of, shareReplay, switchMap } from "rxjs";
+import { combineLatest, filter, first, map, Observable, of, shareReplay, switchMap } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { EventDialogComponent, EventDialogProps } from "./components/event-dialog/event-dialog.component";
 import { Router } from "@angular/router";
@@ -71,7 +71,18 @@ export class EventPageComponent {
       }),
     );
 
-    this.albums$ = this.eventService.albums.data$.pipe(
+    // Filter the albums
+    const albums$ = combineLatest([
+      this.eventService.albums.data$,
+      this.accountService.canManageAlbums$,
+      this.accountService.canUpload$,
+    ]).pipe(map(([albums, canManage, canUpload]) => {
+      const canSeeAllAlbums = canManage || canUpload;
+      return albums.filter(album => canSeeAllAlbums || album.photos_count > 0);
+    }));
+
+    // And sort/group the albums
+    this.albums$ = albums$.pipe(
       map((albums: Album[]) => albums.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())),
       map((albums: Album[]) => groupBy(albums, configService.config.albums.groupIndex)),
       map(groups => {
