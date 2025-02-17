@@ -1,0 +1,49 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+div.photo {
+  width: calc((100% - 2 * 0.5rem) / 3);
+  aspect-ratio: 1;
+  overflow: hidden;
+
+  position: relative;
+
+  display: block;
+}
+
+div.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+div.photo button {
+  display: none;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  color: white;
+  opacity: 0.75;
+  scale: 0.75;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+div.photo:hover button {
+  display: block;
+}
+
+:host div.photo ::ng-deep span.mat-badge-content {
+  transform: translate(-1rem, 1rem);
+}
+
+skeleton {
+  width: 300px;
+}

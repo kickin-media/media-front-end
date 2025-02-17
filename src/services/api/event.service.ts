@@ -63,7 +63,7 @@ export class EventService extends BaseService {
       albums => albums.sort((a, b) => b.views - a.views),
       [],
       true,
-    )
+    );
 
     // Fetch the current watermark
     this.watermarkUrl = this.fetchOnChange(

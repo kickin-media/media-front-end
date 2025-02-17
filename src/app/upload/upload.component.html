@@ -1,0 +1,74 @@
+<h2 mat-dialog-title>Upload to {{(albumService.album.data$ | async)?.name}}</h2>
+<mat-dialog-content>
+  <input
+    type="file"
+    multiple
+    accept="image/jpeg"
+    #fileInput
+    (change)="onSelectFiles($event)"
+  />
+
+  <button
+    mat-stroked-button
+    (click)="fileInput.click()"
+    [disabled]="status !== null"
+  >
+    <mat-icon>add</mat-icon>
+    Select photos...
+  </button>
+
+  <p class="hint">
+    <mat-icon>info</mat-icon>
+    You can upload up to 250 photos at once.
+  </p>
+
+  @for (type of exifWarningTypes; track type) {
+    <p
+      *ngIf="grid.hasWarning(type) as count"
+      class="warn"
+    >
+      <mat-icon>warning</mat-icon>
+      <b>{{ count }}x:</b> {{ type | exifWarning }}
+    </p>
+  }
+</mat-dialog-content>
+
+<mat-divider *ngIf="files.length > 0" />
+
+<mat-dialog-content>
+  <upload-grid #grid [photos]="files" (removeFile)="removeFile($event)" />
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-button
+    mat-dialog-close
+    [disabled]="status !== null"
+  >
+    Cancel
+  </button>
+  <button
+    mat-flat-button
+    [disabled]="!grid.canUpload() || status !== null"
+    (click)="onSubmit()"
+  >
+    Upload {{files.length}} photo{{files.length !== 1 ? 's' : ''}}
+    <mat-icon>upload</mat-icon>
+  </button>
+</mat-dialog-actions>
+
+@if (status !== null) {
+  <div *ngIf="(status | async) as stat" class="progress">
+    <mat-progress-bar
+      mode="determinate"
+      value="100"
+      class="error"
+      [ngStyle]="{'--progress': stat.errors.length / (stat.remaining + stat.total)}"
+    />
+    <mat-progress-bar
+      mode="determinate"
+      [value]="stat.successes / (stat.total + stat.remaining - stat.errors.length) * 100"
+      [ngStyle]="{'--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total)}"
+    />
+  </div>
+}

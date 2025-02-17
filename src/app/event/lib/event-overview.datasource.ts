@@ -5,7 +5,6 @@ import {
   combineLatest,
   concatAll,
   EMPTY,
-  empty,
   expand,
   filter,
   map,
@@ -13,7 +12,7 @@ import {
   Observable,
   of,
   pairwise,
-  startWith, tap
+  startWith
 } from "rxjs";
 
 export class EventOverviewDataSource extends DataSource<EventItem> {
@@ -33,12 +32,12 @@ export class EventOverviewDataSource extends DataSource<EventItem> {
           start: next.end > acc.end ? acc.end + 1 : acc.start,
           end: next.end > acc.end ? next.end : acc.end,
         } as ListRange),
-        { start: -1, end: -1} as ListRange,
+        { start: -1, end: -1 } as ListRange,
       ),
 
       pairwise(),
       filter(([prevRange, curRange]) => curRange.start > prevRange.start),
-      map(([prevRange, curRange]) => curRange),
+      map(([_, curRange]) => curRange),
     );
 
     return combineLatest([indices$, this.eventService.allEvents.data$]).pipe(

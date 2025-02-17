@@ -27,10 +27,6 @@ div.album-list {
     album {
       width: calc((100% - 2rem) / 3);
     }
-
-    album:nth-child(4) {
-      display: none;
-    }
   }
 
   // 2 albums: 2 * 15rem + 1 * 1rem = 31rem = 496px
@@ -38,20 +34,12 @@ div.album-list {
     album {
       width: calc((100% - 1rem) / 2);
     }
-
-    album:nth-child(3) {
-      display: none;
-    }
   }
 
   // 1 albums: 1 * 15rem + 0 * 1rem = 15rem = 240px
   @media (max-width: 400px) {
     album {
       width: 100%;
-    }
-
-    album:nth-child(2) {
-      display: none;
     }
   }
 }

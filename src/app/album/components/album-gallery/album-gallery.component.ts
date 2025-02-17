@@ -1,19 +1,20 @@
 import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SelectionModel } from "@angular/cdk/collections";
 import { AlbumDetailed, Photo } from "../../../../util/types";
-import { AsyncPipe, NgClass, NgForOf, NgIf } from "@angular/common";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
 import slugify from "slugify";
 import { Router, RouterLink, UrlTree } from "@angular/router";
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
   selector: 'album-gallery',
   standalone: true,
   imports: [
-    AsyncPipe,
-    NgIf,
     NgForOf,
     RouterLink,
-    NgClass
+    NgClass,
+    MatIcon,
+    NgIf
   ],
   templateUrl: './album-gallery.component.html',
   styleUrl: './album-gallery.component.scss'
@@ -26,10 +27,19 @@ export class AlbumGalleryComponent implements OnChanges {
 
   @HostBinding("class.select-mode") selectMode: boolean = false;
 
+  processingCount: number = 0;
+
   constructor(protected router: Router) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes["photos"]) {
+      const photos: Photo[] | null = changes["photos"].currentValue;
+      if (photos && photos.length > 0) {
+        this.processingCount = photos.filter(photo => !photo.upload_processed).length;
+      }
+    }
+
     if (changes["select"]) {
       this.selectMode = changes["select"].currentValue !== null;
     }

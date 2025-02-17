@@ -15,6 +15,7 @@ export type EventUpdate = EventCreate;
 // Photos
 export type Photo = components["schemas"]["PhotoReadSingleStub"];
 export type PhotoDetailed = components["schemas"]["PhotoReadSingle"];
+export type PhotoUpload = components["schemas"]["PhotoUploadResponse"];
 
 // S3
 export type S3PreSignedUrl = components["schemas"]["PhotoUploadPreSignedUrl"];

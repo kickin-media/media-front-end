@@ -1,4 +1,7 @@
-<a [routerLink]="getAlbumUrl()">
+<a
+  [routerLink]="getAlbumUrl()"
+  [ngClass]="{'to-be-released': !isReleased(), 'can-open-unreleased': canOpenUnreleasedAlbums$ | async}"
+>
   <div class="cover-photo">
     <img
       *ngIf="getCoverPhoto() as photoSrc"
@@ -7,6 +10,16 @@
       alt=""
       fill
     />
+
+    <mat-icon *ngIf="album !== undefined && album.hidden_secret" class="hidden">lock_open</mat-icon>
+
+    <div *ngIf="album !== undefined && !isReleased()" class="scheduled">
+      <mat-icon>access_time</mat-icon>
+      <span>
+        {{ album.release_time | date: "HH:mm" }}<br />
+        {{ album.release_time | date: "mediumDate" }}
+      </span>
+    </div>
   </div>
 
   @if (album !== undefined) {

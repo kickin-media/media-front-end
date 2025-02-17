@@ -1,3 +1,8 @@
+<p *ngIf="processingCount" class="note">
+  <mat-icon>info</mat-icon>
+  <b>{{ processingCount }}</b> photo(s) are still being processed...
+</p>
+
 <a
   *ngFor="let photo of photos"
   [routerLink]="select ? undefined : getPhotoUrl(photo)"

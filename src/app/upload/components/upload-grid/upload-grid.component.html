@@ -1,0 +1,10 @@
+<div
+  class="photo"
+  *ngFor="let photo of photos"
+  [matBadge]="getBadgeCount(photo)"
+  [matTooltip]="getTooltip(photo)"
+>
+  <skeleton *ngIf="!previews[photo.name]" />
+  <img *ngIf="previews[photo.name]" [src]="previews[photo.name]" alt="" />
+  <button mat-icon-button (click)="removeFile.emit(photo)"><mat-icon>delete</mat-icon></button>
+</div>

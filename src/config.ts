@@ -9,7 +9,7 @@ export interface Config<T extends string | number | symbol> {
   apiHosts: ApiConfig;
 
   // Auth0
-  auth0?: AuthConfig,
+  auth0?: AuthConfig;
 
   // Corporate Identity
   title: string;
@@ -27,7 +27,7 @@ export interface Config<T extends string | number | symbol> {
     groupIndex: (album: Album) => T,
     groupName: (index: T) => string,
     groupSort: (a: T, b: T) => number,
-  }
+  };
 
 }
 

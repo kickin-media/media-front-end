@@ -3,11 +3,12 @@ import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
-import { SlugPipe } from "../../pipes/slug.pipe";
 import { Breadcrumb, TitleSectionComponent } from "../../components/title-section/title-section.component";
 import { AlbumService } from "../../services/api/album.service";
 import {
-  combineLatest, concatAll, EMPTY,
+  combineLatest,
+  concatAll,
+  EMPTY,
   expand,
   filter,
   first,
@@ -17,7 +18,7 @@ import {
   pairwise,
   shareReplay,
   startWith,
-  switchMap, tap
+  switchMap
 } from "rxjs";
 import { AlbumDialogComponent, AlbumDialogProps } from "./components/album-dialog/album-dialog.component";
 import { Album, AlbumDetailed, Photo } from "../../util/types";
@@ -41,6 +42,7 @@ import { SelectionModel } from "@angular/cdk/collections";
 import { ButtonGroupComponent } from "../../components/button-group/button-group.component";
 import { PhotoService } from "../../services/api/photo.service";
 import { AlbumSelectionDialogComponent } from "./components/album-selection-dialog/album-selection-dialog.component";
+import { UploadDialog } from "../upload/upload.component";
 
 @Component({
   selector: 'album-page',
@@ -58,8 +60,6 @@ import { AlbumSelectionDialogComponent } from "./components/album-selection-dial
 
     AlbumGalleryComponent,
     ButtonGroupComponent,
-    LightboxComponent,
-    SlugPipe,
     TitleSectionComponent,
   ],
   templateUrl: './album-page.component.html',
@@ -208,6 +208,13 @@ export class AlbumPageComponent {
     ).subscribe(album => {
       if (!album) return;
       this.router.navigate([`/event/${album.event_id}/${slugify(album.event.name)}`]);
+    });
+  }
+
+  uploadPhotos() {
+    const dialogRef = this.dialog.open(UploadDialog);
+    dialogRef.afterClosed().subscribe(() => {
+      this.albumService.album.refresh();
     });
   }
 

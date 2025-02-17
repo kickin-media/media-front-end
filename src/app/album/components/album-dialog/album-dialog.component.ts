@@ -60,10 +60,11 @@ export class AlbumDialogComponent {
     }
 
     if (data.album) {
+      console.log(data.album);
       this.nameField.setValue(data.album.name);
       this.eventField.setValue(data.album.event_id);
       this.dateField.setValue(new Date(data.album.timestamp));
-      this.secretField.setValue(data.album.hidden_secret !== undefined);
+      this.secretField.setValue(data.album.hidden_secret !== undefined && data.album.hidden_secret !== null);
       if (data.album.release_time) this.scheduledReleaseField.setValue(new Date(data.album.release_time));
 
       this.eventField.disable();

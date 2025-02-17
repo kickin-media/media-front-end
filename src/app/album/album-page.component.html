@@ -26,14 +26,24 @@
     </mat-button-toggle-group>
 
     @if (selected === null) {
-      <button
-        *ngIf="(accountService.canUpload$ | async) || (accountService.canManageOther$ | async)"
-        mat-stroked-button
-        (click)="selectMode(true)"
-      >
-        <mat-icon>check_box_outline_blank</mat-icon>
-        SELECT
-      </button>
+      <button-group>
+        <button
+          *ngIf="(accountService.canUpload$ | async) || (accountService.canManageOther$ | async)"
+          mat-stroked-button
+          (click)="selectMode(true)"
+        >
+          <mat-icon>check_box_outline_blank</mat-icon>
+          SELECT
+        </button>
+        <button
+          *ngIf="accountService.canUpload$ | async"
+          mat-flat-button
+          (click)="uploadPhotos()"
+        >
+          <mat-icon>upload</mat-icon>
+          UPLOAD
+        </button>
+      </button-group>
     } @else {
       <button-group>
         <button mat-stroked-button (click)="selectMode(false)">
@@ -107,8 +117,15 @@
   </ng-container>
 </title-section>
 
-<album-gallery
-  [album]="albumService.album.data$ | async"
-  [photos]="photos$ | async"
-  [select]="selected"
-/>
+<ng-container *ngIf="(albumService.album.data$ | async) as album">
+  <p *ngIf="album.hidden_secret" class="note">
+    <mat-icon>warning</mat-icon>
+    <b>This is a hidden album!</b> Be careful when sharing it with others...
+  </p>
+
+  <album-gallery
+    [album]="albumService.album.data$ | async"
+    [photos]="photos$ | async"
+    [select]="selected"
+  />
+</ng-container>

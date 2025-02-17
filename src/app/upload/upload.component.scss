@@ -1,0 +1,53 @@
+:host {
+  position: relative
+}
+
+input[type="file"] {
+  display: none;
+}
+
+p.hint, p.warn {
+  padding-top: 0.25rem;
+  vertical-align: top;
+
+  &.hint {
+    color: #777;
+  }
+
+  &.warn {
+    color: var(--error-light);
+  }
+
+  > mat-icon {
+    margin-top: -0.25rem;
+    margin-right: 0.5rem;
+    display: inline-block;
+    vertical-align: top;
+  }
+}
+
+mat-dialog-content + mat-divider {
+  margin-top: 1rem;
+}
+
+.progress {
+  width: calc(100% - 1.5rem);
+
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: row;
+
+  transition: width 250ms ease;
+
+  mat-progress-bar {
+    width: calc(100% * var(--progress));
+  }
+
+  mat-progress-bar.error {
+    --mdc-linear-progress-active-indicator-color: var(--error);
+  }
+}

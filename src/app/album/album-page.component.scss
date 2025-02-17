@@ -2,3 +2,18 @@ button[mat-menu-item] span.hint {
   color: #777;
   display: block;
 }
+
+p.note {
+  width: 100%;
+  padding-top: 0.25rem;
+
+  color: #777;
+  vertical-align: top;
+
+  > mat-icon {
+    margin-top: -0.25rem;
+    margin-right: 0.5rem;
+    display: inline-block;
+    vertical-align: top;
+  }
+}

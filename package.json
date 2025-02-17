@@ -26,6 +26,7 @@
     "@mat-datetimepicker/core": "^14.0.0",
     "@mat-datetimepicker/moment": "^14.0.0",
     "browser-image-resizer": "^2.4.1",
+    "exif-parser": "^0.1.12",
     "rxjs": "~7.8.0",
     "slugify": "^1.6.6",
     "tslib": "^2.3.0",

@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Photo, PhotoDetailed } from "../util/types";
+import { EXIF_WARNING_MESSAGES, ExifWarningType } from "../util/validate-exif";
 
 @Pipe({
   name: 'exif',
@@ -47,6 +48,20 @@ export class ExifShutterSpeedPipe extends ExifPipe {
     }
 
     return null;
+  }
+
+}
+
+@Pipe({
+  name: 'exifWarning',
+  standalone: true
+})
+export class ExifWarningPipe implements PipeTransform {
+
+  transform(type: ExifWarningType | null | undefined): string | null {
+    if (type === null || type === undefined) return null;
+
+    return EXIF_WARNING_MESSAGES[type];
   }
 
 }
