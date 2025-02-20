@@ -10,5 +10,10 @@
 </title-section>
 
 <cdk-virtual-scroll-viewport scrollWindow [itemSize]="309" appendOnly>
-  <event *cdkVirtualFor="let item of dataSource" [event]="item.event" [albums]="item.albums" />
+  <event
+    *cdkVirtualFor="let item of dataSource"
+    [event]="item.event"
+    [albums]="item.albums"
+    [canSeeAllAlbums]="(accountService.canManageAlbums$ | async)! || (accountService.canUpload$ | async)!"
+  />
 </cdk-virtual-scroll-viewport>

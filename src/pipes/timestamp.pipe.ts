@@ -8,6 +8,14 @@ const WEEK = DAY * 7;
 const MONTH = 365 * DAY / 12;
 const YEAR = 365 * DAY;
 
+export const parseDate: (date: Date | string | null | undefined) => Date | null = (date) => {
+  if (!date) return null;
+  if (typeof date !== 'string') return date;
+
+  // TODO: Fix timezone
+  return new Date(date);
+};
+
 export const relativeDate: (date: Date) => string = (date) => {
   const diff = new Date().getTime() - date.getTime();
 
@@ -47,9 +55,7 @@ export const renderDate: (date: Date, includeDay?: boolean) => string = (date, i
 export class TimestampPipe implements PipeTransform {
 
   transform(value: string | Date): string {
-    // TODO: Fix timezone
-    if (typeof value === "string") value = new Date(value);
-    return relativeDate(value);
+    return relativeDate(parseDate(value)!);
   }
 
 }
