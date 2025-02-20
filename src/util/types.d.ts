@@ -6,6 +6,10 @@ export type AlbumDetailed = components["schemas"]["AlbumReadSingle"];
 export type AlbumCreate = components["schemas"]["AlbumCreate"];
 export type AlbumUpdate = components["schemas"]["AlbumUpdate"];
 
+// Author
+export type Author = components["schemas"]["AuthorReadSingle"];
+export type AuthorCreate = components["schemas"]["AuthorCreate"];
+
 // Events
 export type PhotoEvent = components["schemas"]["EventReadList"];
 export type EventDetailed = components["schemas"]["EventReadSingle"];

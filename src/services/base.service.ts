@@ -123,7 +123,7 @@ export abstract class BaseService {
           catchError(() => of({ data: defaultValue, loading: false, error: true })),
 
           // Start with an empty state
-          startWith({ data: defaultValue, loading: false, error: true }),
+          startWith({ data: defaultValue, loading: false, error: false }),
         );
       }),
 

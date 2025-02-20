@@ -1,5 +1,10 @@
 <h2 mat-dialog-title>Upload to {{(albumService.album.data$ | async)?.name}}</h2>
 <mat-dialog-content>
+  <p>
+    Upload full resolution photo's to the album (without watermarks). After the upload
+    the photo will be resized and a watermark with your name will be added...
+  </p>
+
   <input
     type="file"
     multiple
@@ -33,7 +38,32 @@
   }
 </mat-dialog-content>
 
-<mat-divider *ngIf="files.length > 0" />
+<mat-divider />
+
+<mat-expansion-panel
+  [expanded]="copyrightExpander()"
+  (opened)="copyrightExpander.set(true)"
+  (closed)="copyrightExpander.set(false)"
+>
+  <mat-expansion-panel-header>
+    <mat-panel-title><mat-icon>copyright</mat-icon> Copyright details</mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <span class="hint">
+    Details about the copyright of the uploaded photos are between you and the
+    <a href="mailto:{{ configService.config.contact.email }}">{{ configService.config.contact.name }}</a>.
+    The uploaded picture will include your name in the watermark as well as the
+    {{ configService.config.title }} logo.
+  </span>
+
+  <mat-form-field>
+    <mat-label>Your name</mat-label>
+    <input matInput [formControl]="authorNameField" placeholder="First name + last name" />
+    <mat-hint>Please enter your name; it will appear on the watermark...</mat-hint>
+  </mat-form-field>
+</mat-expansion-panel>
+
+<mat-divider />
 
 <mat-dialog-content>
   <upload-grid #grid [photos]="files" (removeFile)="removeFile($event)" />
@@ -49,7 +79,7 @@
   </button>
   <button
     mat-flat-button
-    [disabled]="!grid.canUpload() || status !== null"
+    [disabled]="!authorNameField.value || !grid.canUpload() || status !== null"
     (click)="onSubmit()"
   >
     Upload {{files.length}} photo{{files.length !== 1 ? 's' : ''}}

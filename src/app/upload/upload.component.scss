@@ -6,7 +6,7 @@ input[type="file"] {
   display: none;
 }
 
-p.hint, p.warn {
+span.hint, p.hint, p.warn {
   padding-top: 0.25rem;
   vertical-align: top;
 
@@ -50,4 +50,18 @@ mat-dialog-content + mat-divider {
   mat-progress-bar.error {
     --mdc-linear-progress-active-indicator-color: var(--error);
   }
+}
+
+mat-expansion-panel {
+  border-radius: 0;
+  box-shadow: none !important;
+
+  mat-panel-title mat-icon {
+    margin-right: .5rem;
+  }
+}
+
+mat-form-field {
+  margin-top: 1rem;
+  width: 100%;
 }

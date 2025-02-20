@@ -90,7 +90,10 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
 
   canUpload(): boolean {
     const criticalWarnings = Object.values(this.warnings).flat().some(warn => warn.critical);
-    return this.photos.length > 0 && this.previewWorker === null && !criticalWarnings;
+    return this.photos.length > 0
+      && this.photos.length <= 250
+      && this.previewWorker === null
+      && !criticalWarnings;
   }
 
   hasWarning(warningType: ExifWarningType): number | false {

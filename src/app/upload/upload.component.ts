@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { AlbumService } from "../../services/api/album.service";
@@ -8,9 +8,15 @@ import { UploadGridComponent } from "./components/upload-grid/upload-grid.compon
 import { MatDividerModule } from "@angular/material/divider";
 import { EXIF_WARNING_MESSAGES, ExifWarningType } from "../../util/validate-exif";
 import { ExifWarningPipe } from "../../pipes/exif.pipe";
-import { filter, first, Observable, of, shareReplay, startWith, switchMap } from "rxjs";
+import { combineLatest, filter, first, Observable, of, shareReplay, startWith, switchMap, tap } from "rxjs";
 import { PhotoService, PhotoUploadStatus } from "../../services/api/photo.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { AuthorService } from "../../services/api/author.service";
+import { ConfigService } from "../../services/config.service";
 
 @Component({
   selector: 'upload-dialog',
@@ -19,6 +25,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatInputModule,
     AsyncPipe,
     UploadGridComponent,
     MatDividerModule,
@@ -26,21 +35,44 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     ExifWarningPipe,
     MatProgressBarModule,
     NgStyle,
+    ReactiveFormsModule,
   ],
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.scss'
 })
 export class UploadDialog {
 
+  protected authorNameField = new FormControl<string | null>(null);
+
   protected files: File[] = [];
   protected status: Observable<PhotoUploadStatus> | null = null;
   protected hadUploadErrors: boolean = false;
 
+  protected copyrightExpander = signal(false);
+
   constructor(
     protected dialogRef: MatDialogRef<UploadDialog>,
     protected albumService: AlbumService,
+    protected authorService: AuthorService,
+    protected configService: ConfigService,
     protected photoService: PhotoService,
-  ) { }
+  ) {
+    combineLatest([
+      authorService.author.data$,
+      authorService.author.error$,
+    ]).pipe(
+      filter(([author, error]) => error || author !== null),
+      first(),
+      tap(console.log),
+    ).subscribe(([author, _]) => {
+      if (!author) {
+        this.copyrightExpander.set(true);
+        return;
+      }
+
+      this.authorNameField.setValue(author.name);
+    });
+  }
 
   onSelectFiles(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -56,12 +88,23 @@ export class UploadDialog {
   }
 
   onSubmit() {
-    this.status = this.albumService.id$.pipe(
+    if (!this.authorNameField.value) return;
+
+    this.status = this.authorService.updateAuthor({
+      name: this.authorNameField.value as string,
+    }).pipe(
+      switchMap(() => this.albumService.id$),
       filter(id => id !== null),
       first(),
       switchMap(albumId => this.photoService.upload(albumId, this.files)),
       shareReplay(1),
-      startWith({ successes: 0, errors: [], total: 0, remaining: this.files.length } as PhotoUploadStatus),
+      startWith({
+        successes: 0,
+        errors: [],
+        total: 0,
+        remaining: this.files.length,
+        started: false
+      } as PhotoUploadStatus),
     );
 
     this.status.subscribe(res => {

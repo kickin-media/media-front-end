@@ -95,10 +95,10 @@ export class PhotoService extends BaseService {
 
           return res;
         },
-        { successes: 0, errors: [], total: 0, remaining: files.length } as PhotoUploadStatus,
+        { successes: 0, errors: [], total: 0, remaining: files.length, started: true } as PhotoUploadStatus,
       ),
 
-      startWith({ successes: 0, errors: [], total: 0, remaining: files.length } as PhotoUploadStatus),
+      startWith({ successes: 0, errors: [], total: 0, remaining: files.length, started: false } as PhotoUploadStatus),
 
       // Display status in the snackbar on finish...
       tap(status => {
@@ -151,4 +151,5 @@ export interface PhotoUploadStatus {
   errors: File[];
   total: number;
   remaining: number
+  started: boolean;
 }
