@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from "@auth0/auth0-angular";
-import { catchError, map, Observable, of, shareReplay, switchMap } from "rxjs";
+import { catchError, first, map, Observable, of, shareReplay, switchMap } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
+import { BaseService } from "./base.service";
 
 @Injectable({
   providedIn: 'root'
 })
-export class AccountService {
+export class AccountService extends BaseService {
 
   readonly scopes$: Observable<string[]>;
   readonly user$: AuthService["user$"];
@@ -17,8 +19,12 @@ export class AccountService {
   readonly canUpload$: Observable<boolean>;
 
   constructor(
+    router: Router,
+    activatedRoute: ActivatedRoute,
     protected auth: AuthService,
   ) {
+    super(router, activatedRoute);
+
     this.user$ = auth.user$.pipe(catchError(() => of(null)));
 
     // Extract the scopes
@@ -49,7 +55,9 @@ export class AccountService {
   }
 
   login() {
-    this.auth.loginWithRedirect();
+    this.route$.pipe(first()).subscribe(route => {
+      this.auth.loginWithRedirect({appState: { target: `/${route.url.join("/")}` }});
+    });
   }
 
   logout() {
