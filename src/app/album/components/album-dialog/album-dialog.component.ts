@@ -6,11 +6,10 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatDatepicker, MatDatepickerInput, MatDatepickerToggle } from "@angular/material/datepicker";
 import { EventService } from "../../../../services/api/event.service";
 import { MatSelectModule } from "@angular/material/select";
 import { AsyncPipe, NgForOf } from "@angular/common";
-import { MatCheckbox } from "@angular/material/checkbox";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDatetimepickerModule } from "@mat-datetimepicker/core";
 import { MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
 import { MatIconModule } from "@angular/material/icon";
@@ -27,13 +26,10 @@ import { serializeDate } from "../../../../util/date";
     MatInputModule,
     ReactiveFormsModule,
     MatIconModule,
-    MatDatepicker,
-    MatDatepickerInput,
-    MatDatepickerToggle,
     MatSelectModule,
     AsyncPipe,
     NgForOf,
-    MatCheckbox,
+    MatCheckboxModule,
     MatMomentDatetimeModule,
     MatDatetimepickerModule,
   ],
@@ -88,9 +84,7 @@ export class AlbumDialogComponent {
     if (date === null) return false;
 
     const secret = this.secretField.value;
-    if (secret === null) return false;
-
-    return true;
+    return secret !== null;
   }
 
   submit() {
