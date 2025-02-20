@@ -9,7 +9,13 @@
     <mat-icon>settings</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
-    <button mat-menu-item [disabled]="(accountService.canManageAlbums$ | async) !== true">
+    <button
+      mat-menu-item
+      matTooltipPosition="left"
+      matTooltip="Set this photo as the album cover, will be visible in the event overview."
+      [disabled]="(accountService.canManageAlbums$ | async) !== true"
+      (click)="setAlbumCover()"
+    >
       <mat-icon>photo_library</mat-icon>
       Set as album cover
     </button>

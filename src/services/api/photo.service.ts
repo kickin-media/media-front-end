@@ -8,11 +8,12 @@ import {
   concatAll,
   EMPTY,
   expand,
-  map, multicast,
+  map,
   Observable,
   of,
-  scan, share,
-  shareReplay, startWith, Subject,
+  scan,
+  shareReplay,
+  startWith,
   switchMap,
   tap
 } from "rxjs";

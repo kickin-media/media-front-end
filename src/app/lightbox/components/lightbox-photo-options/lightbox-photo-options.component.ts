@@ -73,6 +73,16 @@ export class LightboxPhotoOptionsComponent implements OnChanges {
     }
   }
 
+  setAlbumCover() {
+    const photo = this.photo;
+    if (!photo || !(photo as any).albums) return;
+
+    const currentAlbum = this.album;
+    if (!currentAlbum) return;
+
+    this.albumService.setAlbumCover(currentAlbum.id, photo.id).subscribe();
+  }
+
   removeFromAlbum() {
     if (!this.closeViewer) return;
 

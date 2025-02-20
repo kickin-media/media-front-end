@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { map, Observable, of } from "rxjs";
+import { map, Observable, tap } from "rxjs";
 import { Album, AlbumCreate, AlbumDetailed, AlbumUpdate, Photo } from "../../util/types";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +17,17 @@ export class AlbumService extends BaseService {
   constructor(
     router: Router,
     activatedRoute: ActivatedRoute,
-
     protected http: HttpClient,
+    protected snackbar: MatSnackBar,
   ) {
     super(router, activatedRoute);
 
-    this.id$ = this.trackRouteParam("album_id");
+    this.id$ = this.trackRouteParam("album_id").pipe(
+      tap(albumId => {
+        if (!albumId) return;
+        this.increaseViewcount(albumId).subscribe();
+      }),
+    );
 
     // Retrieve the current album
     this.album = this.fetchOnChange(
@@ -33,19 +39,29 @@ export class AlbumService extends BaseService {
   }
 
   create(album: AlbumCreate): Observable<AlbumDetailed> {
-    return this.http.post<AlbumDetailed>("/album/", album);
+    return this.http.post<AlbumDetailed>("/album/", album).pipe(
+      tap(() => this.snackbar.open("Album created.")),
+    );
   }
 
   update(id: Album["id"], album: AlbumUpdate): Observable<AlbumDetailed> {
-    return this.http.put<AlbumDetailed>(`/album/${id}`, album);
+    return this.http.put<AlbumDetailed>(`/album/${id}`, album).pipe(
+      tap(() => this.snackbar.open("Album updated.")),
+    );
   }
 
   delete(id: Album["id"]): Observable<boolean> {
-    return this.http.delete(`/album/${id}`).pipe(map(() => true));
+    return this.http.delete(`/album/${id}`).pipe(
+      map(() => true),
+      tap(() => this.snackbar.open("Album deleted.")),
+    );
   }
 
   setAlbumCover(id: Album["id"], photoId: Photo["id"]): Observable<boolean> {
-    return this.http.put(`/album/${id}/cover`, { photo_id: photoId }).pipe(map(() => true));
+    return this.http.put(`/album/${id}/cover`, { photo_id: photoId }).pipe(
+      map(() => true),
+      tap(() => this.snackbar.open("Album cover updated.")),
+    );
   }
 
   setSecretStatus(id: Album["id"], isSecret: boolean, refreshSecret: boolean = false): Observable<boolean> {
@@ -56,7 +72,10 @@ export class AlbumService extends BaseService {
   }
 
   empty(id: Album["id"]): Observable<boolean> {
-    return this.http.delete(`/album/${id}/empty`).pipe(map(() => true));
+    return this.http.delete(`/album/${id}/empty`).pipe(
+      map(() => true),
+      tap(() => this.snackbar.open("Photos unlinked.")),
+    );
   }
 
   increaseViewcount(id: Album["id"]): Observable<boolean> {

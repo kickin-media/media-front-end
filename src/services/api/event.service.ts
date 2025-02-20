@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-import { combineLatest, map, Observable, switchMap } from "rxjs";
+import { combineLatest, map, Observable, switchMap, tap } from "rxjs";
 import { Album, EventCreate, EventDetailed, EventUpdate, PhotoEvent, S3PreSignedUrl } from "../../util/types";
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { S3Service } from "../s3.service";
 import { AlbumService } from "./album.service";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class EventService extends BaseService {
     router: Router,
     activatedRoute: ActivatedRoute,
     protected http: HttpClient,
+    protected snackbar: MatSnackBar,
     protected s3: S3Service,
     protected albumService: AlbumService,
   ) {
@@ -74,15 +76,21 @@ export class EventService extends BaseService {
   }
 
   create(event: EventCreate): Observable<EventDetailed> {
-    return this.http.post<EventDetailed>("/event/", event);
+    return this.http.post<EventDetailed>("/event/", event).pipe(
+      tap(() => this.snackbar.open("Event created.")),
+    );
   }
 
   update(id: PhotoEvent["id"], event: EventUpdate): Observable<EventDetailed> {
-    return this.http.put<EventDetailed>(`/event/${id}`, event);
+    return this.http.put<EventDetailed>(`/event/${id}`, event).pipe(
+      tap(() => this.snackbar.open("Event updated.")),
+    );
   }
 
   delete(id: PhotoEvent["id"]): Observable<boolean> {
-    return this.http.delete(`/event/${id}`).pipe(map(() => true));
+    return this.http.delete(`/event/${id}`).pipe(map(() => true)).pipe(
+      tap(() => this.snackbar.open("Event deleted.")),
+    );
   }
 
   updateWatermark(id: PhotoEvent["id"], photo: File): Observable<boolean> {
