@@ -12,7 +12,6 @@ export const parseDate: (date: Date | string | null | undefined) => Date | null 
   if (!date) return null;
   if (typeof date !== 'string') return date;
 
-  // TODO: Fix timezone
   return new Date(date);
 };
 

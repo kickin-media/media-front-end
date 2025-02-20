@@ -15,6 +15,7 @@ import { MatDatetimepickerModule } from "@mat-datetimepicker/core";
 import { MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
 import { MatIconModule } from "@angular/material/icon";
 import { combineLatest, share, switchMap } from "rxjs";
+import { serializeDate } from "../../../../util/date";
 
 @Component({
   selector: 'app-album-dialog',
@@ -60,7 +61,6 @@ export class AlbumDialogComponent {
     }
 
     if (data.album) {
-      console.log(data.album);
       this.nameField.setValue(data.album.name);
       this.eventField.setValue(data.album.event_id);
       this.dateField.setValue(new Date(data.album.timestamp));
@@ -101,8 +101,8 @@ export class AlbumDialogComponent {
     const data: AlbumCreate | AlbumUpdate = {
       name: this.nameField.value as string,
       event_id: this.eventField.value as string,
-      timestamp: JSON.stringify(this.dateField.value as Date).replaceAll("\"", ""),
-      release_time: releaseDate ? JSON.stringify(releaseDate).replaceAll("\"", "") : null,
+      timestamp: serializeDate(this.dateField.value as Date),
+      release_time: releaseDate ? serializeDate(releaseDate) : null,
     };
 
     const saveAction$ = (

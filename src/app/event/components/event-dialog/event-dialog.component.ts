@@ -14,6 +14,7 @@ import { MatDatepickerModule } from "@angular/material/datepicker";
 import { combineLatest, isObservable, map, Observable, of, shareReplay, startWith, switchMap, tap } from "rxjs";
 import { readAndCompressImage, Config as PreviewConfig } from "browser-image-resizer";
 import { fromPromise } from "rxjs/internal/observable/innerFrom";
+import { serializeDate } from "../../../../util/date";
 
 const previewConfig: PreviewConfig = {
   quality: 0.7,
@@ -105,7 +106,7 @@ export class EventDialogComponent {
 
     const data: EventCreate | EventUpdate = {
       name: this.nameField.value as string,
-      timestamp: JSON.stringify(this.dateField.value as Date).replaceAll("\"", ""),
+      timestamp: serializeDate(this.dateField.value as Date),
       locked: this.lockField.value ?? false,
     };
 
