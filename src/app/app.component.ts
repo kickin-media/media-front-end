@@ -1,4 +1,4 @@
-import { Component, Inject, signal } from '@angular/core';
+import { Component, Inject, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatButtonModule } from "@angular/material/button";
@@ -8,6 +8,9 @@ import { ConfigService } from "../services/config.service";
 import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from "@angular/common";
 import { AccountService } from "../services/account.service";
 import { AuthService } from "@auth0/auth0-angular";
+import { MatDialog } from "@angular/material/dialog";
+import { window } from "rxjs";
+import { CookiesDialogComponent } from "../components/cookies-dialog/cookies-dialog.component";
 
 @Component({
   selector: 'app-root',
@@ -27,7 +30,7 @@ import { AuthService } from "@auth0/auth0-angular";
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   protected readonly menuLinks = [
     { title: "Home", url: "/", icon: "home" },
@@ -37,13 +40,25 @@ export class AppComponent {
   protected readonly menu = signal(false);
 
   constructor(
+    protected dialog: MatDialog,
     protected account: AccountService,
     protected config: ConfigService,
   ) {
   }
 
+  ngOnInit(): void {
+    const cookies = localStorage.getItem("cookie-dialog");
+    if (!cookies) {
+      const dialogRef = this.dialog.open(CookiesDialogComponent);
+      dialogRef.afterClosed().subscribe(() => {
+        localStorage.setItem("cookie-dialog", "true");
+      });
+    }
+  }
+
   protected logout() {
     this.account.logout();
+    // @ts-ignore
     window.location.reload();
   }
 
