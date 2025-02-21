@@ -3,10 +3,13 @@ import { Album } from "../../../src/util/types";
 
 bootstrapMediaApp({
   title: "Batavierenrace",
-  logo: "/logo-white.png",
-  website: "https://www.kick-in.nl",
+  logo: "/bata-logo.svg",
+  website: "https://www.batavierenrace.nl/",
 
-  contact: { name: "Kick-In committee", email: "info@kick-in.nl" },
+  contact: {
+    name: "Batavierenrace committee",
+    email: "nijmegen@batavierenrace.nl,enschede@batavierenrace.nl",
+  },
 
   apiHosts: {
     // Development (local)
