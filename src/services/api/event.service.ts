@@ -96,11 +96,15 @@ export class EventService extends BaseService {
   updateWatermark(id: PhotoEvent["id"], photo: File): Observable<boolean> {
     return this.http.post<S3PreSignedUrl>(`/event/${id}/watermark`, "").pipe(
       switchMap(s3Url => this.s3.uploadPhoto(photo, s3Url)),
+      tap(() => this.snackbar.open("Watermark updated.")),
     );
   }
 
   deleteWatermark(id: PhotoEvent["id"]): Observable<boolean> {
-    return this.http.delete(`/event/${id}/watermark`).pipe(map(() => true));
+    return this.http.delete(`/event/${id}/watermark`).pipe(
+      map(() => true),
+      tap(() => this.snackbar.open("Watermark deleted.")),
+    );
   }
 
   protected fetchEvents(): Observable<PhotoEvent[]> {

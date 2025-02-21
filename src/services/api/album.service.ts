@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { map, Observable, tap } from "rxjs";
+import { combineLatest, first, map, Observable, of, switchMap, tap } from "rxjs";
 import { Album, AlbumCreate, AlbumDetailed, AlbumUpdate, Photo } from "../../util/types";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { AccountService } from "../account.service";
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,21 @@ export class AlbumService extends BaseService {
     activatedRoute: ActivatedRoute,
     protected http: HttpClient,
     protected snackbar: MatSnackBar,
+    protected accountService: AccountService,
   ) {
     super(router, activatedRoute);
 
     this.id$ = this.trackRouteParam("album_id").pipe(
       tap(albumId => {
         if (!albumId) return;
-        this.increaseViewcount(albumId).subscribe();
+        // Only update the view count if this is not an authenticated user
+        combineLatest([this.accountService.canManageAlbums$, this.accountService.canUpload$]).pipe(
+          first(),
+          switchMap(([canManage, canUpload]) => {
+            if (canManage || canUpload) return of(true);
+            return this.increaseViewCount(albumId);
+          }),
+        ).subscribe();
       }),
     );
 
@@ -78,7 +87,7 @@ export class AlbumService extends BaseService {
     );
   }
 
-  increaseViewcount(id: Album["id"]): Observable<boolean> {
+  increaseViewCount(id: Album["id"]): Observable<boolean> {
     return this.http.put(`/album/${id}/view`, "").pipe(map(() => true));
   }
 

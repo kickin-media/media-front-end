@@ -96,9 +96,7 @@ export class EventDialogComponent {
     if (name.length === 0) return false;
 
     const date = this.dateField.value;
-    if (date === null) return false;
-
-    return true;
+    return date !== null;
   }
 
   submit() {
@@ -114,7 +112,30 @@ export class EventDialogComponent {
       ? this.eventService.update(this.data.event.id, data)
       : this.eventService.create(data);
 
-    action$.subscribe(result => this.dialogRef.close(result));
+    const conclude: (result: PhotoEvent) => void = result => this.dialogRef.close(result);
+
+    const watermark = this.watermarkField.value;
+    if (watermark === false) {
+      // Delete the watermark
+      action$.pipe(
+        switchMap(event => {
+          return this.eventService.deleteWatermark(event.id).pipe(map(() => event));
+        }),
+      ).subscribe(conclude);
+    } else if (watermark !== null) {
+      // Upload a new watermark
+      action$.pipe(
+        switchMap(event => {
+          return this.eventService.updateWatermark(
+            event.id,
+            watermark,
+          ).pipe(map(() => event));
+        }),
+      ).subscribe(conclude);
+    } else {
+      // Don't do anything with the watermark
+      action$.subscribe(conclude);
+    }
   }
 
 }

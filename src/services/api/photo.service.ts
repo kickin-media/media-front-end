@@ -4,10 +4,10 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import {
   BehaviorSubject,
-  catchError,
+  catchError, combineLatest,
   concatAll,
   EMPTY,
-  expand,
+  expand, first,
   map,
   Observable,
   of,
@@ -20,6 +20,7 @@ import {
 import { Album, Photo, PhotoDetailed, PhotoUpload } from "../../util/types";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { S3Service } from "../s3.service";
+import { AccountService } from "../account.service";
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +38,7 @@ export class PhotoService extends BaseService {
     protected s3: S3Service,
     protected http: HttpClient,
     protected snackbar: MatSnackBar,
+    protected accountService: AccountService,
   ) {
     super(router, activatedRoute);
 
@@ -112,9 +114,18 @@ export class PhotoService extends BaseService {
     );
   }
 
-  setCurrentPhoto(photoId: Photo["id"] | null, updateViewCount: boolean = true) {
+  setCurrentPhoto(photoId: Photo["id"] | null) {
     this.idSubject$.next(photoId);
-    if (updateViewCount && photoId) this.increaseViewCount(photoId).subscribe();
+    if (photoId) {
+      // Only update the view count if this is not an authenticated user
+      combineLatest([this.accountService.canManageAlbums$, this.accountService.canUpload$]).pipe(
+        first(),
+        switchMap(([canManage, canUpload]) => {
+          if (canManage || canUpload) return of(true);
+          return this.increaseViewCount(photoId);
+        }),
+      ).subscribe();
+    }
   }
 
   delete(photoId: Photo["id"]): Observable<void> {
