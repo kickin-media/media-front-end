@@ -1,0 +1,29 @@
+@use "sass:map";
+@use "@angular/material" as mat;
+@use "sterrenkunde.scssm3-theme";
+
+//@import '@mat-datetimepicker/core/datetimepicker/datetimepicker-theme.scss';
+
+@include mat.core();
+
+html {
+  @include mat.core-theme(sterrenkunde.$theme);
+  @include mat.all-component-themes(sterrenkunde.$theme);
+  //@include mat-datetimepicker-theme(bata.$theme);
+
+  @include sterrenkunde.theme-colors();
+}
+
+@include mat.typography-hierarchy(sterrenkunde.$theme);
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+* { box-sizing: border-box; }
+
+.secondary-button {
+  @include mat.button-color(sterrenkunde.$theme, $color-variant: secondary);
+}
+
+.error-button {
+  @include mat.button-color(sterrenkunde.$theme, $color-variant: error);
+}
