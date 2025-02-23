@@ -35,6 +35,7 @@ bootstrapMediaApp({
 
     authorizationParams: {
       audience: "https://api.kick-in.media",
+      connection: "kick-in-idb", // Use the Kick-In OAuth connection
       redirect_uri: window.location.origin,
       scope: [
         'openid',
