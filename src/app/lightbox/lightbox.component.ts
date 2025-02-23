@@ -87,6 +87,7 @@ export class LightboxComponent {
       first(),
     ).subscribe(photos => {
       this.photos = photos;
+      this.index = photos.map(photo => photo.id).indexOf(initialPhotoId);
     });
   }
 
