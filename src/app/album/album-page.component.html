@@ -73,7 +73,7 @@
           <mat-icon style="margin-right: -1rem">expand_more</mat-icon>
         </button>
       </button-group>
-      <mat-menu #photoMenu="matMenu">
+      <mat-menu #photoMenu="matMenu" xPosition="before">
         <button
           mat-menu-item
           (click)="addSelectedToOther()"
@@ -100,7 +100,7 @@
     >
       <mat-icon>more_vert</mat-icon>
     </button>
-    <mat-menu #albumMenu="matMenu">
+    <mat-menu #albumMenu="matMenu" xPosition="before">
       <button
         mat-menu-item
         (click)="editAlbum()"
