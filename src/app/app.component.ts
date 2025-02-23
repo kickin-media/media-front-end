@@ -47,9 +47,18 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Delay the cookies dialog by 0ms to display it on top of the lightbox of
+    // the album page
+    setTimeout(() => this.openCookiesDialog(), 0);
+  }
+
+  protected openCookiesDialog(): void {
     const cookies = localStorage.getItem("cookie-dialog");
     if (!cookies) {
-      const dialogRef = this.dialog.open(CookiesDialogComponent);
+      const dialogRef = this.dialog.open(
+        CookiesDialogComponent,
+        { closeOnNavigation: false, disableClose: true },
+      );
       dialogRef.afterClosed().subscribe(() => {
         localStorage.setItem("cookie-dialog", "true");
       });
