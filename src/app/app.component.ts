@@ -58,8 +58,7 @@ export class AppComponent implements OnInit {
 
   protected logout() {
     this.account.logout();
-    // @ts-ignore
-    window.location.reload();
+    location.reload();
   }
 
 }

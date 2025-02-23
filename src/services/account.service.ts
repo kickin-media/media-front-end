@@ -34,7 +34,8 @@ export class AccountService extends BaseService {
         return auth.getAccessTokenSilently({ detailedResponse: true }).pipe(
           map(res => res.scope),
           map(scope => scope ? scope.split(" ") : []),
-          catchError(() => of([])),
+          // Logout if the session is invalid
+          catchError(() => auth.logout({ openUrl: false }).pipe(map(() => []))),
         );
       }),
       shareReplay(1),
