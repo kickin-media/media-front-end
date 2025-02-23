@@ -1,6 +1,8 @@
 <mat-toolbar>
   <!-- Quick peek photo info -->
-  <mat-chip *ngIf="photo && photo.views">
+  <mat-chip
+    *ngIf="photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))"
+  >
     <mat-icon matChipAvatar>trending_up</mat-icon>
     {{ photo.views }} views
   </mat-chip>

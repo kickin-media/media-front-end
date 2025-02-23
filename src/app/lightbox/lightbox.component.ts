@@ -1,16 +1,15 @@
 import { Component, HostListener } from '@angular/core';
 
 import { PhotoService } from "../../services/api/photo.service";
-import { MatToolbar } from "@angular/material/toolbar";
+import { MatToolbarModule } from "@angular/material/toolbar";
 import { filter, first, Observable } from "rxjs";
 import { AlbumDetailed, Photo, PhotoDetailed } from "../../util/types";
-import { MatIcon } from "@angular/material/icon";
-import { MatIconButton } from "@angular/material/button";
-import { MatTooltip } from "@angular/material/tooltip";
+import { MatIconModule } from "@angular/material/icon";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatChipsModule } from "@angular/material/chips";
-import { DecimalPipe, NgIf } from "@angular/common";
+import { AsyncPipe, DecimalPipe, NgIf } from "@angular/common";
 import { ImageQualityService } from "../../services/image-quality.service";
-import { MatMenu, MatMenuItem } from "@angular/material/menu";
 import { LightboxPhotoOptionsComponent } from "./components/lightbox-photo-options/lightbox-photo-options.component";
 import { LightboxDownloadMenuComponent } from "./components/lightbox-download-menu/lightbox-download-menu.component";
 import { ExifPipe, ExifShutterSpeedPipe } from "../../pipes/exif.pipe";
@@ -18,25 +17,25 @@ import { AlbumService } from "../../services/api/album.service";
 import { ShareService } from "../../services/share.service";
 import { Router } from "@angular/router";
 import slugify from "slugify";
+import { AccountService } from "../../services/account.service";
 
 @Component({
   selector: 'lightbox',
   standalone: true,
   imports: [
-    MatToolbar,
-    MatIcon,
-    MatIconButton,
-    MatTooltip,
+    MatButtonModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatTooltipModule,
     MatChipsModule,
     NgIf,
-    MatMenu,
-    MatMenuItem,
     LightboxPhotoOptionsComponent,
     LightboxDownloadMenuComponent,
     ExifPipe,
     DecimalPipe,
     ExifPipe,
     ExifShutterSpeedPipe,
+    AsyncPipe,
   ],
   templateUrl: './lightbox.component.html',
   styleUrl: './lightbox.component.scss'
@@ -53,7 +52,7 @@ export class LightboxComponent {
 
   constructor(
     protected router: Router,
-
+    protected accountService: AccountService,
     protected albumService: AlbumService,
     protected imageQualityService: ImageQualityService,
     protected photoService: PhotoService,
