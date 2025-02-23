@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService, FetchedObject } from "../base.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { combineLatest, first, map, Observable, of, switchMap, tap } from "rxjs";
+import { combineLatest, distinctUntilChanged, first, map, Observable, of, shareReplay, switchMap, tap } from "rxjs";
 import { Album, AlbumCreate, AlbumDetailed, AlbumUpdate, Photo } from "../../util/types";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AccountService } from "../account.service";
@@ -13,6 +13,8 @@ import { AccountService } from "../account.service";
 export class AlbumService extends BaseService {
 
   readonly id$: Observable<string | null>;
+  readonly secret$: Observable<string | null>;
+
   readonly album: FetchedObject<AlbumDetailed | null>;
 
   constructor(
@@ -38,10 +40,16 @@ export class AlbumService extends BaseService {
       }),
     );
 
+    this.secret$ = this.route$.pipe(
+      map(route => route.queryParamMap.get("secret")),
+      distinctUntilChanged(),
+      shareReplay(1),
+    );
+
     // Retrieve the current album
     this.album = this.fetchOnChange(
       this.id$,
-      id => this.fetchAlbum(id),
+      id => this.secret$.pipe(switchMap(secret => this.fetchAlbum(id, secret))),
       null,
       true,
     );
@@ -91,8 +99,10 @@ export class AlbumService extends BaseService {
     return this.http.put(`/album/${id}/view`, "").pipe(map(() => true));
   }
 
-  protected fetchAlbum(id: Album["id"]): Observable<AlbumDetailed> {
-    return this.http.get<AlbumDetailed>(`/album/${id}`);
+  protected fetchAlbum(id: Album["id"], secret: string | null): Observable<AlbumDetailed> {
+    return this.http.get<AlbumDetailed>(`/album/${id}`, {
+      params: secret ? { secret } : {},
+    });
   }
 
 }

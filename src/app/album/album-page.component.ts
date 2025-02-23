@@ -228,7 +228,7 @@ export class AlbumPageComponent {
     const componentRef = overlayRef.attach(new ComponentPortal(LightboxComponent));
     const close = () => {
       // Navigate to the current URL to reset the lightbox query param
-      this.router.navigate([]);
+      this.router.navigate([], { queryParams: { lightbox: null }, queryParamsHandling: "merge" });
 
       // Cleanup the overlay
       overlayRef.detach();
