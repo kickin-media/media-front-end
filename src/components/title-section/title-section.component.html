@@ -1,15 +1,17 @@
-<h1>
-  {{ title }}
-  <skeleton-line *ngIf="!title" />
-</h1>
+<div class="title">
+  <h1>
+    {{ title }}
+    <skeleton-line *ngIf="!title" />
+  </h1>
+  <div class="breadcrumb" *ngIf="breadcrumb">
+    <ng-container *ngFor="let crumb of breadcrumb; index as idx">
+      <a [routerLink]="crumb.url">
+        {{ crumb.title }}
+        <skeleton-line *ngIf="!crumb.title" />
+      </a>
+      <span *ngIf="idx != breadcrumb.length - 1">&gt;</span>
+    </ng-container>
+  </div>
+</div>
 
 <div class="actions"><ng-content /></div>
-<div class="breadcrumb" *ngIf="breadcrumb">
-  <ng-container *ngFor="let crumb of breadcrumb; index as idx">
-    <a [routerLink]="crumb.url">
-      {{ crumb.title }}
-      <skeleton-line *ngIf="!crumb.title" />
-    </a>
-    <span *ngIf="idx != breadcrumb.length - 1">&gt;</span>
-  </ng-container>
-</div>

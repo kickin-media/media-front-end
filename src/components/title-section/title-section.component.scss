@@ -18,17 +18,7 @@ h1 {
   }
 }
 
-.actions {
-  flex-grow: 1;
-
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-}
-
 .breadcrumb {
-  width: 100%;
-
   a, span {
     color: #777;
     font-size: 0.875rem;
@@ -50,4 +40,14 @@ h1 {
   skeleton-line {
     width: 10ch
   }
+}
+
+.actions {
+  margin-top: 1rem;
+  flex-grow: 1;
+
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap-reverse;
+  gap: 0.5rem;
 }
