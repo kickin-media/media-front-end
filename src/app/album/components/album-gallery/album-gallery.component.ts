@@ -23,7 +23,7 @@ export class AlbumGalleryComponent implements OnChanges {
 
   @Input() album!: AlbumDetailed | null;
   @Input() photos!: Photo[] | null;
-  @Input() select!: SelectionModel<Photo["id"]> | null;
+  @Input() select!: SelectionModel<Photo["id"]>;
   @Input() selectMode!: boolean;
 
   @HostBinding("class.select-mode") selectModeStyle: boolean = false;
