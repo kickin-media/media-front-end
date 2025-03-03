@@ -24,8 +24,9 @@ export class AlbumGalleryComponent implements OnChanges {
   @Input() album!: AlbumDetailed | null;
   @Input() photos!: Photo[] | null;
   @Input() select!: SelectionModel<Photo["id"]> | null;
+  @Input() selectMode!: boolean;
 
-  @HostBinding("class.select-mode") selectMode: boolean = false;
+  @HostBinding("class.select-mode") selectModeStyle: boolean = false;
 
   processingCount: number = 0;
 
@@ -40,8 +41,8 @@ export class AlbumGalleryComponent implements OnChanges {
       }
     }
 
-    if (changes["select"]) {
-      this.selectMode = changes["select"].currentValue !== null;
+    if (changes["selectMode"]) {
+      this.selectModeStyle = changes["selectMode"].currentValue;
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -43,6 +43,7 @@ import { ButtonGroupComponent } from "../../components/button-group/button-group
 import { PhotoService } from "../../services/api/photo.service";
 import { AlbumSelectionDialogComponent } from "./components/album-selection-dialog/album-selection-dialog.component";
 import { UploadDialog } from "../upload/upload.component";
+import { toObservable } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'album-page',
@@ -68,7 +69,8 @@ import { UploadDialog } from "../upload/upload.component";
 export class AlbumPageComponent {
 
   protected photoSortField = new FormControl<"taken" | "upload">("taken");
-  protected selected: null | SelectionModel<Photo["id"]> = null;
+  protected selected: SelectionModel<Photo["id"]> = new SelectionModel(true);
+  protected selectMode = signal(false);
 
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
   protected photos$: Observable<Photo[] | null>;
@@ -107,12 +109,14 @@ export class AlbumPageComponent {
     // Filter photo's by author ID if in select mode
     photos$ = combineLatest([
       photos$,
+      toObservable(this.selectMode).pipe(startWith(false)),
+      this.selected.changed.pipe(startWith(null)),
       accountService.user$,
       accountService.canManageOther$,
     ]).pipe(
-      map(([photos, user, canManageOther]) => {
+      map(([photos, selectMode, _, user, canManageOther]) => {
         if (photos === null) return null;
-        if (this.selected !== null) return photos;
+        if (!selectMode) return photos;
 
         // Check permissions to return the correct set of photos in selection mode
         if (!user) return photos;
@@ -240,8 +244,9 @@ export class AlbumPageComponent {
     componentRef.instance.onOpen(close, photoId, this.photos$);
   }
 
-  selectMode(start: boolean) {
-    this.selected = start ? new SelectionModel(true) : null;
+  stopSelect() {
+    this.selectMode.set(false);
+    this.selected.clear();
   }
 
   selectAll() {

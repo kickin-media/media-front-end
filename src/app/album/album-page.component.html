@@ -25,12 +25,12 @@
       </mat-button-toggle>
     </mat-button-toggle-group>
 
-    @if (selected === null) {
+    @if (!selectMode()) {
       <button-group>
         <button
           *ngIf="(accountService.canUpload$ | async) || (accountService.canManageOther$ | async)"
           mat-stroked-button
-          (click)="selectMode(true)"
+          (click)="selectMode.set(true)"
         >
           <mat-icon>check_box_outline_blank</mat-icon>
           SELECT
@@ -46,7 +46,7 @@
       </button-group>
     } @else {
       <button-group>
-        <button mat-stroked-button (click)="selectMode(false)">
+        <button mat-stroked-button (click)="stopSelect()">
           <mat-icon>check_box</mat-icon>
           SELECT
         </button>
@@ -61,7 +61,7 @@
         <button
           mat-stroked-button
           *ngIf="selected!.selected.length > 0"
-          (click)="selectMode(true)"
+          (click)="selected.clear()"
         >
           <mat-icon>clear_all</mat-icon>
           CLEAR
@@ -96,7 +96,7 @@
     <button
       mat-icon-button
       [matMenuTriggerFor]="albumMenu"
-      *ngIf="selected === null && (accountService.canManageAlbums$ | async)"
+      *ngIf="!selectMode() && (accountService.canManageAlbums$ | async)"
     >
       <mat-icon>more_vert</mat-icon>
     </button>
@@ -127,5 +127,6 @@
     [album]="albumService.album.data$ | async"
     [photos]="photos$ | async"
     [select]="selected"
+    [selectMode]="selectMode()"
   />
 </ng-container>
