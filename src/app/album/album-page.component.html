@@ -5,7 +5,7 @@
   <ng-container *ngIf="albumService.album.data$ | async as album">
     <button
       mat-icon-button
-      *ngIf="selected === null"
+      *ngIf="!selectMode()"
       (click)="shareService.shareAlbum(album)"
       matTooltip="Share album"
     >
@@ -13,7 +13,7 @@
     </button>
 
     <mat-button-toggle-group
-      *ngIf="selected === null"
+      *ngIf="!selectMode()"
       [formControl]="photoSortField"
       [hideSingleSelectionIndicator]="true"
     >
