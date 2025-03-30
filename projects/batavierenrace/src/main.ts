@@ -15,12 +15,9 @@ bootstrapMediaApp({
     // Development (local)
     "localhost": "api.dev.kick-in.media",
 
-    // Testing
-    "dev.kick-in.media": "api.dev.kick-in.media",
-
     // Production
-    "kick-in.media": "api.kick-in.media",
-    "www.kick-in.media": "api.kick-in.media",
+    "foto.batavierenrace.nl": "api.foto.batavierenrace.nl.",
+    "www.foto.batavierenrace.nl": "api.foto.batavierenrace.nl.",
   },
 
   albums: {
@@ -30,14 +27,14 @@ bootstrapMediaApp({
   },
 
   auth0: {
-    domain: "kickin-media.eu.auth0.com",
-    clientId: "JVlKeh2uzBJSw1cwOF34V1Ro57vj5uoh",
+    domain: "bata-media.eu.auth0.com",
+    clientId: "DM86MjwjORkLBs3u2UhorYAUVlkUVMft",
 
     cacheLocation: "localstorage",
     useRefreshTokens: true,
 
     authorizationParams: {
-      audience: "https://api.kick-in.media",
+      audience: "https://api.foto.batavierenrace.nl",
       redirect_uri: window.location.origin,
       scope: [
         'openid',
