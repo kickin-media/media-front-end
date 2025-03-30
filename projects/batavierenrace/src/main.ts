@@ -13,7 +13,7 @@ bootstrapMediaApp({
 
   apiHosts: {
     // Development (local)
-    "localhost": "api.foto.batavierenrace.nl",
+    "localhost": "api.dev.kick-in.media",
 
     // Production
     "foto.batavierenrace.nl": "api.foto.batavierenrace.nl.",
