@@ -2,23 +2,28 @@ name: Build and Publish
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
 
   build-and-push:
-    name: Build front-end and push to S3
+    name: Build and publish front-end (${{ matrix.projects.name }}-${{ matrix.projects.environment }})
     runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
-        environment:
-          - dev
-          - prod
+        projects:
+          - name: kickin
+            environment: dev
+          - name: kickin
+            environment: prod
+          - name: bata
+            environment: prod
 
     environment:
-      name: ${{ matrix.environment }}
+      name: ${{ matrix.projects.name }}-${{ matrix.projects.environment }}
 
     steps:
       - name: Checkout code
@@ -27,23 +32,23 @@ jobs:
       - name: Build front-end
         run: |
           npm install
-          npm run ng -- build ${{ vars.PROJECT }}
+          npm run ng -- build ${{ vars.NPM_NAME }}
 
       - name: Deploy front-end to S3
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl private
         env:
-          AWS_S3_BUCKET: kickin-media-frontend-${{ matrix.environment }}
+          AWS_S3_BUCKET: ${{ matrix.projects.name }}-media-frontend-${{ matrix.projects.environment }}
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-west-1
-          SOURCE_DIR: dist/${{ vars.PROJECT }}/browser
+          SOURCE_DIR: dist/${{ vars.NPM_NAME }}/browser
 
       - name: Invalidate front-end cache
         uses: chetan/invalidate-cloudfront-action@v2
         env:
-          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION }}
+          DISTRIBUTION: ${{ vars.CLOUDFRONT_DISTRIBUTION }}
           PATHS: "/*"
           AWS_REGION: "eu-west-1"
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
