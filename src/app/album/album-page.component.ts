@@ -44,6 +44,7 @@ import { PhotoService } from "../../services/api/photo.service";
 import { AlbumSelectionDialogComponent } from "./components/album-selection-dialog/album-selection-dialog.component";
 import { UploadDialog } from "../upload/upload.component";
 import { toObservable } from "@angular/core/rxjs-interop";
+import { MatDividerModule } from "@angular/material/divider";
 
 @Component({
   selector: 'album-page',
@@ -55,6 +56,7 @@ import { toObservable } from "@angular/core/rxjs-interop";
 
     MatButtonModule,
     MatButtonToggleModule,
+    MatDividerModule,
     MatIconModule,
     MatMenuModule,
     MatTooltipModule,
@@ -342,6 +344,51 @@ export class AlbumPageComponent {
 
       // And trigger re-processing per photo
       map(photo => this.photoService.reprocess(photo.id)),
+      concatAll(),
+    ).subscribe();
+  }
+
+  deleteSelected() {
+    const selected = this.selected;
+    if (selected === null) return;
+
+    const selectCount = selected.selected.length;
+    const dialogRef = this.dialog.open(
+      ConfirmationDialogComponent,
+      {
+        data: {
+          title: `Are you sure you want to permanently delete ${selectCount} photos?`,
+          detail: "These photos will be deleted from ALL albums they are in. This action is not reversible.",
+        } as ConfirmationDialogProps
+      },
+    );
+
+    const onClose = dialogRef.afterClosed() as Observable<boolean>;
+    combineLatest([
+      onClose,
+      this.photos$,
+    ]).pipe(
+      // Filter invalid states
+      filter(([confirmed, photos]) => confirmed && photos !== null),
+      map(([_, photos]) => photos as Photo[]),
+
+      // Only listen for the first (valid) trigger
+      first(),
+
+      // Filter only the selected photos
+      map(photos => photos.filter(photo => selected.isSelected(photo.id))),
+
+      // Trigger an "event" per selected photo
+      map(photos => [null, photos] as [null, Photo[]]),
+      expand(([_, photos]) => {
+        if (photos.length === 0) return EMPTY;
+        return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
+      }),
+      filter(([photo, _]) => photo !== null),
+      map(([photo, _]) => photo),
+
+      // And trigger re-processing per photo
+      map(photo => this.photoService.delete(photo.id)),
       concatAll(),
     ).subscribe();
   }

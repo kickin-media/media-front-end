@@ -90,6 +90,15 @@
           <mat-icon>autorenew</mat-icon> Re-process
           <span class="hint">Re-generates photos and watermarks</span>
         </button>
+        <mat-divider />
+        <button
+          mat-menu-item
+          (click)="deleteSelected()"
+          [disabled]="selected!.selected.length === 0"
+        >
+          <mat-icon>delete</mat-icon> Delete
+          <span class="hint">Permanently deletes the selected photos</span>
+        </button>
       </mat-menu>
     }
 
