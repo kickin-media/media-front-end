@@ -16,8 +16,8 @@ bootstrapMediaApp({
     "localhost": "api.dev.kick-in.media",
 
     // Production
-    "foto.batavierenrace.nl": "api.foto.batavierenrace.nl.",
-    "www.foto.batavierenrace.nl": "api.foto.batavierenrace.nl.",
+    "fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl.",
+    "www.fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl.",
   },
 
   albums: {
@@ -34,7 +34,7 @@ bootstrapMediaApp({
     useRefreshTokens: true,
 
     authorizationParams: {
-      audience: "https://api.foto.batavierenrace.nl",
+      audience: "https://api.foto.batavierenrace.nl", // Should stay with `foto` instead of `fotos` as the audience could not be updated in Auth0 to the new domain. This is just an identifier and does not relate to the actual domain name.
       redirect_uri: window.location.origin,
       scope: [
         'openid',
