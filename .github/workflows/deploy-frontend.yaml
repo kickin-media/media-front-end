@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
 
   build-and-push:
@@ -29,27 +33,23 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Configure AWS Credentials
+        id: configure-aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          output-credentials: true
+
       - name: Build front-end
         run: |
           npm install
           npm run ng -- build ${{ vars.NPM_NAME }}
 
       - name: Deploy front-end to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl private
-        env:
-          AWS_S3_BUCKET: ${{ matrix.projects.name }}-media-frontend-${{ matrix.projects.environment }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-west-1
-          SOURCE_DIR: dist/${{ vars.NPM_NAME }}/browser
+        run: |
+          aws s3 sync dist/${{ vars.NPM_NAME }}/browser s3://${{ matrix.projects.name }}-media-frontend-${{ matrix.projects.environment }} --acl private
 
       - name: Invalidate front-end cache
-        uses: chetan/invalidate-cloudfront-action@v2
-        env:
-          DISTRIBUTION: ${{ vars.CLOUDFRONT_DISTRIBUTION }}
-          PATHS: "/*"
-          AWS_REGION: "eu-west-1"
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_DEPLOY_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_DEPLOY_AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION }} --paths "/*"
