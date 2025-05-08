@@ -16,8 +16,8 @@ bootstrapMediaApp({
     "localhost": "api.dev.kick-in.media",
 
     // Production
-    "fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl.",
-    "www.fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl.",
+    "fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl",
+    "www.fotos.batavierenrace.nl": "api.fotos.batavierenrace.nl",
   },
 
   albums: {
