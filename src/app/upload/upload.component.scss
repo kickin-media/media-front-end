@@ -1,5 +1,14 @@
 :host {
-  position: relative
+  max-height: calc(100vh - 4rem);
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 input[type="file"] {
@@ -28,6 +37,11 @@ span.hint, p.hint, p.warn {
 
 mat-dialog-content + mat-divider {
   margin-top: 1rem;
+}
+
+mat-dialog-content.photos {
+  flex-basis: fit-content;
+  flex-shrink: 1;
 }
 
 .progress {
