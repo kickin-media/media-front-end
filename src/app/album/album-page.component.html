@@ -139,3 +139,10 @@
     [selectMode]="selectMode()"
   />
 </ng-container>
+
+<div class="loading-overlay" *ngIf="isReprocessing()">
+  <div class="spinner-container">
+    <mat-spinner></mat-spinner>
+    <p>Reprocessing photos...</p>
+  </div>
+</div>

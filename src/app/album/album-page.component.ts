@@ -3,6 +3,7 @@ import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { Breadcrumb, TitleSectionComponent } from "../../components/title-section/title-section.component";
 import { AlbumService } from "../../services/api/album.service";
 import {
@@ -18,7 +19,8 @@ import {
   pairwise,
   shareReplay,
   startWith,
-  switchMap
+  switchMap,
+  tap
 } from "rxjs";
 import { AlbumDialogComponent, AlbumDialogProps } from "./components/album-dialog/album-dialog.component";
 import { Album, AlbumDetailed, Photo } from "../../util/types";
@@ -59,6 +61,7 @@ import { MatDividerModule } from "@angular/material/divider";
     MatDividerModule,
     MatIconModule,
     MatMenuModule,
+    MatProgressSpinnerModule,
     MatTooltipModule,
 
     AlbumGalleryComponent,
@@ -73,6 +76,7 @@ export class AlbumPageComponent {
   protected photoSortField = new FormControl<"taken" | "upload">("taken");
   protected selected: SelectionModel<Photo["id"]> = new SelectionModel(true);
   protected selectMode = signal(false);
+  protected isReprocessing = signal(false);
 
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
   protected photos$: Observable<Photo[] | null>;
@@ -330,6 +334,9 @@ export class AlbumPageComponent {
       // Only listen for the first (valid) trigger
       first(),
 
+      // Show loading spinner
+      tap(() => this.isReprocessing.set(true)),
+
       // Filter only the selected photos
       map(photos => photos.filter(photo => selected.isSelected(photo.id))),
 
@@ -345,7 +352,10 @@ export class AlbumPageComponent {
       // And trigger re-processing per photo
       map(photo => this.photoService.reprocess(photo.id)),
       concatAll(),
-    ).subscribe();
+    ).subscribe({
+      complete: () => this.isReprocessing.set(false),
+      error: () => this.isReprocessing.set(false)
+    });
   }
 
   deleteSelected() {
