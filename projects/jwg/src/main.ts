@@ -2,25 +2,22 @@ import { bootstrapMediaApp } from "../../../src/public-api";
 import { Album } from "../../../src/util/types";
 
 bootstrapMediaApp({
-  title: "Sterrenkunde",
+  title: "Jongeren Werkgroep voor Sterrenkunde",
   logo: "/cropped-star-192x192.png",
   website: "https://www.sterrenkunde.nl/jwg",
 
   contact: {
-    name: "Sterrenkunde JWG",
-    email: "secretaris@sterrenkunde.nl",
+    name: "Internet Commissie",
+    email: "gallery@sterrenkunde.nl",
   },
 
   apiHosts: {
     // Development (local)
     "localhost": "api.dev.kick-in.media",
 
-    // Testing
-    "dev.kick-in.media": "api.dev.kick-in.media",
-
     // Production
-    "kick-in.media": "api.kick-in.media",
-    "www.kick-in.media": "api.kick-in.media",
+    "fotos.sterrenkunde.nl": "api.fotos.sterrenkunde.nl",
+    "www.fotos.sterrenkunde.nl": "api.fotos.sterrenkunde.nl",
   },
 
   albums: {
@@ -30,14 +27,14 @@ bootstrapMediaApp({
   },
 
   auth0: {
-    domain: "kickin-media.eu.auth0.com",
-    clientId: "JVlKeh2uzBJSw1cwOF34V1Ro57vj5uoh",
+    domain: "todo",
+    clientId: "todo",
 
     cacheLocation: "localstorage",
     useRefreshTokens: true,
 
     authorizationParams: {
-      audience: "https://api.kick-in.media",
+      audience: "https://api.fotos.sterrenkunde.nl",
       redirect_uri: window.location.origin,
       scope: [
         'openid',

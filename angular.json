@@ -238,36 +238,36 @@
         }
       }
     },
-    "sterrenkunde": {
+    "jwg": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/sterrenkunde",
-      "sourceRoot": "projects/sterrenkunde/src",
+      "root": "projects/jwg",
+      "sourceRoot": "projects/jwg/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/sterrenkunde",
-            "index": "projects/sterrenkunde/src/index.html",
-            "browser": "projects/sterrenkunde/src/main.ts",
+            "outputPath": "dist/jwg",
+            "index": "projects/jwg/src/index.html",
+            "browser": "projects/jwg/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "projects/sterrenkunde/tsconfig.app.json",
+            "tsConfig": "projects/jwg/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/sterrenkunde/public"
+                "input": "projects/jwg/public"
               }
             ],
             "styles": [
-              "projects/sterrenkunde/src/styles.scss"
+              "projects/jwg/src/styles.scss"
             ],
             "scripts": []
           },
@@ -277,7 +277,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -302,10 +302,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "sterrenkunde:build:production"
+              "buildTarget": "jwg:build:production"
             },
             "development": {
-              "buildTarget": "sterrenkunde:build:development"
+              "buildTarget": "jwg:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -320,21 +320,24 @@
               "zone.js",
               "zone.js/testing"
             ],
-            "tsConfig": "projects/sterrenkunde/tsconfig.spec.json",
+            "tsConfig": "projects/jwg/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/sterrenkunde/public"
+                "input": "projects/jwg/public"
               }
             ],
             "styles": [
-              "projects/sterrenkunde/src/styles.scss"
+              "projects/jwg/src/styles.scss"
             ],
             "scripts": []
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

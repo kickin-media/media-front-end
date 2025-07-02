@@ -25,6 +25,8 @@ jobs:
             environment: prod
           - name: bata
             environment: prod
+          - name: jwg
+            environment: prod
 
     environment:
       name: ${{ matrix.projects.name }}-${{ matrix.projects.environment }}
