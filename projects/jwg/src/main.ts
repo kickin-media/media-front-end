@@ -27,8 +27,8 @@ bootstrapMediaApp({
   },
 
   auth0: {
-    domain: "todo",
-    clientId: "todo",
+    domain: "jwg.eu.auth0.com",
+    clientId: "YIynckJv1QJvl0YvkLlYxTo2EBe079Fn",
 
     cacheLocation: "localstorage",
     useRefreshTokens: true,
