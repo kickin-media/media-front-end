@@ -93,11 +93,19 @@
         <mat-divider />
         <button
           mat-menu-item
+          (click)="removeSelected()"
+          [disabled]="selected!.selected.length === 0"
+        >
+          <mat-icon>remove</mat-icon> Remove from album
+          <span class="hint">Removes selected photos from THIS album</span>
+        </button>
+        <button
+          mat-menu-item
           (click)="deleteSelected()"
           [disabled]="selected!.selected.length === 0"
         >
           <mat-icon>delete</mat-icon> Delete
-          <span class="hint">Permanently deletes the selected photos</span>
+          <span class="hint">Permanently deletes the selected photos from ALL albums</span>
         </button>
       </mat-menu>
     }

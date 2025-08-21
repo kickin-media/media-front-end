@@ -358,6 +358,71 @@ export class AlbumPageComponent {
     });
   }
 
+  removeSelected() {
+    const selected = this.selected;
+    if (selected === null) return;
+
+    const selectCount = selected.selected.length;
+    const dialogRef = this.dialog.open(
+      ConfirmationDialogComponent,
+      {
+        data: {
+          title: `Are you sure you want to REMOVE ${selectCount} photos FROM this album?`,
+          detail: "These photos will only be removed from this album. They will stay in the other albums they are in. If any photos are left without albums, they are PERMANENTLY DELETED. This action is not reversible.",
+        } as ConfirmationDialogProps
+      },
+    );
+
+    const onClose = dialogRef.afterClosed() as Observable<boolean>;
+    const photos = combineLatest([
+      onClose,
+      this.photos$,
+    ]).pipe(
+      // Filter invalid states
+      filter(([confirmed, photos]) => confirmed && photos !== null),
+      map(([_, photos]) => photos as Photo[]),
+
+      // Only listen for the first (valid) trigger
+      first(),
+
+      // Filter only the selected photos
+      map(photos => photos.filter(photo => selected.isSelected(photo.id))),
+
+      // Trigger an "event" per selected photo
+      map(photos => [null, photos] as [null, Photo[]]),
+      expand(([_, photos]) => {
+        if (photos.length === 0) return EMPTY;
+        return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
+      }),
+      filter(([photo, _]) => photo !== null),
+      map(([photo, _]) => photo),
+
+      // Get the current albums of the photo
+      map(photo => this.photoService.fetchPhoto(photo["id"])),
+    );
+
+    combineLatest([
+      photos,
+      this.albumService.id$.pipe(
+        filter(id => id !== null),
+        map(id => id as string),
+        first(),
+      ),
+    ]).pipe(
+      map(([photo$, albumId]) => photo$.pipe(
+        map(photo => {
+          const albums = photo.albums.filter(album => album.id !== albumId);
+          const albumIds = albums.map(album => album.id);
+
+          if (albums.length > 0) return this.photoService.setPhotoAlbums(photo["id"], albumIds);
+          else return this.photoService.delete(photo["id"]);
+        }),
+      )),
+      concatAll(),
+      concatAll(),
+    ).subscribe();
+  }
+
   deleteSelected() {
     const selected = this.selected;
     if (selected === null) return;
@@ -397,7 +462,7 @@ export class AlbumPageComponent {
       filter(([photo, _]) => photo !== null),
       map(([photo, _]) => photo),
 
-      // And trigger re-processing per photo
+      // And call DELETE per photo
       map(photo => this.photoService.delete(photo.id)),
       concatAll(),
     ).subscribe();
