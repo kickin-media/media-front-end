@@ -4,16 +4,43 @@
   <p>Choose which album to add the selected photos to:</p>
   <mat-form-field>
     <mat-label>Album</mat-label>
-    <mat-select [formControl]="albumField">
-      <mat-select-trigger>{{ albumField.value ? albumField.value.name : "" }}</mat-select-trigger>
-      <mat-option
-        *ngFor="let album of eventService.albums.data$ | async"
-        [value]="album"
-      >
-        {{ renderAlbum(album) }}
-        <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
-      </mat-option>
-    </mat-select>
+    <input
+      type="text"
+      placeholder="Type to search other album..."
+      matInput
+      [formControl]="albumField"
+      [matAutocomplete]="autoComplete"
+    />
+    <mat-icon matSuffix>arrow_drop_down</mat-icon>
+    <mat-autocomplete
+      autoActiveFirstOption
+      #autoComplete="matAutocomplete"
+      [displayWith]="displayFn"
+    >
+      @for (item of albums$ | async; track item[0]) {
+        @let index = item[0];
+        @let album = item[1];
+        @if (index) {
+          <mat-optgroup *ngIf="index" [label]="configService.config.albums.groupName(index)">
+            <mat-option
+              *ngFor="let album of album"
+              [value]="album"
+            >
+              {{ renderAlbum(album) }}
+              <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
+            </mat-option>
+          </mat-optgroup>
+        } @else {
+          <mat-option
+            *ngFor="let album of album"
+            [value]="album"
+          >
+            {{ renderAlbum(album) }}
+            <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
+          </mat-option>
+        }
+      }
+    </mat-autocomplete>
   </mat-form-field>
 </mat-dialog-content>
 
@@ -21,7 +48,7 @@
   <button mat-button [mat-dialog-close]="null">CANCEL</button>
   <button
     mat-flat-button
-    [disabled]="albumField.value === null"
+    [disabled]="!canSubmit()"
     [mat-dialog-close]="albumField.value"
   >
     ADD
