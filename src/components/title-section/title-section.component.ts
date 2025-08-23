@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, HostBinding, Input } from '@angular/core';
 import { NgForOf, NgIf } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { SkeletonLineComponent } from "../skeleton-line/skeleton-line.component";
@@ -19,6 +19,10 @@ export class TitleSectionComponent {
 
   @Input() title?: string;
   @Input() breadcrumb?: Breadcrumb[] | null;
+
+  @HostBinding("class.sticky")
+  @Input()
+  sticky: boolean = false;
 
 }
 

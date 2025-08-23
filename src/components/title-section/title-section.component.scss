@@ -10,6 +10,33 @@
   flex-wrap: wrap;
 }
 
+:host.sticky {
+  position: sticky;
+  top: 72px;
+  z-index: 10;
+
+  &::before {
+    content: '';
+    width: 100vw;
+    height: 4.75rem;
+
+    position: absolute;
+    top: -.5rem;
+    left: 50%;
+    z-index: -1;
+    transform: translateX(-50%);
+
+    background-color: rgba(255, 255, 255, 0.6);
+    border-bottom: 1px solid white;
+    backdrop-filter: blur(20px);
+  }
+}
+
+.before:not(:empty) {
+  margin-right: 1rem;
+  align-self: end;
+}
+
 h1 {
   margin: 0;
 

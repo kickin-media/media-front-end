@@ -1,6 +1,7 @@
 <title-section
   [breadcrumb]="breadcrumb$ | async"
   [title]="(eventService.event.data$ | async)?.name"
+  [sticky]="true"
 >
   <button
     *ngIf="accountService.canManageAlbums$ | async"

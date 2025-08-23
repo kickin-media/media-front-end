@@ -1,7 +1,19 @@
 <title-section
   [breadcrumb]="breadcrumb$ | async"
   [title]="(albumService.album.data$ | async)?.name"
+  [sticky]="true"
 >
+  <ng-container ngProjectAs="title-before">
+    @let album = albumService.album.data$ | async;
+    @let cover = album ? album.cover_photo : null;
+
+    @if (cover) {
+      <img class="cover-photo" [src]="cover.img_urls.small" alt="Album cover" />
+    } @else {
+      <skeleton class="cover-photo" />
+    }
+  </ng-container>
+
   <ng-container *ngIf="albumService.album.data$ | async as album">
     <button
       mat-icon-button
