@@ -96,7 +96,7 @@
       [ngStyle]="{'--progress': stat.errors.length / (stat.remaining + stat.total)}"
     />
     <mat-progress-bar
-      mode="determinate"
+      [mode]="(stat.successes + stat.errors.length) > 0 ? 'determinate' : 'indeterminate'"
       [value]="stat.successes / (stat.total + stat.remaining - stat.errors.length) * 100"
       [ngStyle]="{'--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total)}"
     />
