@@ -38,7 +38,7 @@ export class AlbumComponent {
     protected imageQualityService: ImageQualityService,
   ) {
     this.canOpenUnreleasedAlbums$ = this.accountService.scopes$.pipe(
-      map(scopes => ["albums:manage", "photos:upload"].some(permission => scopes.indexOf(permission) >= 0)),
+      map(scopes => ["albums:manage", "photos:upload", "albums:read_hidden"].some(permission => scopes.indexOf(permission) >= 0)),
     );
   }
 
