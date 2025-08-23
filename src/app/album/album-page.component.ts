@@ -47,6 +47,7 @@ import { AlbumSelectionDialogComponent } from "./components/album-selection-dial
 import { UploadDialog } from "../upload/upload.component";
 import { toObservable } from "@angular/core/rxjs-interop";
 import { MatDividerModule } from "@angular/material/divider";
+import { SkeletonComponent } from "../../components/skeleton/skeleton.component";
 
 @Component({
   selector: 'album-page',
@@ -67,6 +68,7 @@ import { MatDividerModule } from "@angular/material/divider";
     AlbumGalleryComponent,
     ButtonGroupComponent,
     TitleSectionComponent,
+    SkeletonComponent,
   ],
   templateUrl: './album-page.component.html',
   styleUrl: './album-page.component.scss'

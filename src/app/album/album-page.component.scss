@@ -1,3 +1,11 @@
+.cover-photo {
+  height: 3rem;
+  aspect-ratio: 3 / 2;
+
+  border-radius: 4px;
+  object-fit: cover;
+}
+
 button[mat-menu-item] span.hint {
   color: #777;
   display: block;
