@@ -51,4 +51,6 @@ bootstrapMediaApp({
       ].join(' '),
     },
   },
+
+  uploadIgnoreCriticalWarnings: false,
 });

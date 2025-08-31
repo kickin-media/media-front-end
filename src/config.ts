@@ -29,6 +29,8 @@ export interface Config<T extends string | number | symbol> {
     groupSort: (a: T, b: T) => number,
   };
 
+  uploadIgnoreCriticalWarnings: boolean;
+
 }
 
 const defaultConfig: Config<string> = {
@@ -45,6 +47,8 @@ const defaultConfig: Config<string> = {
     groupName: (index: string) => index,
     groupSort: (a: string, b: string) => new Date(b).getTime() - new Date(a).getTime(),
   },
+
+  uploadIgnoreCriticalWarnings: false,
 };
 
 export const APP_CONFIG = new InjectionToken<Config<any>>(

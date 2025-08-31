@@ -7,6 +7,7 @@ import { SkeletonComponent } from "../../../../components/skeleton/skeleton.comp
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfigService } from "../../../../services/config.service";
 
 const PREVIEW_CONFIG = {
   quality: 0.7,
@@ -41,7 +42,9 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
 
   protected readonly warnings: { [key: string]: ExifWarning[] } = {};
 
-  constructor() {
+  constructor(
+    protected configService: ConfigService,
+  ) {
     // Bind the method to this class instance (needed for Higher-Order-Function
     // in `setTimeout(...)`)
     this.loadPreview = this.loadPreview.bind(this);
@@ -89,10 +92,16 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
   }
 
   canUpload(): boolean {
-    const criticalWarnings = Object.values(this.warnings).flat().some(warn => warn.critical);
+    let criticalWarnings = Object.values(this.warnings).flat().some(warn => warn.critical);
+    if (this.configService.config.uploadIgnoreCriticalWarnings) criticalWarnings = false;
+
+    // Can only upload if there are photos selected
     return this.photos.length > 0
+      // Fewer than the hardcoded limit of 250 photos
       && this.photos.length <= 250
+      // All previews are loaded (and warnings checked)
       && this.previewWorker === null
+      // Without critical warnings
       && !criticalWarnings;
   }
 
