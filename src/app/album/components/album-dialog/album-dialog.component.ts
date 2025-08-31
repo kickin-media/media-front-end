@@ -8,7 +8,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { EventService } from "../../../../services/api/event.service";
 import { MatSelectModule } from "@angular/material/select";
-import { AsyncPipe, NgForOf } from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatDatetimepickerModule } from "@mat-datetimepicker/core";
 import { MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
@@ -32,6 +32,7 @@ import { serializeDate } from "../../../../util/date";
     MatCheckboxModule,
     MatMomentDatetimeModule,
     MatDatetimepickerModule,
+    NgIf,
   ],
   templateUrl: './album-dialog.component.html',
   styleUrl: './album-dialog.component.scss'
@@ -87,7 +88,7 @@ export class AlbumDialogComponent {
     return secret !== null;
   }
 
-  submit() {
+  submit(exit: boolean = true) {
     if (!this.canSubmit()) return;
 
     const releaseDate = this.scheduledReleaseField.value;
@@ -115,7 +116,21 @@ export class AlbumDialogComponent {
     );
 
     combineLatest([saveAction$, secretAction$])
-      .subscribe(([album, _]) => this.dialogRef.close(album));
+      .subscribe(([album, _]) => {
+        if (exit) {
+          this.dialogRef.close(album);
+        } else {
+          // Reset the form so the user may create another album
+          this.nameField.reset();
+
+          this.secretField.setValue(false);
+          this.scheduledReleaseField.reset();
+
+          if (!this.data.event) {
+            this.eventField.reset();
+          }
+        }
+      });
   }
 
 }

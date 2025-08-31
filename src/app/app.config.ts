@@ -14,6 +14,7 @@ import { provideMomentDateAdapter } from "@angular/material-moment-adapter";
 import { MAT_MOMENT_DATETIME_FORMATS, MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
 import { MAT_DATETIME_FORMATS, MatDatetimeFormats } from "@mat-datetimepicker/core";
 import { IMAGE_CONFIG } from "@angular/common";
+import { MAT_DATE_LOCALE } from "@angular/material/core";
 
 export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (config) => ({
   providers: [
@@ -44,6 +45,10 @@ export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (
     provideAnimationsAsync(),
     provideMomentDateAdapter(),
     importProvidersFrom(MatMomentDatetimeModule),
+    {
+      provide: MAT_DATE_LOCALE,
+      useValue: "nl-NL",
+    },
     {
       provide: MAT_DATETIME_FORMATS,
       useValue: {

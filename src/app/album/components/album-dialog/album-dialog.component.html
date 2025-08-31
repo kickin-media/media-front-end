@@ -36,10 +36,20 @@
   </mat-hint>
   <mat-form-field>
     <mat-label>Album release</mat-label>
-    <input matInput type="datetime" [matDatetimepicker]="releasePicker" [formControl]="scheduledReleaseField" />
+    <input
+      matInput
+      type="datetime"
+      [matDatetimepicker]="releasePicker"
+      [formControl]="scheduledReleaseField"
+    />
     <mat-hint>DD-MM-YYYY HH:MM</mat-hint>
     <mat-datetimepicker-toggle matIconSuffix [for]="releasePicker" />
-    <mat-datetimepicker #releasePicker type="datetime" [openOnFocus]="true" />
+    <mat-datetimepicker
+      #releasePicker
+      type="datetime"
+      [openOnFocus]="true"
+      [startAt]="dateField.value"
+    />
     <button mat-button class="secondary-button reset" matSuffix (click)="resetReleaseDate($event)">
       <mat-icon>refresh</mat-icon>
       RESET
@@ -57,5 +67,21 @@
 
 <mat-dialog-actions align="end">
   <button mat-button [matDialogClose]="null">CANCEL</button>
-  <button mat-flat-button [disabled]="!canSubmit()" (click)="submit()">SAVE</button>
+
+  <button
+    mat-stroked-button
+    *ngIf="!data.album"
+    [disabled]="!canSubmit()"
+    (click)="submit(false)"
+  >
+    SAVE AND NEW
+  </button>
+
+  <button
+    mat-flat-button
+    [disabled]="!canSubmit()"
+    (click)="submit()"
+  >
+    SAVE
+  </button>
 </mat-dialog-actions>
