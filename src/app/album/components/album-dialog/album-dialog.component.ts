@@ -97,6 +97,8 @@ export class AlbumDialogComponent {
       event_id: this.eventField.value as string,
       timestamp: serializeDate(this.dateField.value as Date),
       release_time: releaseDate ? serializeDate(releaseDate) : null,
+      // Prevent album-cover being reset on album update
+      cover_id: this.data.album ? this.data.album.cover_id : null,
     };
 
     const saveAction$ = (
