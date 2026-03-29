@@ -1,0 +1,11 @@
+:host > * {
+  max-width: min(calc(100vw - 4rem), 400px);
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-dialog-content p {
+  margin-bottom: 1rem;
+}

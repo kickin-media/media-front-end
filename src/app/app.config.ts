@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { Config } from "../config";
 import { provideHttpClient, withInterceptors } from "@angular/common/http";
 import { apiHttpInterceptor } from "../util/api.interceptor";
+import { basicAuthInterceptor } from "../util/basic-auth.interceptor";
 import { provideAnimationsAsync } from "@angular/platform-browser/animations/async";
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from "@angular/material/form-field";
 import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from "@angular/material/snack-bar";
@@ -37,6 +38,7 @@ export const createAngularConfig: (config: Config<any>) => ApplicationConfig = (
 
     // HttpClient
     provideHttpClient(withInterceptors([
+      basicAuthInterceptor,
       apiHttpInterceptor(config.apiHosts),
       authHttpInterceptorFn
     ])),
