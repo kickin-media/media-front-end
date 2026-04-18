@@ -34,10 +34,13 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "src/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -59,9 +62,7 @@
             "outputPath": "dist/kick-in",
             "index": "projects/kick-in/src/index.html",
             "browser": "projects/kick-in/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/kick-in/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -70,9 +71,7 @@
                 "input": "projects/kick-in/public"
               }
             ],
-            "styles": [
-              "projects/kick-in/src/styles.scss"
-            ],
+            "styles": ["projects/kick-in/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -120,10 +119,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/kick-in/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -132,10 +128,15 @@
                 "input": "projects/kick-in/public"
               }
             ],
-            "styles": [
-              "projects/kick-in/src/styles.scss"
-            ],
+            "styles": ["projects/kick-in/src/styles.scss"],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/kick-in/**/*.ts", "projects/kick-in/**/*.html"],
+            "eslintConfig": "projects/kick-in/eslint.config.js"
           }
         }
       }
@@ -157,9 +158,7 @@
             "outputPath": "dist/batavierenrace",
             "index": "projects/batavierenrace/src/index.html",
             "browser": "projects/batavierenrace/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/batavierenrace/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -168,9 +167,7 @@
                 "input": "projects/batavierenrace/public"
               }
             ],
-            "styles": [
-              "projects/batavierenrace/src/styles.scss"
-            ],
+            "styles": ["projects/batavierenrace/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -218,10 +215,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/batavierenrace/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -230,10 +224,15 @@
                 "input": "projects/batavierenrace/public"
               }
             ],
-            "styles": [
-              "projects/batavierenrace/src/styles.scss"
-            ],
+            "styles": ["projects/batavierenrace/src/styles.scss"],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/batavierenrace/**/*.ts", "projects/batavierenrace/**/*.html"],
+            "eslintConfig": "projects/batavierenrace/eslint.config.js"
           }
         }
       }
@@ -255,9 +254,7 @@
             "outputPath": "dist/jwg",
             "index": "projects/jwg/src/index.html",
             "browser": "projects/jwg/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "projects/jwg/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -266,9 +263,7 @@
                 "input": "projects/jwg/public"
               }
             ],
-            "styles": [
-              "projects/jwg/src/styles.scss"
-            ],
+            "styles": ["projects/jwg/src/styles.scss"],
             "scripts": []
           },
           "configurations": {
@@ -316,10 +311,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/jwg/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -328,10 +320,15 @@
                 "input": "projects/jwg/public"
               }
             ],
-            "styles": [
-              "projects/jwg/src/styles.scss"
-            ],
+            "styles": ["projects/jwg/src/styles.scss"],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": ["projects/jwg/**/*.ts", "projects/jwg/**/*.html"],
+            "eslintConfig": "projects/jwg/eslint.config.js"
           }
         }
       }

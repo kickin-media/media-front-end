@@ -7,9 +7,19 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "api-spec": "openapi-typescript https://api.dev.kick-in.media/openapi.json -o src/util/back-end.d.ts"
+    "api-spec": "openapi-typescript https://api.dev.kick-in.media/openapi.json -o src/util/back-end.d.ts",
+    "lint": "ng lint"
   },
   "private": true,
+  "lint-staged": {
+    "*.{ts,html}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{scss,css,json,md}": [
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@angular/animations": "^18.1.0",
     "@angular/cdk": "^18.1.1",
@@ -34,17 +44,31 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.1.0",
+    "@angular-eslint/builder": "^18.4.3",
+    "@angular-eslint/eslint-plugin": "^18.4.3",
+    "@angular-eslint/eslint-plugin-template": "^18.4.3",
+    "@angular-eslint/schematics": "^18.4.3",
+    "@angular-eslint/template-parser": "^18.4.3",
     "@angular/cli": "^18.1.0",
     "@angular/compiler-cli": "^18.1.0",
     "@types/jasmine": "~5.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
+    "angular-eslint": "18.4.3",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "lint-staged": "^16.4.0",
     "ng-packagr": "^18.1.0",
     "openapi-typescript": "^7.0.2",
-    "typescript": "~5.5.2"
+    "prettier": "^3.8.3",
+    "typescript": "~5.5.2",
+    "typescript-eslint": "^8.16.0"
   }
 }
