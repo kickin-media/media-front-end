@@ -1,9 +1,9 @@
-name: Build and Publish
+name: Build and Publish Dev
 
 on:
   push:
     branches:
-      - master
+      - main
 
 permissions:
   id-token: write
@@ -21,12 +21,6 @@ jobs:
         projects:
           - name: kickin
             environment: dev
-          - name: kickin
-            environment: prod
-          - name: bata
-            environment: prod
-          - name: jwg
-            environment: prod
 
     environment:
       name: ${{ matrix.projects.name }}-${{ matrix.projects.environment }}

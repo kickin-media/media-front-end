@@ -1,0 +1,54 @@
+name: Build and Publish Prod
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  build-and-push:
+    name: Build and publish front-end (${{ matrix.projects.name }}-${{ matrix.projects.environment }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        projects:
+          - name: kickin
+            environment: prod
+          - name: bata
+            environment: prod
+          - name: jwg
+            environment: prod
+
+    environment:
+      name: ${{ matrix.projects.name }}-${{ matrix.projects.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        id: configure-aws-credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          output-credentials: true
+
+      - name: Build front-end
+        run: |
+          npm install
+          npm run ng -- build ${{ vars.NPM_NAME }}
+
+      - name: Deploy front-end to S3
+        run: |
+          aws s3 sync dist/${{ vars.NPM_NAME }}/browser s3://${{ matrix.projects.name }}-media-frontend-${{ matrix.projects.environment }} --acl private
+
+      - name: Invalidate front-end cache
+        run: |
+          aws cloudfront create-invalidation --distribution-id ${{ vars.CLOUDFRONT_DISTRIBUTION }} --paths "/*"
