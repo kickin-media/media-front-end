@@ -8,11 +8,13 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "api-spec": "openapi-typescript https://api.dev.kick-in.media/openapi.json -o src/util/back-end.d.ts",
+    "generate-api": "./scripts/generate-api.sh",
     "lint": "ng lint"
   },
   "private": true,
   "lint-staged": {
     "*.{ts,html}": [
+      "npm run generate-api",
       "eslint --fix",
       "prettier --write"
     ],
@@ -35,6 +37,7 @@
     "@auth0/auth0-angular": "^2.2.3",
     "@mat-datetimepicker/core": "^14.0.0",
     "@mat-datetimepicker/moment": "^14.0.0",
+    "@ngrx/signals": "^18.1.0",
     "browser-image-resizer": "^2.4.1",
     "exif-parser": "^0.1.12",
     "rxjs": "~7.8.0",
@@ -51,6 +54,7 @@
     "@angular-eslint/template-parser": "^18.4.3",
     "@angular/cli": "^18.1.0",
     "@angular/compiler-cli": "^18.1.0",
+    "@openapitools/openapi-generator-cli": "^2.31.1",
     "@types/jasmine": "~5.1.0",
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",

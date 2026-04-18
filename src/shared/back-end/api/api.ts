@@ -1,0 +1,13 @@
+export * from './albums.service';
+import { AlbumsService } from './albums.service';
+export * from './author.service';
+import { AuthorService } from './author.service';
+export * from './events.service';
+import { EventsService } from './events.service';
+export * from './photo.service';
+import { PhotoService } from './photo.service';
+export * from './system.service';
+import { SystemService } from './system.service';
+export * from './tags.service';
+import { TagsService } from './tags.service';
+export const APIS = [AlbumsService, AuthorService, EventsService, PhotoService, SystemService, TagsService];
