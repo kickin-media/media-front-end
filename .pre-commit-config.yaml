@@ -1,0 +1,21 @@
+repos:
+  - repo: builtin
+    hooks:
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: check-shebang-scripts-are-executable
+      - id: check-executables-have-shebangs
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        exclude: (.csv$)|(.idea)|(package-lock.json)
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: lint-staged
+        name: lint-staged
+        entry: npx lint-staged
+        language: system
+        types: [file]
+        pass_filenames: false
