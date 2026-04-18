@@ -58,6 +58,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/event/{event_id}/search": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Search Event Photos */
+        post: operations["search_event_photos_event__event_id__search_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/event/{event_id}/albums": {
         parameters: {
             query?: never;
@@ -251,6 +268,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/photo/{photo_id}/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Photo Tags */
+        post: operations["add_photo_tags_photo__photo_id__tags_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/photo/{photo_id}/tags/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Remove Photo Tags */
+        post: operations["remove_photo_tags_photo__photo_id__tags_remove_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/photo/{photo_id}/event": {
         parameters: {
             query?: never;
@@ -439,6 +490,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tag/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tags */
+        get: operations["list_tags_tag__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -452,15 +520,12 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Release Time
-             * Format: date-time
-             */
-            release_time?: string;
+            /** Release Time */
+            release_time?: string | null;
             /** Event Id */
             event_id: string;
             /** Cover Id */
-            cover_id?: string;
+            cover_id?: string | null;
         };
         /** AlbumReadList */
         AlbumReadList: {
@@ -471,22 +536,19 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Release Time
-             * Format: date-time
-             */
-            release_time?: string;
+            /** Release Time */
+            release_time?: string | null;
             /** Event Id */
             event_id: string;
             /** Cover Id */
-            cover_id?: string;
+            cover_id?: string | null;
             /** Id */
             id: string;
             /** Photos Count */
             photos_count: number;
-            cover_photo?: components["schemas"]["PhotoReadSingleStub"];
+            cover_photo: components["schemas"]["PhotoReadSingleStub"] | null;
             /** Hidden Secret */
-            hidden_secret?: string;
+            hidden_secret: string | null;
             /** Views */
             views: number;
         };
@@ -499,22 +561,19 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Release Time
-             * Format: date-time
-             */
-            release_time?: string;
+            /** Release Time */
+            release_time?: string | null;
             /** Event Id */
             event_id: string;
             /** Cover Id */
-            cover_id?: string;
+            cover_id?: string | null;
             /** Id */
             id: string;
             /** Photos Count */
             photos_count: number;
-            cover_photo?: components["schemas"]["PhotoReadSingleStub"];
+            cover_photo: components["schemas"]["PhotoReadSingleStub"] | null;
             /** Hidden Secret */
-            hidden_secret?: string;
+            hidden_secret: string | null;
             /** Views */
             views: number;
             event: components["schemas"]["models__album__AlbumReadSingleStub__Event"];
@@ -530,22 +589,19 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Release Time
-             * Format: date-time
-             */
-            release_time?: string;
+            /** Release Time */
+            release_time?: string | null;
             /** Event Id */
             event_id: string;
             /** Cover Id */
-            cover_id?: string;
+            cover_id?: string | null;
             /** Id */
             id: string;
             /** Photos Count */
             photos_count: number;
-            cover_photo?: components["schemas"]["PhotoReadSingleStub"];
+            cover_photo: components["schemas"]["PhotoReadSingleStub"] | null;
             /** Hidden Secret */
-            hidden_secret?: string;
+            hidden_secret: string | null;
             /** Views */
             views: number;
             event: components["schemas"]["models__album__AlbumReadSingleStub__Event"];
@@ -553,7 +609,7 @@ export interface components {
         /** AlbumSetCover */
         AlbumSetCover: {
             /** Photo Id */
-            photo_id?: string;
+            photo_id: string | null;
         };
         /** AlbumSetSecretStatus */
         AlbumSetSecretStatus: {
@@ -567,7 +623,7 @@ export interface components {
             /** Name */
             name: string;
             /** Id */
-            id?: string;
+            id?: string | null;
         };
         /** AuthorCreate */
         AuthorCreate: {
@@ -648,11 +704,8 @@ export interface components {
         PhotoReadList: {
             /** Id */
             id: string;
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp?: string;
+            /** Timestamp */
+            timestamp: string | null;
             img_urls: components["schemas"]["PhotoImgUrls"];
             /** Upload Processed */
             upload_processed: boolean;
@@ -668,11 +721,8 @@ export interface components {
         PhotoReadSingle: {
             /** Id */
             id: string;
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp?: string;
+            /** Timestamp */
+            timestamp: string | null;
             img_urls: components["schemas"]["PhotoImgUrls"];
             /** Upload Processed */
             upload_processed: boolean;
@@ -685,25 +735,29 @@ export interface components {
             views: number;
             author: components["schemas"]["Author"];
             /** Exif */
-            exif: Record<string, never>;
+            exif: {
+                [key: string]: unknown;
+            };
             /** Albums */
             albums: components["schemas"]["models__photo__PhotoReadSingle__Album"][];
             /** Gps Thumb */
-            gps_thumb?: string;
+            gps_thumb: string | null;
             /** Gps Lat */
-            gps_lat?: number;
+            gps_lat: number | null;
             /** Gps Lon */
-            gps_lon?: number;
+            gps_lon: number | null;
+            /**
+             * Tags
+             * @default []
+             */
+            tags: components["schemas"]["PhotoTagRead"][];
         };
         /** PhotoReadSingleStub */
         PhotoReadSingleStub: {
             /** Id */
             id: string;
-            /**
-             * Timestamp
-             * Format: date-time
-             */
-            timestamp?: string;
+            /** Timestamp */
+            timestamp: string | null;
             img_urls: components["schemas"]["PhotoImgUrls"];
             /** Upload Processed */
             upload_processed: boolean;
@@ -724,6 +778,13 @@ export interface components {
             next_photo_id: string;
             /** Next Timestamp */
             next_timestamp: string;
+        };
+        /** PhotoTagRead */
+        PhotoTagRead: {
+            /** Tag Slug */
+            tag_slug: string;
+            /** Tag Value */
+            tag_value?: string | null;
         };
         /** PhotoUploadPreSignedUrl */
         PhotoUploadPreSignedUrl: {
@@ -748,6 +809,27 @@ export interface components {
             photo_id: string;
             pre_signed_url: components["schemas"]["PhotoUploadPreSignedUrl"];
         };
+        /** SearchRequest */
+        SearchRequest: {
+            /** Tags */
+            tags: components["schemas"]["TagRequest"][];
+        };
+        /** TagReadList */
+        TagReadList: {
+            /** Tag Slug */
+            tag_slug: string;
+            /** Tag Description */
+            tag_description: string;
+            /** Supports Value */
+            supports_value: boolean;
+        };
+        /** TagRequest */
+        TagRequest: {
+            /** Tag */
+            tag: string;
+            /** Value */
+            value?: string | null;
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -756,6 +838,10 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+            /** Input */
+            input?: unknown;
+            /** Context */
+            ctx?: Record<string, never>;
         };
         /** Album */
         models__album__Album: {
@@ -766,19 +852,16 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            /**
-             * Release Time
-             * Format: date-time
-             */
-            release_time?: string;
+            /** Release Time */
+            release_time?: string | null;
             /** Event Id */
             event_id: string;
             /** Cover Id */
-            cover_id?: string;
+            cover_id?: string | null;
             /** Id */
-            id?: string;
+            id?: string | null;
             /** Hidden Secret */
-            hidden_secret?: string;
+            hidden_secret?: string | null;
             /**
              * Views
              * @default 0
@@ -809,7 +892,7 @@ export interface components {
             /** Locked */
             locked: boolean;
             /** Id */
-            id?: string;
+            id: string | null;
         };
         /** Album */
         models__photo__PhotoReadSingle__Album: {
@@ -822,7 +905,7 @@ export interface components {
              * Format: date-time
              */
             timestamp: string;
-            cover_photo?: components["schemas"]["PhotoReadSingleStub"];
+            cover_photo: components["schemas"]["PhotoReadSingleStub"] | null;
         };
     };
     responses: never;
@@ -990,6 +1073,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    search_event_photos_event__event_id__search_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SearchRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoReadSingleStub"][];
                 };
             };
             /** @description Validation Error */
@@ -1527,6 +1645,76 @@ export interface operations {
             };
         };
     };
+    add_photo_tags_photo__photo_id__tags_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagRequest"][];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoTagRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    remove_photo_tags_photo__photo_id__tags_remove_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                photo_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagRequest"][];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PhotoTagRead"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_photo_event_photo__photo_id__event_get: {
         parameters: {
             query?: never;
@@ -1570,7 +1758,9 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": {
+                    [key: string]: unknown;
+                };
             };
         };
         responses: {
@@ -1897,6 +2087,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    list_tags_tag__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TagReadList"][];
                 };
             };
         };

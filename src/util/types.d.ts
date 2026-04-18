@@ -21,5 +21,8 @@ export type Photo = components["schemas"]["PhotoReadSingleStub"];
 export type PhotoDetailed = components["schemas"]["PhotoReadSingle"];
 export type PhotoUpload = components["schemas"]["PhotoUploadResponse"];
 
+// Tags
+export type Tag = components["schemas"]["TagReadList"];
+
 // S3
 export type S3PreSignedUrl = components["schemas"]["PhotoUploadPreSignedUrl"];

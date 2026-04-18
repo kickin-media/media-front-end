@@ -1,16 +1,13 @@
-import { Component, Inject, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { MatButtonModule } from "@angular/material/button";
-import { MatIconModule } from "@angular/material/icon";
-import { APP_CONFIG, Config } from "../config";
-import { ConfigService } from "../services/config.service";
-import { AsyncPipe, NgForOf, NgIf, NgOptimizedImage } from "@angular/common";
-import { AccountService } from "../services/account.service";
-import { AuthService } from "@auth0/auth0-angular";
-import { MatDialog } from "@angular/material/dialog";
-import { window } from "rxjs";
-import { CookiesDialogComponent } from "../components/cookies-dialog/cookies-dialog.component";
+import {Component, OnInit, signal} from '@angular/core';
+import {RouterLink, RouterOutlet} from '@angular/router';
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import {ConfigService} from "../services/config.service";
+import {AsyncPipe, NgForOf, NgIf} from "@angular/common";
+import {AccountService} from "../services/account.service";
+import {MatDialog} from "@angular/material/dialog";
+import {CookiesDialogComponent} from "../components/cookies-dialog/cookies-dialog.component";
 
 @Component({
   selector: 'app-root',
@@ -21,7 +18,6 @@ import { CookiesDialogComponent } from "../components/cookies-dialog/cookies-dia
     MatButtonModule,
     MatIconModule,
     MatToolbarModule,
-    NgOptimizedImage,
     RouterLink,
     NgForOf,
     NgIf,
@@ -33,8 +29,8 @@ import { CookiesDialogComponent } from "../components/cookies-dialog/cookies-dia
 export class AppComponent implements OnInit {
 
   protected readonly menuLinks = [
-    { title: "Home", url: "/", icon: "home" },
-    { title: "Events", url: "/event", icon: "home" },
+    {title: "Home", url: "/", icon: "home"},
+    {title: "Events", url: "/event", icon: "home"},
   ];
 
   protected readonly menu = signal(false);
@@ -57,7 +53,7 @@ export class AppComponent implements OnInit {
     if (!cookies) {
       const dialogRef = this.dialog.open(
         CookiesDialogComponent,
-        { closeOnNavigation: false, disableClose: true },
+        {closeOnNavigation: false, disableClose: true},
       );
       dialogRef.afterClosed().subscribe(() => {
         localStorage.setItem("cookie-dialog", "true");

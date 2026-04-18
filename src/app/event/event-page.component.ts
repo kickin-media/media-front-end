@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { Breadcrumb, TitleSectionComponent } from "../../components/title-section/title-section.component";
@@ -21,6 +21,7 @@ import {
 } from "../../components/confirmation-dialog/confirmation-dialog.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { AccountService } from "../../services/account.service";
+import {TagsStore} from "../../shared/stores/tags";
 
 @Component({
   selector: 'event-page',
@@ -49,6 +50,8 @@ export class EventPageComponent {
   protected albums$: Observable<{ [key: string]: Album[] }>;
 
   protected canDelete$: Observable<boolean>;
+
+  protected tagsStore = inject(TagsStore);
 
   constructor(
     protected dialog: MatDialog,
