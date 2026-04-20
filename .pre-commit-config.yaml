@@ -8,8 +8,9 @@ repos:
       - id: check-executables-have-shebangs
       - id: detect-private-key
       - id: end-of-file-fixer
-        exclude: (.csv$)|(.idea)|(package-lock.json)
+        exclude: (.csv$)|(.idea)|(package-lock.json)|(^src/shared/back-end/)
       - id: trailing-whitespace
+        exclude: ^src/shared/back-end/
 
   - repo: local
     hooks:

@@ -7,6 +7,10 @@ const prettier = require("eslint-config-prettier");
 module.exports = tseslint.config(
   {
     files: ["**/*.ts"],
+    ignores: [
+      "**/back-end.d.ts",
+      "src/shared/back-end/**/*",
+    ],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommended,
