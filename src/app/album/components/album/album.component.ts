@@ -1,18 +1,17 @@
 import { Component, Input } from '@angular/core';
-import { Album } from "../../../../util/types";
-import { ImageQualityService } from "../../../../services/image-quality.service";
-import { AsyncPipe, DatePipe, NgClass, NgIf, NgOptimizedImage } from "@angular/common";
-import { SkeletonLineComponent } from "../../../../components/skeleton-line/skeleton-line.component";
-import { TimestampPipe } from "../../../../pipes/timestamp.pipe";
-import { RouterLink } from "@angular/router";
-import slugify from "slugify";
-import { MatIconModule } from "@angular/material/icon";
-import { AccountService } from "../../../../services/account.service";
-import { map, Observable } from "rxjs";
+import { Album } from '../../../../util/types';
+import { ImageQualityService } from '../../../../services/image-quality.service';
+import { AsyncPipe, DatePipe, NgClass, NgIf, NgOptimizedImage } from '@angular/common';
+import { SkeletonLineComponent } from '../../../../components/skeleton-line/skeleton-line.component';
+import { TimestampPipe } from '../../../../pipes/timestamp.pipe';
+import { RouterLink } from '@angular/router';
+import slugify from 'slugify';
+import { MatIconModule } from '@angular/material/icon';
+import { AccountService } from '../../../../services/account.service';
+import { map, Observable } from 'rxjs';
 
 @Component({
-  selector: 'album',
-  standalone: true,
+  selector: 'app-album',
   imports: [
     NgOptimizedImage,
     NgIf,
@@ -22,23 +21,24 @@ import { map, Observable } from "rxjs";
     MatIconModule,
     DatePipe,
     NgClass,
-    AsyncPipe
+    AsyncPipe,
   ],
   templateUrl: './album.component.html',
-  styleUrl: './album.component.scss'
+  styleUrl: './album.component.scss',
 })
 export class AlbumComponent {
-
   @Input() album?: Album;
 
   protected canOpenUnreleasedAlbums$: Observable<boolean>;
 
   constructor(
     protected accountService: AccountService,
-    protected imageQualityService: ImageQualityService,
+    protected imageQualityService: ImageQualityService
   ) {
     this.canOpenUnreleasedAlbums$ = this.accountService.scopes$.pipe(
-      map(scopes => ["albums:manage", "photos:upload", "albums:read_hidden"].some(permission => scopes.indexOf(permission) >= 0)),
+      map(scopes =>
+        ['albums:manage', 'photos:upload', 'albums:read_hidden'].some(permission => scopes.indexOf(permission) >= 0)
+      )
     );
   }
 
@@ -63,5 +63,4 @@ export class AlbumComponent {
     const releaseTime = new Date(this.album.release_time);
     return releaseTime.getTime() - new Date().getTime() < 0;
   }
-
 }

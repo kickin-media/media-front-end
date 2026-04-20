@@ -1,36 +1,33 @@
 import { Component, Inject } from '@angular/core';
-import { EventCreate, EventUpdate, PhotoEvent } from "../../../../util/types";
-import { EventService } from "../../../../services/api/event.service";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { AsyncPipe, NgIf } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { ButtonGroupComponent } from "../../../../components/button-group/button-group.component";
-import { MatIconModule } from "@angular/material/icon";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { combineLatest, isObservable, map, Observable, of, shareReplay, startWith, switchMap, tap } from "rxjs";
-import { readAndCompressImage, Config as PreviewConfig } from "browser-image-resizer";
-import { fromPromise } from "rxjs/internal/observable/innerFrom";
-import { serializeDate } from "../../../../util/date";
+import { EventCreate, EventUpdate, PhotoEvent } from '../../../../util/types';
+import { EventService } from '../../../../services/api/event.service';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatIconModule } from '@angular/material/icon';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { combineLatest, isObservable, map, Observable, of, shareReplay, startWith, switchMap } from 'rxjs';
+import { Config as PreviewConfig, readAndCompressImage } from 'browser-image-resizer';
+import { fromPromise } from 'rxjs/internal/observable/innerFrom';
+import { serializeDate } from '../../../../util/date';
 
 const previewConfig: PreviewConfig = {
   quality: 0.7,
   maxWidth: 400,
   maxHeight: 400,
-  mimeType: "image/png",
+  mimeType: 'image/png',
 };
 
 @Component({
-  selector: 'event-dialog',
-  standalone: true,
+  selector: 'app-event-dialog',
   imports: [
     AsyncPipe,
     NgIf,
     ReactiveFormsModule,
-
     MatButtonModule,
     MatCheckboxModule,
     MatDatepickerModule,
@@ -38,14 +35,11 @@ const previewConfig: PreviewConfig = {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-
-    ButtonGroupComponent,
   ],
   templateUrl: './event-dialog.component.html',
-  styleUrl: './event-dialog.component.scss'
+  styleUrl: './event-dialog.component.scss',
 })
 export class EventDialogComponent {
-
   protected nameField = new FormControl<string | null>(null);
   protected dateField = new FormControl<Date>(new Date());
   protected watermarkField = new FormControl<File | false | null>(null);
@@ -56,8 +50,7 @@ export class EventDialogComponent {
   constructor(
     protected dialogRef: MatDialogRef<EventDialogComponent>,
     @Inject(MAT_DIALOG_DATA) protected data: EventDialogProps,
-
-    protected eventService: EventService,
+    protected eventService: EventService
   ) {
     const event = data.event;
     if (event) {
@@ -74,12 +67,11 @@ export class EventDialogComponent {
         if (field === false) return null;
         if (field === null) return current;
 
-        const createBlob = readAndCompressImage(field, previewConfig)
-          .then(preview => URL.createObjectURL(preview));
+        const createBlob = readAndCompressImage(field, previewConfig).then(preview => URL.createObjectURL(preview));
         return fromPromise(createBlob);
       }),
-      switchMap(preview => isObservable(preview) ? preview : of(preview)),
-      shareReplay(1),
+      switchMap(preview => (isObservable(preview) ? preview : of(preview))),
+      shareReplay(1)
     );
   }
 
@@ -117,27 +109,27 @@ export class EventDialogComponent {
     const watermark = this.watermarkField.value;
     if (watermark === false) {
       // Delete the watermark
-      action$.pipe(
-        switchMap(event => {
-          return this.eventService.deleteWatermark(event.id).pipe(map(() => event));
-        }),
-      ).subscribe(conclude);
+      action$
+        .pipe(
+          switchMap(event => {
+            return this.eventService.deleteWatermark(event.id).pipe(map(() => event));
+          })
+        )
+        .subscribe(conclude);
     } else if (watermark !== null) {
       // Upload a new watermark
-      action$.pipe(
-        switchMap(event => {
-          return this.eventService.updateWatermark(
-            event.id,
-            watermark,
-          ).pipe(map(() => event));
-        }),
-      ).subscribe(conclude);
+      action$
+        .pipe(
+          switchMap(event => {
+            return this.eventService.updateWatermark(event.id, watermark).pipe(map(() => event));
+          })
+        )
+        .subscribe(conclude);
     } else {
       // Don't do anything with the watermark
       action$.subscribe(conclude);
     }
   }
-
 }
 
 export interface EventDialogProps {

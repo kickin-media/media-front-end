@@ -1,24 +1,16 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-basic-auth-dialog',
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    ReactiveFormsModule,
-  ],
+  imports: [MatDialogModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, ReactiveFormsModule],
   templateUrl: './basic-auth-dialog.component.html',
-  styleUrl: './basic-auth-dialog.component.scss'
+  styleUrl: './basic-auth-dialog.component.scss',
 })
 export class BasicAuthDialogComponent {
   protected passwordField = new FormControl<string>('');
@@ -26,7 +18,7 @@ export class BasicAuthDialogComponent {
 
   constructor(
     protected dialogRef: MatDialogRef<BasicAuthDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: BasicAuthDialogProps,
+    @Inject(MAT_DIALOG_DATA) public data: BasicAuthDialogProps
   ) {}
 
   submit(): void {

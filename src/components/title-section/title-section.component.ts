@@ -1,29 +1,21 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { NgForOf, NgIf } from "@angular/common";
-import { RouterLink } from "@angular/router";
-import { SkeletonLineComponent } from "../skeleton-line/skeleton-line.component";
+import { NgForOf, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { SkeletonLineComponent } from '../skeleton-line/skeleton-line.component';
 
 @Component({
-  selector: 'title-section',
-  standalone: true,
-  imports: [
-    NgIf,
-    NgForOf,
-    RouterLink,
-    SkeletonLineComponent
-  ],
+  selector: 'app-title-section',
+  imports: [NgIf, NgForOf, RouterLink, SkeletonLineComponent],
   templateUrl: './title-section.component.html',
-  styleUrl: './title-section.component.scss'
+  styleUrl: './title-section.component.scss',
 })
 export class TitleSectionComponent {
-
   @Input() title?: string;
   @Input() breadcrumb?: Breadcrumb[] | null;
 
-  @HostBinding("class.sticky")
+  @HostBinding('class.sticky')
   @Input()
-  sticky: boolean = false;
-
+  sticky = false;
 }
 
 export interface Breadcrumb {
