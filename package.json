@@ -14,7 +14,6 @@
   "private": true,
   "lint-staged": {
     "*.{ts,html}": [
-      "npm run generate-api",
       "eslint --fix",
       "prettier --write"
     ],
