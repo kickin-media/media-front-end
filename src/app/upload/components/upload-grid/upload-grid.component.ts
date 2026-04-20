@@ -61,8 +61,7 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
         // If there are still some items in the queue, then schedule
         // the next item
         if (this.previewQueue.length > 0) {
-          // @ts-expect-error TS2322
-          this.previewWorker = setTimeout(this.loadPreview, 50);
+          this.previewWorker = setTimeout(this.loadPreview, 50) as unknown as number;
         } else {
           // Otherwise, let the process die...
           this.previewWorker = null;
@@ -130,7 +129,7 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
 
     // If there is no current worker fetching images, then start a new one
     if (this.previewWorker === null && this.previewQueue.length > 0) {
-      setTimeout(this.loadPreview, 50);
+      this.previewWorker = setTimeout(this.loadPreview, 50) as unknown as number;
     }
   }
 

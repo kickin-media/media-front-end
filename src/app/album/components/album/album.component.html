@@ -1,34 +1,25 @@
 <a
   [routerLink]="getAlbumUrl()"
-  [ngClass]="{'to-be-released': !isReleased(), 'can-open-unreleased': canOpenUnreleasedAlbums$ | async}"
->
+  [ngClass]="{ 'to-be-released': !isReleased(), 'can-open-unreleased': canOpenUnreleasedAlbums$ | async }">
   <div class="cover-photo">
-    <img
-      *ngIf="getCoverPhoto() as photoSrc"
-      [ngSrc]="photoSrc"
-      class="cover-photo"
-      alt=""
-      fill
-    />
+    <img *ngIf="getCoverPhoto() as photoSrc" [ngSrc]="photoSrc" class="cover-photo" alt="" fill />
 
     <mat-icon *ngIf="album !== undefined && album.hidden_secret" class="hidden">lock_open</mat-icon>
 
     <div *ngIf="album !== undefined && !isReleased()" class="scheduled">
       <mat-icon>access_time</mat-icon>
       <span>
-        {{ album.release_time | date: "HH:mm" }}<br />
-        {{ album.release_time | date: "mediumDate" }}
+        {{ album.release_time | date: 'HH:mm' }}<br />
+        {{ album.release_time | date: 'mediumDate' }}
       </span>
     </div>
   </div>
 
   @if (album !== undefined) {
     <h4>{{ album.name }}</h4>
-    <span class="detail">
-      {{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos
-    </span>
+    <span class="detail"> {{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos </span>
   } @else {
-    <h4><skeleton-line /></h4>
-    <span class="detail"><skeleton-line /></span>
+    <h4><app-skeleton-line /></h4>
+    <span class="detail"><app-skeleton-line /></span>
   }
 </a>

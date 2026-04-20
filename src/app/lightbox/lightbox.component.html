@@ -1,40 +1,27 @@
 <mat-toolbar>
   <!-- Quick peek photo info -->
   <mat-chip
-    *ngIf="photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))"
-  >
+    *ngIf="photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))">
     <mat-icon matChipAvatar>trending_up</mat-icon>
     {{ photo.views }} views
   </mat-chip>
 
-  <mat-chip
-    *ngIf="photo | exif: 'focal_length' as value"
-    matTooltip="Focal length"
-  >
+  <mat-chip *ngIf="photo | exif: 'focal_length' as value" matTooltip="Focal length">
     <mat-icon matChipAvatar>terrain</mat-icon>
     {{ value | number }}mm
   </mat-chip>
 
-  <mat-chip
-    *ngIf="photo | exif: 'aperture_value' as value"
-    matTooltip="Aperture"
-  >
+  <mat-chip *ngIf="photo | exif: 'aperture_value' as value" matTooltip="Aperture">
     <mat-icon matChipAvatar>camera</mat-icon>
     f/{{ value | number: '1.1-1' }}
   </mat-chip>
 
-  <mat-chip
-    *ngIf="photo | exifShutterSpeed as value"
-    matTooltip="Shutter speed"
-  >
+  <mat-chip *ngIf="photo | exifShutterSpeed as value" matTooltip="Shutter speed">
     <mat-icon matChipAvatar>shutter_speed</mat-icon>
     {{ value }}
   </mat-chip>
 
-  <mat-chip
-    *ngIf="photo | exif: 'photographic_sensitivity' as value"
-    matTooltip="ISO"
-  >
+  <mat-chip *ngIf="photo | exif: 'photographic_sensitivity' as value" matTooltip="ISO">
     <mat-icon matChipAvatar>exposure</mat-icon>
     {{ value | number }}
   </mat-chip>
@@ -45,67 +32,39 @@
     mat-icon-button
     matTooltip="Share photo"
     *ngIf="album && photo"
-    (click)="shareService.sharePhoto(album, photo)"
-  >
+    (click)="shareService.sharePhoto(album, photo)">
     <mat-icon>share</mat-icon>
   </button>
-  <lightbox-download-menu [album]="album" [photo]="photo" />
-  <lightbox-photo-options [album]="album" [photo]="photo" [closeViewer]="close" />
+  <app-lightbox-download-menu [album]="album" [photo]="photo" />
+  <app-lightbox-photo-options [album]="album" [photo]="photo" [closeViewer]="close" />
 
   <!-- Close the photo viewer -->
-  <button
-    mat-icon-button
-    (click)="close()"
-    matTooltip="[ESC] Close photo viewer"
-  >
+  <button mat-icon-button (click)="close()" matTooltip="[ESC] Close photo viewer">
     <mat-icon>close</mat-icon>
   </button>
 </mat-toolbar>
 
 <div class="content">
   <!-- Go through photo album... -->
-  <button
-    *ngIf="photos && index > 0"
-    mat-icon-button
-    class="previous"
-    (click)="go(-1)"
-  >
+  <button *ngIf="photos && index > 0" mat-icon-button class="previous" (click)="go(-1)">
     <mat-icon>chevron_left</mat-icon>
   </button>
-  <button
-    *ngIf="photos && index < photos.length - 1"
-    mat-icon-button
-    class="next"
-    (click)="go(1)"
-  >
+  <button *ngIf="photos && index < photos.length - 1" mat-icon-button class="next" (click)="go(1)">
     <mat-icon>chevron_right</mat-icon>
   </button>
 
   <!-- Current image -->
   <!--suppress AngularNgOptimizedImage -->
-  <img
-    *ngIf="photo"
-    [src]="getPhotoSrc(photo)"
-    alt=""
-    class="current mat-elevation-z8"
-    loading="eager"
-  />
+  <img *ngIf="photo" [src]="getPhotoSrc(photo)" alt="" class="current mat-elevation-z8" loading="eager" />
 
   <!-- Preload previous and next images -->
   <!--suppress AngularNgOptimizedImage -->
-  <img
-    *ngIf="photos && index >= 1"
-    [src]="getPhotoSrc(photos[index-1])"
-    alt=""
-    class="preview"
-    loading="eager"
-  />
+  <img *ngIf="photos && index >= 1" [src]="getPhotoSrc(photos[index - 1])" alt="" class="preview" loading="eager" />
   <!--suppress AngularNgOptimizedImage -->
   <img
     *ngIf="photos && index < photos.length - 1"
-    [src]="getPhotoSrc(photos[index+1])"
+    [src]="getPhotoSrc(photos[index + 1])"
     alt=""
     class="preview"
-    loading="eager"
-  />
+    loading="eager" />
 </div>

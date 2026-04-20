@@ -1,23 +1,13 @@
-<h2 mat-dialog-title>Upload to {{(albumService.album.data$ | async)?.name}}</h2>
+<h2 mat-dialog-title>Upload to {{ (albumService.album.data$ | async)?.name }}</h2>
 <mat-dialog-content>
   <p>
-    Upload full resolution photo's to the album (without watermarks). After the upload
-    the photo will be resized and a watermark with your name will be added...
+    Upload full resolution photo's to the album (without watermarks). After the upload the photo will be resized and a
+    watermark with your name will be added...
   </p>
 
-  <input
-    type="file"
-    multiple
-    accept="image/jpeg"
-    #fileInput
-    (change)="onSelectFiles($event)"
-  />
+  <input type="file" multiple accept="image/jpeg" #fileInput (change)="onSelectFiles($event)" />
 
-  <button
-    mat-stroked-button
-    (click)="fileInput.click()"
-    [disabled]="status !== null"
-  >
+  <button mat-stroked-button (click)="fileInput.click()" [disabled]="status !== null">
     <mat-icon>add</mat-icon>
     Select photos...
   </button>
@@ -28,10 +18,7 @@
   </p>
 
   @for (type of exifWarningTypes; track type) {
-    <p
-      *ngIf="grid.hasWarning(type) as count"
-      class="warn"
-    >
+    <p *ngIf="grid.hasWarning(type) as count" class="warn">
       <mat-icon>warning</mat-icon>
       <b>{{ count }}x:</b> {{ type | exifWarning }}
     </p>
@@ -43,16 +30,15 @@
 <mat-expansion-panel
   [expanded]="copyrightExpander()"
   (opened)="copyrightExpander.set(true)"
-  (closed)="copyrightExpander.set(false)"
->
+  (closed)="copyrightExpander.set(false)">
   <mat-expansion-panel-header>
     <mat-panel-title><mat-icon>copyright</mat-icon> Copyright details</mat-panel-title>
   </mat-expansion-panel-header>
 
   <span class="hint">
     Details about the copyright of the uploaded photos are between you and the
-    <a href="mailto:{{ configService.config.contact.email }}">{{ configService.config.contact.name }}</a>.
-    The uploaded picture will include your name in the watermark as well as the
+    <a href="mailto:{{ configService.config.contact.email }}">{{ configService.config.contact.name }}</a
+    >. The uploaded picture will include your name in the watermark as well as the
     {{ configService.config.title }} logo.
   </span>
 
@@ -66,39 +52,30 @@
 <mat-divider />
 
 <mat-dialog-content class="photos">
-  <upload-grid #grid [photos]="files" (removeFile)="removeFile($event)" />
+  <app-upload-grid #grid [photos]="files" (removeFile)="removeFile($event)" />
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-    mat-button
-    mat-dialog-close
-    [disabled]="status !== null"
-  >
-    Cancel
-  </button>
+  <button mat-button mat-dialog-close [disabled]="status !== null">Cancel</button>
   <button
     mat-flat-button
     [disabled]="!authorNameField.value || !grid.canUpload() || status !== null"
-    (click)="onSubmit()"
-  >
-    Upload {{files.length}} photo{{files.length !== 1 ? 's' : ''}}
+    (click)="onSubmit()">
+    Upload {{ files.length }} photo{{ files.length !== 1 ? 's' : '' }}
     <mat-icon>upload</mat-icon>
   </button>
 </mat-dialog-actions>
 
 @if (status !== null) {
-  <div *ngIf="(status | async) as stat" class="progress">
+  <div *ngIf="status | async as stat" class="progress">
     <mat-progress-bar
       mode="determinate"
       value="100"
       class="error"
-      [ngStyle]="{'--progress': stat.errors.length / (stat.remaining + stat.total)}"
-    />
+      [ngStyle]="{ '--progress': stat.errors.length / (stat.remaining + stat.total) }" />
     <mat-progress-bar
-      [mode]="(stat.successes + stat.errors.length) > 0 ? 'determinate' : 'indeterminate'"
-      [value]="stat.successes / (stat.total + stat.remaining - stat.errors.length) * 100"
-      [ngStyle]="{'--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total)}"
-    />
+      [mode]="stat.successes + stat.errors.length > 0 ? 'determinate' : 'indeterminate'"
+      [value]="(stat.successes / (stat.total + stat.remaining - stat.errors.length)) * 100"
+      [ngStyle]="{ '--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total) }" />
   </div>
 }

@@ -14,6 +14,7 @@ import { combineLatest, isObservable, map, Observable, of, shareReplay, startWit
 import { Config as PreviewConfig, readAndCompressImage } from 'browser-image-resizer';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 import { serializeDate } from '../../../../util/date';
+import { ButtonGroupComponent } from '../../../../components/button-group/button-group.component';
 
 const previewConfig: PreviewConfig = {
   quality: 0.7,
@@ -35,6 +36,7 @@ const previewConfig: PreviewConfig = {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    ButtonGroupComponent,
   ],
   templateUrl: './event-dialog.component.html',
   styleUrl: './event-dialog.component.scss',

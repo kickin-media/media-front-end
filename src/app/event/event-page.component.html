@@ -1,22 +1,13 @@
-<title-section
+<app-title-section
   [breadcrumb]="breadcrumb$ | async"
   [title]="(eventService.event.data$ | async)?.name"
-  [sticky]="true"
->
-  <button
-    *ngIf="accountService.canManageAlbums$ | async"
-    mat-stroked-button
-    (click)="createAlbum()"
-  >
+  [sticky]="true">
+  <button *ngIf="accountService.canManageAlbums$ | async" mat-stroked-button (click)="createAlbum()">
     <mat-icon>add</mat-icon>
     ALBUM
   </button>
 
-  <button
-    *ngIf="accountService.canManageEvents$ | async"
-    mat-icon-button
-    [matMenuTriggerFor]="eventMenu"
-  >
+  <button *ngIf="accountService.canManageEvents$ | async" mat-icon-button [matMenuTriggerFor]="eventMenu">
     <mat-icon>more_vert</mat-icon>
   </button>
   <mat-menu #eventMenu="matMenu">
@@ -27,25 +18,20 @@
     <button
       mat-menu-item
       (click)="deleteEvent()"
-      [disabled]="!(canDelete$ | async)"
+      [disabled]="(canDelete$ | async) === false"
       [matTooltip]="
-        (canDelete$ | async)
-        ? ''
-        : 'You can only delete an event after all of its albums have been deleted.'"
-      matTooltipPosition="left"
-    >
+        (canDelete$ | async) ? '' : 'You can only delete an event after all of its albums have been deleted.'
+      "
+      matTooltipPosition="left">
       <mat-icon>delete</mat-icon>
       Delete event
     </button>
   </mat-menu>
-</title-section>
+</app-title-section>
 
-<div
-  *ngIf="albums$ | async as albums"
-  class="album-list"
->
+<div *ngIf="albums$ | async as albums" class="album-list">
   <ng-container *ngFor="let index of getAlbumGroupIndices(albums)">
     <h3 *ngIf="index">{{ configService.config.albums.groupName(index) }}</h3>
-    <album *ngFor="let album of albums[index]" [album]="album"/>
+    <app-album *ngFor="let album of albums[index]" [album]="album" />
   </ng-container>
 </div>

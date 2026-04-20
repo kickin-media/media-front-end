@@ -6,10 +6,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { SlugPipe } from '../../../../pipes/slug.pipe';
 import { NgForOf } from '@angular/common';
+import { AlbumComponent } from '../../../album/components/album/album.component';
 
 @Component({
   selector: 'app-event',
-  imports: [MatIconModule, MatButtonModule, RouterLink, SlugPipe, NgForOf],
+  imports: [MatIconModule, MatButtonModule, RouterLink, SlugPipe, NgForOf, AlbumComponent],
   templateUrl: './event.component.html',
   styleUrl: './event.component.scss',
 })
