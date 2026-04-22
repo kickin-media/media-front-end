@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, input } from '@angular/core';
 
 import { RouterLink } from '@angular/router';
 import { SkeletonLineComponent } from '../skeleton-line/skeleton-line.component';
@@ -10,12 +10,11 @@ import { SkeletonLineComponent } from '../skeleton-line/skeleton-line.component'
   styleUrl: './title-section.component.scss',
 })
 export class TitleSectionComponent {
-  @Input() title?: string;
-  @Input() breadcrumb?: Breadcrumb[] | null;
+  readonly title = input<string>();
+  readonly breadcrumb = input<Breadcrumb[] | null>();
 
   @HostBinding('class.sticky')
-  @Input()
-  sticky = false;
+  readonly sticky = input(false);
 }
 
 export interface Breadcrumb {

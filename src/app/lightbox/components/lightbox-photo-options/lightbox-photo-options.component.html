@@ -1,4 +1,4 @@
-@if (album && photo && ((canDelete$ | async) || (accountService.canManageAlbums$ | async))) {
+@if (album() && photo() && ((canDelete$ | async) || (accountService.canManageAlbums$ | async))) {
   <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Photo options...">
     <mat-icon>settings</mat-icon>
   </button>

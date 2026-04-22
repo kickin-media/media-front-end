@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnDestroy, SimpleChanges, inject, input, output } from '@angular/core';
 import { readAndCompressImage } from 'browser-image-resizer';
 import validateExif, { ExifWarning, ExifWarningType } from '../../../../util/validate-exif';
 
@@ -22,9 +22,11 @@ const PREVIEW_CONFIG = {
   styleUrl: './upload-grid.component.scss',
 })
 export class UploadGridComponent implements OnChanges, OnDestroy {
-  @Input() photos: File[] = [];
+  protected configService = inject(ConfigService);
 
-  @Output() removeFile = new EventEmitter<File>();
+  readonly photos = input<File[]>([]);
+
+  readonly removeFile = output<File>();
 
   protected readonly previews: Record<string, string> = {};
   protected previewQueue: File[] = [];
@@ -32,7 +34,7 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
 
   protected readonly warnings: Record<string, ExifWarning[]> = {};
 
-  constructor(protected configService: ConfigService) {
+  constructor() {
     // Bind the method to this class instance (needed for Higher-Order-Function
     // in `setTimeout(...)`)
     this.loadPreview = this.loadPreview.bind(this);
@@ -43,7 +45,7 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
     const item = this.previewQueue.shift();
 
     if (!item) return;
-    if (this.photos.indexOf(item) === -1) return;
+    if (this.photos().indexOf(item) === -1) return;
 
     // Generate the preview & do some further processing...
     readAndCompressImage(item, PREVIEW_CONFIG)
@@ -89,9 +91,9 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
 
     // Can only upload if there are photos selected
     return (
-      this.photos.length > 0 &&
+      this.photos().length > 0 &&
       // Fewer than the hardcoded limit of 250 photos
-      this.photos.length <= 250 &&
+      this.photos().length <= 250 &&
       // All previews are loaded (and warnings checked)
       this.previewWorker === null &&
       // Without critical warnings
@@ -141,7 +143,7 @@ export class UploadGridComponent implements OnChanges, OnDestroy {
     if (this.previewWorker !== null) clearTimeout(this.previewWorker);
 
     // Revoke all previews
-    for (const file of this.photos) {
+    for (const file of this.photos()) {
       URL.revokeObjectURL(this.previews[file.name]);
     }
   }

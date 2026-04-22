@@ -5,11 +5,11 @@
   </p>
 }
 
-@for (photo of photos; track photo) {
+@for (photo of photos(); track photo) {
   <a
-    [routerLink]="selectMode ? undefined : getPhotoUrl(photo)"
+    [routerLink]="selectMode() ? undefined : getPhotoUrl(photo)"
     (click)="onClickPhoto(photo, $event)"
-    [ngClass]="{ selected: selectMode && select.isSelected(photo.id) }"
+    [ngClass]="{ selected: selectMode() && select().isSelected(photo.id) }"
     style="--w: 100; --h: 100">
     <!--suppress AngularNgOptimizedImage -->
     <img [src]="photo.img_urls.small" (load)="onImageLoad($event)" alt="" loading="lazy" />

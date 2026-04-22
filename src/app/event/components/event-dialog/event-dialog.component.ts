@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { EventCreate, EventUpdate, PhotoEvent } from '../../../../util/types';
 import { EventService } from '../../../../services/api/event.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -41,6 +41,10 @@ const previewConfig: PreviewConfig = {
   styleUrl: './event-dialog.component.scss',
 })
 export class EventDialogComponent {
+  protected dialogRef = inject<MatDialogRef<EventDialogComponent>>(MatDialogRef);
+  protected data = inject<EventDialogProps>(MAT_DIALOG_DATA);
+  protected eventService = inject(EventService);
+
   protected nameField = new FormControl<string | null>(null);
   protected dateField = new FormControl<Date>(new Date());
   protected watermarkField = new FormControl<File | false | null>(null);
@@ -48,11 +52,10 @@ export class EventDialogComponent {
 
   protected readonly preview$: Observable<string | null>;
 
-  constructor(
-    protected dialogRef: MatDialogRef<EventDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) protected data: EventDialogProps,
-    protected eventService: EventService
-  ) {
+  constructor() {
+    const data = this.data;
+    const eventService = this.eventService;
+
     const event = data.event;
     if (event) {
       this.nameField.reset(event.name);

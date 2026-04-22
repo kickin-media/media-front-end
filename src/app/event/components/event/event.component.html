@@ -1,6 +1,6 @@
 <h2>
-  <a routerLink="/event/{{ event.id }}/{{ event.name | slug }}">
-    {{ event.name }}
+  <a routerLink="/event/{{ event().id }}/{{ event().name | slug }}">
+    {{ event().name }}
     <mat-icon>chevron_right</mat-icon>
   </a>
 </h2>
@@ -12,7 +12,7 @@
 </div>
 
 <div class="actions">
-  <a mat-button routerLink="/event/{{ event.id }}/{{ event.name | slug }}">
+  <a mat-button routerLink="/event/{{ event().id }}/{{ event().name | slug }}">
     VIEW MORE
     <mat-icon>chevron_right</mat-icon>
   </a>

@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { AlbumService } from '../../services/api/album.service';
@@ -39,6 +39,12 @@ import { ConfigService } from '../../services/config.service';
   styleUrl: './upload.component.scss',
 })
 export class UploadDialogComponent {
+  protected dialogRef = inject<MatDialogRef<UploadDialogComponent>>(MatDialogRef);
+  protected albumService = inject(AlbumService);
+  protected authorService = inject(AuthorService);
+  protected configService = inject(ConfigService);
+  protected photoService = inject(PhotoService);
+
   protected authorNameField = new FormControl<string | null>(null);
 
   protected files: File[] = [];
@@ -47,14 +53,8 @@ export class UploadDialogComponent {
 
   protected copyrightExpander = signal(false);
 
-  constructor(
-    protected dialogRef: MatDialogRef<UploadDialogComponent>,
-    protected albumService: AlbumService,
-    protected authorService: AuthorService,
-    protected configService: ConfigService,
-    protected photoService: PhotoService
-  ) {
-    combineLatest([authorService.author.data$, authorService.author.error$])
+  constructor() {
+    combineLatest([this.authorService.author.data$, this.authorService.author.error$])
       .pipe(
         filter(([author, error]) => error || author !== null),
         first(),

@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 
 import { PhotoService } from '../../services/api/photo.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -39,6 +39,13 @@ import { AccountService } from '../../services/account.service';
   styleUrl: './lightbox.component.scss',
 })
 export class LightboxComponent {
+  protected router = inject(Router);
+  protected accountService = inject(AccountService);
+  protected albumService = inject(AlbumService);
+  protected imageQualityService = inject(ImageQualityService);
+  protected photoService = inject(PhotoService);
+  protected shareService = inject(ShareService);
+
   protected album: AlbumDetailed | null = null;
 
   protected photos: Photo[] | null = null;
@@ -47,14 +54,10 @@ export class LightboxComponent {
 
   protected closeOverlay: (() => void) | null = null;
 
-  constructor(
-    protected router: Router,
-    protected accountService: AccountService,
-    protected albumService: AlbumService,
-    protected imageQualityService: ImageQualityService,
-    protected photoService: PhotoService,
-    protected shareService: ShareService
-  ) {
+  constructor() {
+    const albumService = this.albumService;
+    const photoService = this.photoService;
+
     albumService.album.data$.pipe(filter(album => album !== null)).subscribe(album => {
       this.album = album;
     });

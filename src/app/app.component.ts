@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,18 +16,16 @@ import { CookiesDialogComponent } from '../components/cookies-dialog/cookies-dia
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
+  protected dialog = inject(MatDialog);
+  protected account = inject(AccountService);
+  protected config = inject(ConfigService);
+
   protected readonly menuLinks = [
     { title: 'Home', url: '/', icon: 'home' },
     { title: 'Events', url: '/event', icon: 'home' },
   ];
 
   protected readonly menu = signal(false);
-
-  constructor(
-    protected dialog: MatDialog,
-    protected account: AccountService,
-    protected config: ConfigService
-  ) {}
 
   ngOnInit(): void {
     // Delay the cookies dialog by 0ms to display it on top of the lightbox of

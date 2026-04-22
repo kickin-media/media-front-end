@@ -1,4 +1,4 @@
-import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, HostBinding, OnChanges, SimpleChanges, inject, input } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AlbumDetailed, Photo } from '../../../../util/types';
 import { NgClass } from '@angular/common';
@@ -13,16 +13,16 @@ import { MatIcon } from '@angular/material/icon';
   styleUrl: './album-gallery.component.scss',
 })
 export class AlbumGalleryComponent implements OnChanges {
-  @Input() album!: AlbumDetailed | null;
-  @Input() photos!: Photo[] | null;
-  @Input() select!: SelectionModel<Photo['id']>;
-  @Input() selectMode!: boolean;
+  protected router = inject(Router);
+
+  readonly album = input.required<AlbumDetailed | null>();
+  readonly photos = input.required<Photo[] | null>();
+  readonly select = input.required<SelectionModel<Photo['id']>>();
+  readonly selectMode = input.required<boolean>();
 
   @HostBinding('class.select-mode') selectModeStyle = false;
 
   processingCount = 0;
-
-  constructor(protected router: Router) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['photos']) {
@@ -42,7 +42,8 @@ export class AlbumGalleryComponent implements OnChanges {
     e.stopImmediatePropagation();
     e.stopPropagation();
 
-    if (this.select) this.select.toggle(photo.id);
+    const select = this.select();
+    if (select) select.toggle(photo.id);
   }
 
   onImageLoad(event: Event) {
@@ -53,8 +54,9 @@ export class AlbumGalleryComponent implements OnChanges {
   }
 
   getPhotoUrl(photo: Photo): UrlTree | undefined {
-    if (!this.album) return undefined;
-    return this.router.createUrlTree([`/album/${this.album.id}/${slugify(this.album.name)}`], {
+    const album = this.album();
+    if (!album) return undefined;
+    return this.router.createUrlTree([`/album/${album.id}/${slugify(album.name)}`], {
       queryParams: { lightbox: photo.id },
       queryParamsHandling: 'merge',
     });

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, input } from '@angular/core';
 
 import { Album, PhotoEvent } from '../../../../util/types';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,9 +15,9 @@ import { AlbumComponent } from '../../../album/components/album/album.component'
   styleUrl: './event.component.scss',
 })
 export class EventComponent implements OnChanges {
-  @Input() event!: PhotoEvent;
-  @Input() albums!: Album[];
-  @Input() canSeeAllAlbums!: boolean;
+  readonly event = input.required<PhotoEvent>();
+  readonly albums = input.required<Album[]>();
+  readonly canSeeAllAlbums = input.required<boolean>();
 
   protected sortedAlbums: (Album | undefined)[] | undefined;
 
@@ -26,7 +26,7 @@ export class EventComponent implements OnChanges {
       const albums: Album[] = changes['albums'].currentValue;
 
       const filtered = albums
-        ? (albums.filter(album => this.canSeeAllAlbums || album.photos_count > 0) as Album[])
+        ? (albums.filter(album => this.canSeeAllAlbums() || album.photos_count > 0) as Album[])
         : [];
 
       // Sort the albums based on most-popular first (and only take the first 4)

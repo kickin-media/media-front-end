@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, computed, inject, input, Signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -24,20 +24,27 @@ import { MatDialog } from '@angular/material/dialog';
   templateUrl: './lightbox-photo-options.component.html',
   styleUrl: './lightbox-photo-options.component.scss',
 })
-export class LightboxPhotoOptionsComponent implements OnChanges {
-  @Input() photo!: Photo | PhotoDetailed | null;
-  @Input() album!: Album | AlbumDetailed | null;
-  @Input() closeViewer!: () => void | null;
+export class LightboxPhotoOptionsComponent {
+  protected dialog = inject(MatDialog);
+  protected accountService = inject(AccountService);
+  protected albumService = inject(AlbumService);
+  protected photoService = inject(PhotoService);
 
-  private photoAuthor$ = signal<NonNullable<User['sub']> | null>(null);
+  readonly photo = input.required<Photo | PhotoDetailed | null>();
+  readonly album = input.required<Album | AlbumDetailed | null>();
+  readonly closeViewer = input.required<() => void | null>();
+
+  private photoAuthor$: Signal<NonNullable<User['sub']> | null>;
   protected canDelete$: Observable<boolean>;
 
-  constructor(
-    protected dialog: MatDialog,
-    protected accountService: AccountService,
-    protected albumService: AlbumService,
-    protected photoService: PhotoService
-  ) {
+  constructor() {
+    const accountService = this.accountService;
+
+    this.photoAuthor$ = computed(() => {
+      const photo = this.photo();
+      return photo ? (photo.author.id ?? null) : null;
+    });
+
     const isOwnPhoto$: Observable<boolean> = combineLatest([
       toObservable(this.photoAuthor$).pipe(startWith(null)),
       accountService.user$,
@@ -48,33 +55,25 @@ export class LightboxPhotoOptionsComponent implements OnChanges {
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['photo']) {
-      const photo: typeof this.photo = changes['photo'].currentValue;
-      if (photo) this.photoAuthor$.set(photo.author.id ?? null);
-      else this.photoAuthor$.set(null);
-    }
-  }
-
   setAlbumCover() {
-    const photo = this.photo;
+    const photo = this.photo();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!photo || !(photo as any).albums) return;
 
-    const currentAlbum = this.album;
+    const currentAlbum = this.album();
     if (!currentAlbum) return;
 
     this.albumService.setAlbumCover(currentAlbum.id, photo.id).subscribe();
   }
 
   removeFromAlbum() {
-    if (!this.closeViewer) return;
+    if (!this.closeViewer()) return;
 
-    const photo = this.photo;
+    const photo = this.photo();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!photo || !(photo as any).albums) return;
 
-    const currentAlbum = this.album;
+    const currentAlbum = this.album();
     if (!currentAlbum) return;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,14 +100,14 @@ export class LightboxPhotoOptionsComponent implements OnChanges {
       )
       .subscribe(() => {
         this.albumService.album.refresh();
-        this.closeViewer();
+        this.closeViewer()();
       });
   }
 
   deletePhoto() {
-    if (!this.closeViewer) return;
+    if (!this.closeViewer()) return;
 
-    const photo = this.photo;
+    const photo = this.photo();
     if (!photo) return;
 
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
@@ -127,17 +126,18 @@ export class LightboxPhotoOptionsComponent implements OnChanges {
       )
       .subscribe(() => {
         this.albumService.album.refresh();
-        this.closeViewer();
+        this.closeViewer()();
       });
   }
 
   get isInMultipleAlbums(): boolean | null {
-    if (!this.album) return null;
-    if (!this.photo) return null;
-    if (!('albums' in this.photo)) return null;
+    if (!this.album()) return null;
+    const photo = this.photo();
+    if (!photo) return null;
+    if (!('albums' in photo)) return null;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const albums: Album[] = (this.photo as any).albums;
+    const albums: Album[] = (photo as any).albums;
     return albums.length > 0;
   }
 }

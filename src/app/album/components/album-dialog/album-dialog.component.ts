@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AlbumCreate, AlbumDetailed, AlbumUpdate, PhotoEvent } from '../../../../util/types';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { AlbumService } from '../../../../services/api/album.service';
@@ -35,6 +35,11 @@ import { serializeDate } from '../../../../util/date';
   styleUrl: './album-dialog.component.scss',
 })
 export class AlbumDialogComponent {
+  protected dialogRef = inject<MatDialogRef<AlbumDialogComponent>>(MatDialogRef);
+  data = inject<AlbumDialogProps>(MAT_DIALOG_DATA);
+  protected albumService = inject(AlbumService);
+  protected eventService = inject(EventService);
+
   protected nameField = new FormControl<string | null>(null);
   protected eventField = new FormControl<string | null>(null);
   protected dateField = new FormControl<Date>(new Date());
@@ -42,12 +47,9 @@ export class AlbumDialogComponent {
   protected secretField = new FormControl<boolean>(false);
   protected scheduledReleaseField = new FormControl<Date | null>(null);
 
-  constructor(
-    protected dialogRef: MatDialogRef<AlbumDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AlbumDialogProps,
-    protected albumService: AlbumService,
-    protected eventService: EventService
-  ) {
+  constructor() {
+    const data = this.data;
+
     if (data.event) {
       this.eventField.setValue(data.event.id);
       this.eventField.disable();

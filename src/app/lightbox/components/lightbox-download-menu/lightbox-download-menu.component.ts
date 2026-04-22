@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
@@ -19,17 +19,19 @@ import { toObservable } from '@angular/core/rxjs-interop';
   templateUrl: './lightbox-download-menu.component.html',
   styleUrl: './lightbox-download-menu.component.scss',
 })
-export class LightboxDownloadMenuComponent implements OnChanges {
-  @Input() photo!: Photo | PhotoDetailed | null;
-  @Input() album!: Album | AlbumDetailed | null;
+export class LightboxDownloadMenuComponent {
+  protected accountService = inject(AccountService);
+  protected downloadService = inject(DownloadService);
+
+  readonly photo = input.required<Photo | PhotoDetailed | null>();
+  readonly album = input.required<Album | AlbumDetailed | null>();
 
   private photoAuthor$ = signal<NonNullable<User['sub']> | null>(null);
   protected canDownload$: Observable<boolean>;
 
-  constructor(
-    protected accountService: AccountService,
-    protected downloadService: DownloadService
-  ) {
+  constructor() {
+    const accountService = this.accountService;
+
     const isOwnPhoto$: Observable<boolean> = combineLatest([
       toObservable(this.photoAuthor$).pipe(startWith(null)),
       accountService.user$,
@@ -40,23 +42,17 @@ export class LightboxDownloadMenuComponent implements OnChanges {
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['photo']) {
-      const photo: typeof this.photo = changes['photo'].currentValue;
-      if (photo) this.photoAuthor$.set(photo.author.id ?? null);
-      else this.photoAuthor$.set(null);
-    }
-  }
-
   get filename(): string {
     let res = '';
-    if (this.album) {
-      res += slugify(this.album.name);
+    const album = this.album();
+    if (album) {
+      res += slugify(album.name);
     }
 
-    if (this.photo) {
+    const photo = this.photo();
+    if (photo) {
       if (res) res += '--';
-      res += slugify(this.photo.id);
+      res += slugify(photo.id);
     }
 
     return res;

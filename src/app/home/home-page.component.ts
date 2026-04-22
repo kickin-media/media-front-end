@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { EventOverviewPageComponent } from '../event/event-overview-page.component';
 import { EventService } from '../../services/api/event.service';
 import { filter, first, map } from 'rxjs';
@@ -11,7 +11,10 @@ import slugify from 'slugify';
   templateUrl: './home-page.component.html',
 })
 export class HomePageComponent {
-  constructor(router: Router, eventService: EventService) {
+  constructor() {
+    const router = inject(Router);
+    const eventService = inject(EventService);
+
     eventService.allEvents.data$
       .pipe(
         // Take the first occurrence with at least one event

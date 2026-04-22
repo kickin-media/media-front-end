@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -70,6 +70,14 @@ import { SkeletonComponent } from '../../components/skeleton/skeleton.component'
   styleUrl: './album-page.component.scss',
 })
 export class AlbumPageComponent {
+  protected router = inject(Router);
+  protected dialog = inject(MatDialog);
+  protected overlay = inject(Overlay);
+  protected accountService = inject(AccountService);
+  protected albumService = inject(AlbumService);
+  protected photoService = inject(PhotoService);
+  protected shareService = inject(ShareService);
+
   protected photoSortField = new FormControl<'taken' | 'upload'>('taken');
   protected selected: SelectionModel<Photo['id']> = new SelectionModel<Photo['id']>(true);
   protected selectMode = signal(false);
@@ -78,16 +86,11 @@ export class AlbumPageComponent {
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
   protected photos$: Observable<Photo[] | null>;
 
-  constructor(
-    activatedRoute: ActivatedRoute,
-    protected router: Router,
-    protected dialog: MatDialog,
-    protected overlay: Overlay,
-    protected accountService: AccountService,
-    protected albumService: AlbumService,
-    protected photoService: PhotoService,
-    protected shareService: ShareService
-  ) {
+  constructor() {
+    const activatedRoute = inject(ActivatedRoute);
+    const accountService = this.accountService;
+    const albumService = this.albumService;
+
     this.breadcrumb$ = this.albumService.album.data$.pipe(
       map(album => {
         return [

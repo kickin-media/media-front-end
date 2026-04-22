@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { EventService } from '../../../../services/api/event.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -33,15 +33,18 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './album-selection-dialog.component.scss',
 })
 export class AlbumSelectionDialogComponent {
+  protected configService = inject(ConfigService);
+  protected eventService = inject(EventService);
+
   protected albumField = new FormControl<Album | string | null>(null);
 
   // Yields albums indexed by date-strings or ""
   protected albums$: Observable<[string, Album[]][]>;
 
-  constructor(
-    protected configService: ConfigService,
-    protected eventService: EventService
-  ) {
+  constructor() {
+    const configService = this.configService;
+    const eventService = this.eventService;
+
     this.getAlbumGroupIndices = this.getAlbumGroupIndices.bind(this);
 
     // Filter the albums

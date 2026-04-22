@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
@@ -13,13 +13,11 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   styleUrl: './basic-auth-dialog.component.scss',
 })
 export class BasicAuthDialogComponent {
+  protected dialogRef = inject<MatDialogRef<BasicAuthDialogComponent>>(MatDialogRef);
+  data = inject<BasicAuthDialogProps>(MAT_DIALOG_DATA);
+
   protected passwordField = new FormControl<string>('');
   protected hidePassword = true;
-
-  constructor(
-    protected dialogRef: MatDialogRef<BasicAuthDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: BasicAuthDialogProps
-  ) {}
 
   submit(): void {
     const password = this.passwordField.value;

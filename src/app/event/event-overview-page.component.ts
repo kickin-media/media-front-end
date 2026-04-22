@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { EventService } from '../../services/api/event.service';
 import {
   CdkFixedSizeVirtualScroll,
@@ -36,14 +36,16 @@ import { AccountService } from '../../services/account.service';
   styleUrl: './event-overview-page.component.scss',
 })
 export class EventOverviewPageComponent {
+  protected dialog = inject(MatDialog);
+  protected router = inject(Router);
+  protected accountService = inject(AccountService);
+  protected eventService = inject(EventService);
+
   protected dataSource: EventOverviewDataSource;
 
-  constructor(
-    protected dialog: MatDialog,
-    protected router: Router,
-    protected accountService: AccountService,
-    protected eventService: EventService
-  ) {
+  constructor() {
+    const eventService = this.eventService;
+
     this.dataSource = new EventOverviewDataSource(eventService);
   }
 

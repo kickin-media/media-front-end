@@ -11,6 +11,6 @@
   <app-event
     *cdkVirtualFor="let item of dataSource"
     [event]="item.event"
-    [albums]="item.albums"
+    [albums]="item.albums ?? []"
     [canSeeAllAlbums]="(accountService.canManageAlbums$ | async)! || (accountService.canUpload$ | async)!" />
 </cdk-virtual-scroll-viewport>

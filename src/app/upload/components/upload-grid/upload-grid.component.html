@@ -1,4 +1,4 @@
-@for (photo of photos; track photo) {
+@for (photo of photos(); track photo) {
   <div class="photo" [matBadge]="getBadgeCount(photo)" [matTooltip]="getTooltip(photo)">
     @if (!previews[photo.name]) {
       <app-skeleton />

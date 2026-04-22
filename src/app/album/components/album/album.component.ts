@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { Album } from '../../../../util/types';
 import { ImageQualityService } from '../../../../services/image-quality.service';
 import { AsyncPipe, DatePipe, NgClass, NgOptimizedImage } from '@angular/common';
@@ -26,14 +26,14 @@ import { map, Observable } from 'rxjs';
   styleUrl: './album.component.scss',
 })
 export class AlbumComponent {
-  @Input() album?: Album;
+  protected accountService = inject(AccountService);
+  protected imageQualityService = inject(ImageQualityService);
+
+  readonly album = input<Album>();
 
   protected canOpenUnreleasedAlbums$: Observable<boolean>;
 
-  constructor(
-    protected accountService: AccountService,
-    protected imageQualityService: ImageQualityService
-  ) {
+  constructor() {
     this.canOpenUnreleasedAlbums$ = this.accountService.scopes$.pipe(
       map(scopes =>
         ['albums:manage', 'photos:upload', 'albums:read_hidden'].some(permission => scopes.indexOf(permission) >= 0)
@@ -42,24 +42,27 @@ export class AlbumComponent {
   }
 
   protected getAlbumUrl(): string | undefined {
-    if (!this.album) return undefined;
-    return `/album/${this.album.id}/${slugify(this.album.name)}`;
+    const album = this.album();
+    if (!album) return undefined;
+    return `/album/${album.id}/${slugify(album.name)}`;
   }
 
   protected getCoverPhoto(): string | null {
-    if (!this.album) return null;
+    const album = this.album();
+    if (!album) return null;
 
-    const cover = this.album.cover_photo;
+    const cover = album.cover_photo;
     if (!cover) return null;
 
     return cover.img_urls[this.imageQualityService.previewQuality];
   }
 
   protected isReleased(): boolean {
-    if (!this.album || !this.album.release_time) return true;
+    const album = this.album();
+    if (!album || !album.release_time) return true;
 
     // TODO: Fix timezone
-    const releaseTime = new Date(this.album.release_time);
+    const releaseTime = new Date(album.release_time);
     return releaseTime.getTime() - new Date().getTime() < 0;
   }
 }

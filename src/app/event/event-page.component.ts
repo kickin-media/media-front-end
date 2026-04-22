@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Breadcrumb, TitleSectionComponent } from '../../components/title-section/title-section.component';
@@ -37,6 +37,12 @@ import { AccountService } from '../../services/account.service';
   styleUrl: './event-page.component.scss',
 })
 export class EventPageComponent {
+  protected dialog = inject(MatDialog);
+  protected router = inject(Router);
+  protected accountService = inject(AccountService);
+  protected configService = inject(ConfigService);
+  protected eventService = inject(EventService);
+
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
 
   // Yields albums indexed by date-strings or ""
@@ -44,13 +50,9 @@ export class EventPageComponent {
 
   protected canDelete$: Observable<boolean>;
 
-  constructor(
-    protected dialog: MatDialog,
-    protected router: Router,
-    protected accountService: AccountService,
-    protected configService: ConfigService,
-    protected eventService: EventService
-  ) {
+  constructor() {
+    const configService = this.configService;
+
     this.breadcrumb$ = this.eventService.event.data$.pipe(
       map(event => {
         return [

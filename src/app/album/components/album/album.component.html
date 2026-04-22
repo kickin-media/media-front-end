@@ -1,3 +1,5 @@
+@let albumValue = album();
+
 <a
   [routerLink]="getAlbumUrl()"
   [ngClass]="{ 'to-be-released': !isReleased(), 'can-open-unreleased': canOpenUnreleasedAlbums$ | async }">
@@ -6,24 +8,24 @@
       <img [ngSrc]="photoSrc" class="cover-photo" alt="" fill />
     }
 
-    @if (album !== undefined && album.hidden_secret) {
+    @if (albumValue !== undefined && albumValue?.hidden_secret) {
       <mat-icon class="hidden">lock_open</mat-icon>
     }
 
-    @if (album !== undefined && !isReleased()) {
+    @if (albumValue !== undefined && !isReleased()) {
       <div class="scheduled">
         <mat-icon>access_time</mat-icon>
         <span>
-          {{ album.release_time | date: 'HH:mm' }}<br />
-          {{ album.release_time | date: 'mediumDate' }}
+          {{ albumValue?.release_time | date: 'HH:mm' }}<br />
+          {{ albumValue?.release_time | date: 'mediumDate' }}
         </span>
       </div>
     }
   </div>
 
-  @if (album !== undefined) {
-    <h4>{{ album.name }}</h4>
-    <span class="detail"> {{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos </span>
+  @if (albumValue !== undefined) {
+    <h4>{{ albumValue?.name }}</h4>
+    <span class="detail"> {{ albumValue?.timestamp | relativeDate }} • {{ albumValue?.photos_count }} photos </span>
   } @else {
     <h4><app-skeleton-line /></h4>
     <span class="detail"><app-skeleton-line /></span>
