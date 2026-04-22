@@ -156,7 +156,7 @@ export class AlbumPageComponent {
     // Open lightbox whenever the `lightbox` query param appears in the URL
     activatedRoute.queryParamMap
       .pipe(
-        map(params => params.get('lightbox')),
+        map(params => params.get('lightbox') ?? null),
         startWith(null),
         pairwise()
       )
