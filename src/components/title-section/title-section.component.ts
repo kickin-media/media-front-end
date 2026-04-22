@@ -1,11 +1,11 @@
 import { Component, HostBinding, Input } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 import { SkeletonLineComponent } from '../skeleton-line/skeleton-line.component';
 
 @Component({
   selector: 'app-title-section',
-  imports: [NgIf, NgForOf, RouterLink, SkeletonLineComponent],
+  imports: [RouterLink, SkeletonLineComponent],
   templateUrl: './title-section.component.html',
   styleUrl: './title-section.component.scss',
 })

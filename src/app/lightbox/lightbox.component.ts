@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatChipsModule } from '@angular/material/chips';
-import { AsyncPipe, DecimalPipe, NgIf } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import { ImageQualityService } from '../../services/image-quality.service';
 import { LightboxPhotoOptionsComponent } from './components/lightbox-photo-options/lightbox-photo-options.component';
 import { LightboxDownloadMenuComponent } from './components/lightbox-download-menu/lightbox-download-menu.component';
@@ -27,7 +27,6 @@ import { AccountService } from '../../services/account.service';
     MatIconModule,
     MatTooltipModule,
     MatChipsModule,
-    NgIf,
     LightboxPhotoOptionsComponent,
     LightboxDownloadMenuComponent,
     ExifPipe,

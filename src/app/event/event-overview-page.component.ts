@@ -7,7 +7,7 @@ import {
   CdkVirtualScrollViewport,
 } from '@angular/cdk/scrolling';
 import { EventComponent } from './components/event/event.component';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { TitleSectionComponent } from '../../components/title-section/title-section.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -31,7 +31,6 @@ import { AccountService } from '../../services/account.service';
     MatIconModule,
     EventComponent,
     TitleSectionComponent,
-    NgIf,
   ],
   templateUrl: './event-overview-page.component.html',
   styleUrl: './event-overview-page.component.scss',

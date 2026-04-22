@@ -1,20 +1,17 @@
-<p *ngIf="processingCount" class="note">
-  <mat-icon>info</mat-icon>
-  <b>{{ processingCount }}</b> photo(s) are still being processed...
-</p>
+@if (processingCount) {
+  <p class="note">
+    <mat-icon>info</mat-icon>
+    <b>{{ processingCount }}</b> photo(s) are still being processed...
+  </p>
+}
 
-<a
-  *ngFor="let photo of photos"
-  [routerLink]="selectMode ? undefined : getPhotoUrl(photo)"
-  (click)="onClickPhoto(photo, $event)"
-  [ngClass]="{ selected: selectMode && select.isSelected(photo.id) }"
-  style="--w: 100; --h: 100"
->
-  <!--suppress AngularNgOptimizedImage -->
-  <img
-    [src]="photo.img_urls.small"
-    (load)="onImageLoad($event)"
-    alt=""
-    loading="lazy"
-  />
-</a>
+@for (photo of photos; track photo) {
+  <a
+    [routerLink]="selectMode ? undefined : getPhotoUrl(photo)"
+    (click)="onClickPhoto(photo, $event)"
+    [ngClass]="{ selected: selectMode && select.isSelected(photo.id) }"
+    style="--w: 100; --h: 100">
+    <!--suppress AngularNgOptimizedImage -->
+    <img [src]="photo.img_urls.small" (load)="onImageLoad($event)" alt="" loading="lazy" />
+  </a>
+}

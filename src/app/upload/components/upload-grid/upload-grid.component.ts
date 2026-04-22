@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
 import { readAndCompressImage } from 'browser-image-resizer';
 import validateExif, { ExifWarning, ExifWarningType } from '../../../../util/validate-exif';
-import { NgForOf, NgIf } from '@angular/common';
+
 import { MatBadgeModule } from '@angular/material/badge';
 import { SkeletonComponent } from '../../../../components/skeleton/skeleton.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -17,7 +17,7 @@ const PREVIEW_CONFIG = {
 
 @Component({
   selector: 'app-upload-grid',
-  imports: [NgForOf, MatBadgeModule, SkeletonComponent, MatTooltipModule, NgIf, MatIconModule, MatButtonModule],
+  imports: [MatBadgeModule, SkeletonComponent, MatTooltipModule, MatIconModule, MatButtonModule],
   templateUrl: './upload-grid.component.html',
   styleUrl: './upload-grid.component.scss',
 })

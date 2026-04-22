@@ -13,33 +13,36 @@
     }
   </ng-container>
 
-  <ng-container *ngIf="albumService.album.data$ | async as album">
-    <button mat-icon-button *ngIf="!selectMode()" (click)="shareService.shareAlbum(album)" matTooltip="Share album">
-      <mat-icon>share</mat-icon>
-    </button>
-
-    <mat-button-toggle-group *ngIf="!selectMode()" [formControl]="photoSortField" [hideSingleSelectionIndicator]="true">
-      <mat-button-toggle matTooltip="Sort by time taken" value="taken">
-        <mat-icon>photo_camera</mat-icon>
-      </mat-button-toggle>
-      <mat-button-toggle matTooltip="Sort by time uploaded" value="upload">
-        <mat-icon>cloud</mat-icon>
-      </mat-button-toggle>
-    </mat-button-toggle-group>
-
+  @if (albumService.album.data$ | async; as album) {
+    @if (!selectMode()) {
+      <button mat-icon-button (click)="shareService.shareAlbum(album)" matTooltip="Share album">
+        <mat-icon>share</mat-icon>
+      </button>
+    }
+    @if (!selectMode()) {
+      <mat-button-toggle-group [formControl]="photoSortField" [hideSingleSelectionIndicator]="true">
+        <mat-button-toggle matTooltip="Sort by time taken" value="taken">
+          <mat-icon>photo_camera</mat-icon>
+        </mat-button-toggle>
+        <mat-button-toggle matTooltip="Sort by time uploaded" value="upload">
+          <mat-icon>cloud</mat-icon>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    }
     @if (!selectMode()) {
       <app-button-group>
-        <button
-          *ngIf="(accountService.canUpload$ | async) || (accountService.canManageOther$ | async)"
-          mat-stroked-button
-          (click)="selectMode.set(true)">
-          <mat-icon>check_box_outline_blank</mat-icon>
-          SELECT
-        </button>
-        <button *ngIf="accountService.canUpload$ | async" mat-flat-button (click)="uploadPhotos()">
-          <mat-icon>upload</mat-icon>
-          UPLOAD
-        </button>
+        @if ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async)) {
+          <button mat-stroked-button (click)="selectMode.set(true)">
+            <mat-icon>check_box_outline_blank</mat-icon>
+            SELECT
+          </button>
+        }
+        @if (accountService.canUpload$ | async) {
+          <button mat-flat-button (click)="uploadPhotos()">
+            <mat-icon>upload</mat-icon>
+            UPLOAD
+          </button>
+        }
       </app-button-group>
     } @else {
       <app-button-group>
@@ -47,14 +50,18 @@
           <mat-icon>check_box</mat-icon>
           SELECT
         </button>
-        <button mat-stroked-button *ngIf="selected!.selected.length === 0" (click)="selectAll()">
-          <mat-icon>clear_all</mat-icon>
-          ALL
-        </button>
-        <button mat-stroked-button *ngIf="selected!.selected.length > 0" (click)="selected.clear()">
-          <mat-icon>clear_all</mat-icon>
-          CLEAR
-        </button>
+        @if (selected!.selected.length === 0) {
+          <button mat-stroked-button (click)="selectAll()">
+            <mat-icon>clear_all</mat-icon>
+            ALL
+          </button>
+        }
+        @if (selected!.selected.length > 0) {
+          <button mat-stroked-button (click)="selected.clear()">
+            <mat-icon>clear_all</mat-icon>
+            CLEAR
+          </button>
+        }
         <button mat-flat-button [matMenuTriggerFor]="photoMenu">
           <mat-icon style="margin-right: -1rem">expand_more</mat-icon>
         </button>
@@ -79,36 +86,37 @@
         </button>
       </mat-menu>
     }
-
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="albumMenu"
-      *ngIf="!selectMode() && (accountService.canManageAlbums$ | async)">
-      <mat-icon>more_vert</mat-icon>
-    </button>
+    @if (!selectMode() && (accountService.canManageAlbums$ | async)) {
+      <button mat-icon-button [matMenuTriggerFor]="albumMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+    }
     <mat-menu #albumMenu="matMenu" xPosition="before">
       <button mat-menu-item (click)="editAlbum()"><mat-icon>edit</mat-icon> Edit album</button>
       <button mat-menu-item (click)="deleteAlbum()"><mat-icon>delete</mat-icon> Delete album</button>
     </mat-menu>
-  </ng-container>
+  }
 </app-title-section>
 
-<ng-container *ngIf="albumService.album.data$ | async as album">
-  <p *ngIf="album.hidden_secret" class="note">
-    <mat-icon>warning</mat-icon>
-    <b>This is a hidden album!</b> Be careful when sharing it with others...
-  </p>
-
+@if (albumService.album.data$ | async; as album) {
+  @if (album.hidden_secret) {
+    <p class="note">
+      <mat-icon>warning</mat-icon>
+      <b>This is a hidden album!</b> Be careful when sharing it with others...
+    </p>
+  }
   <app-album-gallery
     [album]="albumService.album.data$ | async"
     [photos]="photos$ | async"
     [select]="selected"
     [selectMode]="selectMode()" />
-</ng-container>
+}
 
-<div class="loading-overlay" *ngIf="isReprocessing()">
-  <div class="spinner-container">
-    <mat-spinner></mat-spinner>
-    <p>Reprocessing photos...</p>
+@if (isReprocessing()) {
+  <div class="loading-overlay">
+    <div class="spinner-container">
+      <mat-spinner></mat-spinner>
+      <p>Reprocessing photos...</p>
+    </div>
   </div>
-</div>
+}

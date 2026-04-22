@@ -29,23 +29,29 @@
   <div class="watermark">
     <div class="preview">
       <!--suppress AngularNgOptimizedImage -->
-      <img *ngIf="preview$ | async as url" [src]="url" alt="" />
+      @if (preview$ | async; as url) {
+        <img [src]="url" alt="" />
+      }
     </div>
 
-    <app-button-group *ngIf="preview$ | async">
-      <button mat-stroked-button (click)="upload.click()" class="secondary-button">
+    @if (preview$ | async) {
+      <app-button-group>
+        <button mat-stroked-button (click)="upload.click()" class="secondary-button">
+          <mat-icon>upload</mat-icon>
+          UPLOAD
+        </button>
+        <button mat-stroked-button (click)="watermarkField.setValue(false)" class="secondary-button icon-button">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </app-button-group>
+    }
+
+    @if ((preview$ | async) === null) {
+      <button mat-flat-button (click)="upload.click()" class="secondary-button">
         <mat-icon>upload</mat-icon>
         UPLOAD
       </button>
-      <button mat-stroked-button (click)="watermarkField.setValue(false)" class="secondary-button icon-button">
-        <mat-icon>delete</mat-icon>
-      </button>
-    </app-button-group>
-
-    <button mat-flat-button *ngIf="(preview$ | async) === null" (click)="upload.click()" class="secondary-button">
-      <mat-icon>upload</mat-icon>
-      UPLOAD
-    </button>
+    }
 
     <input #upload type="file" accept="image/png" (change)="onUpload($event)" />
   </div>

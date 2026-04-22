@@ -18,10 +18,12 @@
   </p>
 
   @for (type of exifWarningTypes; track type) {
-    <p *ngIf="grid.hasWarning(type) as count" class="warn">
-      <mat-icon>warning</mat-icon>
-      <b>{{ count }}x:</b> {{ type | exifWarning }}
-    </p>
+    @if (grid.hasWarning(type); as count) {
+      <p class="warn">
+        <mat-icon>warning</mat-icon>
+        <b>{{ count }}x:</b> {{ type | exifWarning }}
+      </p>
+    }
   }
 </mat-dialog-content>
 
@@ -32,7 +34,10 @@
   (opened)="copyrightExpander.set(true)"
   (closed)="copyrightExpander.set(false)">
   <mat-expansion-panel-header>
-    <mat-panel-title><mat-icon>copyright</mat-icon> Copyright details</mat-panel-title>
+    <mat-panel-title>
+      <mat-icon>copyright</mat-icon>
+      Copyright details
+    </mat-panel-title>
   </mat-expansion-panel-header>
 
   <span class="hint">
@@ -67,15 +72,17 @@
 </mat-dialog-actions>
 
 @if (status !== null) {
-  <div *ngIf="status | async as stat" class="progress">
-    <mat-progress-bar
-      mode="determinate"
-      value="100"
-      class="error"
-      [ngStyle]="{ '--progress': stat.errors.length / (stat.remaining + stat.total) }" />
-    <mat-progress-bar
-      [mode]="stat.successes + stat.errors.length > 0 ? 'determinate' : 'indeterminate'"
-      [value]="(stat.successes / (stat.total + stat.remaining - stat.errors.length)) * 100"
-      [ngStyle]="{ '--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total) }" />
-  </div>
+  @if (status | async; as stat) {
+    <div class="progress">
+      <mat-progress-bar
+        mode="determinate"
+        value="100"
+        class="error"
+        [ngStyle]="{ '--progress': stat.errors.length / (stat.remaining + stat.total) }" />
+      <mat-progress-bar
+        [mode]="stat.successes + stat.errors.length > 0 ? 'determinate' : 'indeterminate'"
+        [value]="(stat.successes / (stat.total + stat.remaining - stat.errors.length)) * 100"
+        [ngStyle]="{ '--progress': 1.0 - stat.errors.length / (stat.remaining + stat.total) }" />
+    </div>
+  }
 }

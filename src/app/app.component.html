@@ -12,65 +12,51 @@
     <span class="spacing"></span>
 
     <div class="menu">
-      <a
-        *ngFor="let link of menuLinks"
-        [routerLink]="link.url"
-        mat-button
-      >
-        {{ link.title.toUpperCase() }}
-      </a>
+      @for (link of menuLinks; track link) {
+        <a [routerLink]="link.url" mat-button>
+          {{ link.title.toUpperCase() }}
+        </a>
+      }
 
-      <button
-        *ngIf="!(account.user$ | async)"
-        mat-icon-button
-        (click)="account.login()"
-      >
-        <mat-icon>account_circle</mat-icon>
-      </button>
+      <!--  eslint-disable-next-line @angular-eslint/template/no-negated-async-->
+      @if (!(account.user$ | async)) {
+        <button mat-icon-button (click)="account.login()">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      }
 
-      <button
-        *ngIf="account.user$ | async as user"
-        mat-stroked-button
-        (click)="logout()"
-      >
-        {{ user.name }}
-      </button>
+      @if (account.user$ | async; as user) {
+        <button mat-stroked-button (click)="logout()">
+          {{ user.name }}
+        </button>
+      }
     </div>
   </nav>
 </mat-toolbar>
 
-<div id="nav-overlay" *ngIf="menu()">
-  <!--suppress AngularNgOptimizedImage -->
-  <img [src]="config.config.logo" alt="{{ config.config.title }} logo" />
-
-  <a
-    *ngFor="let link of menuLinks"
-    [routerLink]="link.url"
-    mat-button
-  >
-    {{ link.title.toUpperCase() }}
-  </a>
-
-  <button
-    *ngIf="!(account.user$ | async)"
-    mat-icon-button
-    (click)="account.login()"
-  >
-    <mat-icon>account_circle</mat-icon>
-  </button>
-
-  <button
-    *ngIf="account.user$ | async as user"
-    mat-stroked-button
-    (click)="account.logout()"
-  >
-    {{ user.name }}
-  </button>
-
-  <button mat-button (click)="menu.set(false)">
-    <mat-icon>close</mat-icon> CLOSE MENU
-  </button>
-</div>
+@if (menu()) {
+  <div id="nav-overlay">
+    <!--suppress AngularNgOptimizedImage -->
+    <img [src]="config.config.logo" alt="{{ config.config.title }} logo" />
+    @for (link of menuLinks; track link) {
+      <a [routerLink]="link.url" mat-button>
+        {{ link.title.toUpperCase() }}
+      </a>
+    }
+    <!-- eslint-disable-next-line @angular-eslint/template/no-negated-async-->
+    @if (!(account.user$ | async)) {
+      <button mat-icon-button (click)="account.login()">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+    }
+    @if (account.user$ | async; as user) {
+      <button mat-stroked-button (click)="account.logout()">
+        {{ user.name }}
+      </button>
+    }
+    <button mat-button (click)="menu.set(false)"><mat-icon>close</mat-icon> CLOSE MENU</button>
+  </div>
+}
 
 <div id="content" class="container">
   <router-outlet />
@@ -92,7 +78,8 @@
       <br />
       <br />
       If you want to have a photo removed, please send an e-mail to the
-      <a href="mailto:{{ config.config.contact.email }}">{{ config.config.contact.name }}</a>.
+      <a href="mailto:{{ config.config.contact.email }}">{{ config.config.contact.name }}</a
+      >.
     </div>
   </div>
 </div>
@@ -103,8 +90,8 @@
     <em>
       &copy; 2025
       <a href="https://hello.jonathanj.nl/">Jonathan Juursema</a>,
-      <a href="https://github.com/jeffreybakker">Jeffrey Bakker</a>,
-      and <a href="https://github.com/kickin-media">other contributors</a>.
+      <a href="https://github.com/jeffreybakker">Jeffrey Bakker</a>, and
+      <a href="https://github.com/kickin-media">other contributors</a>.
     </em>
   </div>
 </div>

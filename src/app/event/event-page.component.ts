@@ -3,7 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Breadcrumb, TitleSectionComponent } from '../../components/title-section/title-section.component';
 import { EventService } from '../../services/api/event.service';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatMenuModule } from '@angular/material/menu';
 import { combineLatest, filter, first, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,8 +26,6 @@ import { AccountService } from '../../services/account.service';
   selector: 'app-event-page',
   imports: [
     AsyncPipe,
-    NgForOf,
-    NgIf,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,

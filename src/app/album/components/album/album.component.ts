@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Album } from '../../../../util/types';
 import { ImageQualityService } from '../../../../services/image-quality.service';
-import { AsyncPipe, DatePipe, NgClass, NgIf, NgOptimizedImage } from '@angular/common';
+import { AsyncPipe, DatePipe, NgClass, NgOptimizedImage } from '@angular/common';
 import { SkeletonLineComponent } from '../../../../components/skeleton-line/skeleton-line.component';
 import { TimestampPipe } from '../../../../pipes/timestamp.pipe';
 import { RouterLink } from '@angular/router';
@@ -14,7 +14,6 @@ import { map, Observable } from 'rxjs';
   selector: 'app-album',
   imports: [
     NgOptimizedImage,
-    NgIf,
     SkeletonLineComponent,
     TimestampPipe,
     RouterLink,

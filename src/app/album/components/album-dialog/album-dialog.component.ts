@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { EventService } from '../../../../services/api/event.service';
 import { MatSelectModule } from '@angular/material/select';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
 import { MatMomentDatetimeModule } from '@mat-datetimepicker/moment';
@@ -27,11 +27,9 @@ import { serializeDate } from '../../../../util/date';
     MatIconModule,
     MatSelectModule,
     AsyncPipe,
-    NgForOf,
     MatCheckboxModule,
     MatMomentDatetimeModule,
     MatDatetimepickerModule,
-    NgIf,
   ],
   templateUrl: './album-dialog.component.html',
   styleUrl: './album-dialog.component.scss',

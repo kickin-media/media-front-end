@@ -4,14 +4,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ConfigService } from '../services/config.service';
-import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { AccountService } from '../services/account.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CookiesDialogComponent } from '../components/cookies-dialog/cookies-dialog.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MatButtonModule, MatIconModule, MatToolbarModule, RouterLink, NgForOf, NgIf, AsyncPipe],
+  imports: [RouterOutlet, MatButtonModule, MatIconModule, MatToolbarModule, RouterLink, AsyncPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

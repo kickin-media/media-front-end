@@ -5,7 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatDivider } from '@angular/material/divider';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { DownloadService } from '../../../../services/download.service';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { Album, AlbumDetailed, Photo, PhotoDetailed } from '../../../../util/types';
 import slugify from 'slugify';
 import { AccountService } from '../../../../services/account.service';
@@ -15,7 +15,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-lightbox-download-menu',
-  imports: [MatIcon, MatIconButton, MatTooltip, MatDivider, MatMenu, MatMenuItem, MatMenuTrigger, AsyncPipe, NgIf],
+  imports: [MatIcon, MatIconButton, MatTooltip, MatDivider, MatMenu, MatMenuItem, MatMenuTrigger, AsyncPipe],
   templateUrl: './lightbox-download-menu.component.html',
   styleUrl: './lightbox-download-menu.component.scss',
 })

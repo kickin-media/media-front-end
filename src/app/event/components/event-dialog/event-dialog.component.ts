@@ -2,7 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { EventCreate, EventUpdate, PhotoEvent } from '../../../../util/types';
 import { EventService } from '../../../../services/api/event.service';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -27,7 +27,6 @@ const previewConfig: PreviewConfig = {
   selector: 'app-event-dialog',
   imports: [
     AsyncPipe,
-    NgIf,
     ReactiveFormsModule,
     MatButtonModule,
     MatCheckboxModule,

@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -53,7 +53,6 @@ import { SkeletonComponent } from '../../components/skeleton/skeleton.component'
   selector: 'app-album-page',
   imports: [
     AsyncPipe,
-    NgIf,
     ReactiveFormsModule,
     MatButtonModule,
     MatButtonToggleModule,

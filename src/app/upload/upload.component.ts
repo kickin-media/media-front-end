@@ -3,7 +3,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { AlbumService } from '../../services/api/album.service';
 import { MatIconModule } from '@angular/material/icon';
-import { AsyncPipe, NgIf, NgStyle } from '@angular/common';
+import { AsyncPipe, NgStyle } from '@angular/common';
 import { UploadGridComponent } from './components/upload-grid/upload-grid.component';
 import { MatDividerModule } from '@angular/material/divider';
 import { EXIF_WARNING_MESSAGES, ExifWarningType } from '../../util/validate-exif';
@@ -30,7 +30,6 @@ import { ConfigService } from '../../services/config.service';
     AsyncPipe,
     UploadGridComponent,
     MatDividerModule,
-    NgIf,
     ExifWarningPipe,
     MatProgressBarModule,
     NgStyle,

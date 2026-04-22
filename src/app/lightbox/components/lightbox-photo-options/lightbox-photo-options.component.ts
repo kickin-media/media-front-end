@@ -5,7 +5,7 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatDivider } from '@angular/material/divider';
 import { Album, AlbumDetailed, Photo, PhotoDetailed } from '../../../../util/types';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { User } from '@auth0/auth0-angular';
 import { combineLatest, filter, map, Observable, startWith, switchMap } from 'rxjs';
 import { AccountService } from '../../../../services/account.service';
@@ -20,7 +20,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-lightbox-photo-options',
-  imports: [MatIcon, MatIconButton, MatTooltip, MatMenu, MatMenuItem, MatDivider, MatMenuTrigger, NgIf, AsyncPipe],
+  imports: [MatIcon, MatIconButton, MatTooltip, MatMenu, MatMenuItem, MatDivider, MatMenuTrigger, AsyncPipe],
   templateUrl: './lightbox-photo-options.component.html',
   styleUrl: './lightbox-photo-options.component.scss',
 })

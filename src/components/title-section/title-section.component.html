@@ -3,14 +3,25 @@
 <div class="title">
   <h1>
     {{ title }}
-    <app-skeleton-line *ngIf="!title" />
+    @if (!title) {
+      <app-skeleton-line />
+    }
   </h1>
-  <div class="breadcrumb" *ngIf="breadcrumb">
-    <ng-container *ngFor="let crumb of breadcrumb; index as idx">
-      <a [routerLink]="crumb.url">{{ crumb.title }}<app-skeleton-line *ngIf="!crumb.title" /></a>
-      <span *ngIf="idx !== breadcrumb.length - 1">&gt;</span>
-    </ng-container>
-  </div>
+  @if (breadcrumb) {
+    <div class="breadcrumb">
+      @for (crumb of breadcrumb; track crumb; let idx = $index) {
+        <a [routerLink]="crumb.url"
+          >{{ crumb.title }}
+          @if (!crumb.title) {
+            <app-skeleton-line />
+          }
+        </a>
+        @if (idx !== breadcrumb.length - 1) {
+          <span>&gt;</span>
+        }
+      }
+    </div>
+  }
 </div>
 
 <div class="actions"><ng-content /></div>

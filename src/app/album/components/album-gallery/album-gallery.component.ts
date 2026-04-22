@@ -1,14 +1,14 @@
 import { Component, HostBinding, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SelectionModel } from '@angular/cdk/collections';
 import { AlbumDetailed, Photo } from '../../../../util/types';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import slugify from 'slugify';
 import { Router, RouterLink, UrlTree } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 
 @Component({
   selector: 'app-album-gallery',
-  imports: [NgForOf, RouterLink, NgClass, MatIcon, NgIf],
+  imports: [RouterLink, NgClass, MatIcon],
   templateUrl: './album-gallery.component.html',
   styleUrl: './album-gallery.component.scss',
 })

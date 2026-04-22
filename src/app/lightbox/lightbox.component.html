@@ -1,40 +1,47 @@
 <mat-toolbar>
   <!-- Quick peek photo info -->
-  <mat-chip
-    *ngIf="photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))">
-    <mat-icon matChipAvatar>trending_up</mat-icon>
-    {{ photo.views }} views
-  </mat-chip>
+  @if (photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))) {
+    <mat-chip>
+      <mat-icon matChipAvatar>trending_up</mat-icon>
+      {{ photo.views }} views
+    </mat-chip>
+  }
 
-  <mat-chip *ngIf="photo | exif: 'focal_length' as value" matTooltip="Focal length">
-    <mat-icon matChipAvatar>terrain</mat-icon>
-    {{ value | number }}mm
-  </mat-chip>
+  @if (photo | exif: 'focal_length'; as value) {
+    <mat-chip matTooltip="Focal length">
+      <mat-icon matChipAvatar>terrain</mat-icon>
+      {{ value | number }}mm
+    </mat-chip>
+  }
 
-  <mat-chip *ngIf="photo | exif: 'aperture_value' as value" matTooltip="Aperture">
-    <mat-icon matChipAvatar>camera</mat-icon>
-    f/{{ value | number: '1.1-1' }}
-  </mat-chip>
+  @if (photo | exif: 'aperture_value'; as value) {
+    <mat-chip matTooltip="Aperture">
+      <mat-icon matChipAvatar>camera</mat-icon>
+      f/{{ value | number: '1.1-1' }}
+    </mat-chip>
+  }
 
-  <mat-chip *ngIf="photo | exifShutterSpeed as value" matTooltip="Shutter speed">
-    <mat-icon matChipAvatar>shutter_speed</mat-icon>
-    {{ value }}
-  </mat-chip>
+  @if (photo | exifShutterSpeed; as value) {
+    <mat-chip matTooltip="Shutter speed">
+      <mat-icon matChipAvatar>shutter_speed</mat-icon>
+      {{ value }}
+    </mat-chip>
+  }
 
-  <mat-chip *ngIf="photo | exif: 'photographic_sensitivity' as value" matTooltip="ISO">
-    <mat-icon matChipAvatar>exposure</mat-icon>
-    {{ value | number }}
-  </mat-chip>
+  @if (photo | exif: 'photographic_sensitivity'; as value) {
+    <mat-chip matTooltip="ISO">
+      <mat-icon matChipAvatar>exposure</mat-icon>
+      {{ value | number }}
+    </mat-chip>
+  }
 
   <!-- Menus -->
   <!--<button mat-icon-button matTooltip="View EXIF data"><mat-icon>info</mat-icon></button>-->
-  <button
-    mat-icon-button
-    matTooltip="Share photo"
-    *ngIf="album && photo"
-    (click)="shareService.sharePhoto(album, photo)">
-    <mat-icon>share</mat-icon>
-  </button>
+  @if (album && photo) {
+    <button mat-icon-button matTooltip="Share photo" (click)="shareService.sharePhoto(album, photo)">
+      <mat-icon>share</mat-icon>
+    </button>
+  }
   <app-lightbox-download-menu [album]="album" [photo]="photo" />
   <app-lightbox-photo-options [album]="album" [photo]="photo" [closeViewer]="close" />
 
@@ -46,25 +53,30 @@
 
 <div class="content">
   <!-- Go through photo album... -->
-  <button *ngIf="photos && index > 0" mat-icon-button class="previous" (click)="go(-1)">
-    <mat-icon>chevron_left</mat-icon>
-  </button>
-  <button *ngIf="photos && index < photos.length - 1" mat-icon-button class="next" (click)="go(1)">
-    <mat-icon>chevron_right</mat-icon>
-  </button>
+  @if (photos && index > 0) {
+    <button mat-icon-button class="previous" (click)="go(-1)">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+  }
+  @if (photos && index < photos.length - 1) {
+    <button mat-icon-button class="next" (click)="go(1)">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  }
 
   <!-- Current image -->
   <!--suppress AngularNgOptimizedImage -->
-  <img *ngIf="photo" [src]="getPhotoSrc(photo)" alt="" class="current mat-elevation-z8" loading="eager" />
+  @if (photo) {
+    <img [src]="getPhotoSrc(photo)" alt="" class="current mat-elevation-z8" loading="eager" />
+  }
 
   <!-- Preload previous and next images -->
   <!--suppress AngularNgOptimizedImage -->
-  <img *ngIf="photos && index >= 1" [src]="getPhotoSrc(photos[index - 1])" alt="" class="preview" loading="eager" />
+  @if (photos && index >= 1) {
+    <img [src]="getPhotoSrc(photos[index - 1])" alt="" class="preview" loading="eager" />
+  }
   <!--suppress AngularNgOptimizedImage -->
-  <img
-    *ngIf="photos && index < photos.length - 1"
-    [src]="getPhotoSrc(photos[index + 1])"
-    alt=""
-    class="preview"
-    loading="eager" />
+  @if (photos && index < photos.length - 1) {
+    <img [src]="getPhotoSrc(photos[index + 1])" alt="" class="preview" loading="eager" />
+  }
 </div>

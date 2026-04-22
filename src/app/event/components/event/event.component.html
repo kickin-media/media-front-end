@@ -6,7 +6,9 @@
 </h2>
 
 <div class="albums">
-  <app-album *ngFor="let album of sortedAlbums" [album]="album" />
+  @for (album of sortedAlbums; track album) {
+    <app-album [album]="album" />
+  }
 </div>
 
 <div class="actions">

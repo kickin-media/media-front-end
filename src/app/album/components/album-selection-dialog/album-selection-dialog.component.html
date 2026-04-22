@@ -9,35 +9,30 @@
       placeholder="Type to search other album..."
       matInput
       [formControl]="albumField"
-      [matAutocomplete]="autoComplete"
-    />
+      [matAutocomplete]="autoComplete" />
     <mat-icon matSuffix>arrow_drop_down</mat-icon>
-    <mat-autocomplete
-      autoActiveFirstOption
-      #autoComplete="matAutocomplete"
-      [displayWith]="displayFn"
-    >
+    <mat-autocomplete autoActiveFirstOption #autoComplete="matAutocomplete" [displayWith]="displayFn">
       @for (item of albums$ | async; track item[0]) {
         @let index = item[0];
         @let album = item[1];
         @if (index) {
-          <mat-optgroup *ngIf="index" [label]="configService.config.albums.groupName(index)">
-            <mat-option
-              *ngFor="let album of album"
-              [value]="album"
-            >
+          @if (index) {
+            <mat-optgroup [label]="configService.config.albums.groupName(index)">
+              @for (album of album; track album) {
+                <mat-option [value]="album">
+                  {{ renderAlbum(album) }}
+                  <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
+                </mat-option>
+              }
+            </mat-optgroup>
+          }
+        } @else {
+          @for (album of album; track album) {
+            <mat-option [value]="album">
               {{ renderAlbum(album) }}
               <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
             </mat-option>
-          </mat-optgroup>
-        } @else {
-          <mat-option
-            *ngFor="let album of album"
-            [value]="album"
-          >
-            {{ renderAlbum(album) }}
-            <span class="detail">{{ album.timestamp | relativeDate }} • {{ album.photos_count }} photos</span>
-          </mat-option>
+          }
         }
       }
     </mat-autocomplete>
@@ -46,11 +41,5 @@
 
 <mat-dialog-actions>
   <button mat-button [mat-dialog-close]="null">CANCEL</button>
-  <button
-    mat-flat-button
-    [disabled]="!canSubmit()"
-    [mat-dialog-close]="albumField.value"
-  >
-    ADD
-  </button>
+  <button mat-flat-button [disabled]="!canSubmit()" [mat-dialog-close]="albumField.value">ADD</button>
 </mat-dialog-actions>
