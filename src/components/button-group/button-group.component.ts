@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'button-group',
-  standalone: true,
+  selector: 'app-button-group',
   imports: [],
   templateUrl: './button-group.component.html',
-  styleUrl: './button-group.component.scss'
+  styleUrl: './button-group.component.scss',
 })
-export class ButtonGroupComponent {
-
-}
+export class ButtonGroupComponent {}

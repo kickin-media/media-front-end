@@ -30,7 +30,7 @@ h2 a {
   flex-direction: row;
   gap: 1rem;
 
-  album {
+  app-album {
     width: calc((100% - 3rem) / 4);
   }
 
@@ -39,33 +39,33 @@ h2 a {
 
   // 3 albums: 3 * 15rem + 2 * 1rem = 47rem = 752px
   @media (max-width: 912px) {
-    album {
+    app-album {
       width: calc((100% - 2rem) / 3);
     }
 
-    album:nth-child(4) {
+    app-album:nth-child(4) {
       display: none;
     }
   }
 
   // 2 albums: 2 * 15rem + 1 * 1rem = 31rem = 496px
   @media (max-width: 656px) {
-    album {
+    app-album {
       width: calc((100% - 1rem) / 2);
     }
 
-    album:nth-child(3) {
+    app-album:nth-child(3) {
       display: none;
     }
   }
 
   // 1 albums: 1 * 15rem + 0 * 1rem = 15rem = 240px
   @media (max-width: 400px) {
-    album {
+    app-album {
       width: 100%;
     }
 
-    album:nth-child(2) {
+    app-album:nth-child(2) {
       display: none;
     }
   }
@@ -81,5 +81,5 @@ h2 a {
   margin-right: 0;
   margin-left: 0.5rem;
 
-  color: var(--primary)
+  color: var(--primary);
 }

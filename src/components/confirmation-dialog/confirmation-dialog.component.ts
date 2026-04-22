@@ -1,26 +1,15 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
-import { NgIf } from "@angular/common";
+import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-confirmation-dialog',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatDialogModule,
-    NgIf,
-  ],
+  imports: [MatButtonModule, MatDialogModule],
   templateUrl: './confirmation-dialog.component.html',
-  styleUrl: './confirmation-dialog.component.scss'
+  styleUrl: './confirmation-dialog.component.scss',
 })
 export class ConfirmationDialogComponent {
-
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public props: ConfirmationDialogProps,
-  ) {
-  }
-
+  props = inject<ConfirmationDialogProps>(MAT_DIALOG_DATA);
 }
 
 export interface ConfirmationDialogProps {

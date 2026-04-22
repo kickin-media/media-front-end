@@ -1,11 +1,5 @@
-<ng-container
-  *ngIf="album && photo && ((canDelete$ | async) || (accountService.canManageAlbums$ | async))"
->
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="menu"
-    matTooltip="Photo options..."
-  >
+@if (album() && photo() && ((canDelete$ | async) || (accountService.canManageAlbums$ | async))) {
+  <button mat-icon-button [matMenuTriggerFor]="menu" matTooltip="Photo options...">
     <mat-icon>settings</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
@@ -14,34 +8,28 @@
       matTooltipPosition="left"
       matTooltip="Set this photo as the album cover, will be visible in the event overview."
       [disabled]="(accountService.canManageAlbums$ | async) !== true"
-      (click)="setAlbumCover()"
-    >
+      (click)="setAlbumCover()">
       <mat-icon>photo_library</mat-icon>
       Set as album cover
     </button>
-
     <mat-divider />
-
     <button
       mat-menu-item
       matTooltipPosition="left"
       matTooltip="Remove photo from this album, it will remain in the other albums it is in."
       [disabled]="!(isInMultipleAlbums && (canDelete$ | async))"
-      (click)="removeFromAlbum()"
-    >
+      (click)="removeFromAlbum()">
       <mat-icon>clear</mat-icon>
       Remove from album
     </button>
-
     <button
       mat-menu-item
       matTooltipPosition="left"
       matTooltip="Remove photo permanently from ALL albums."
-      [disabled]="!(canDelete$ | async)"
-      (click)="deletePhoto()"
-    >
+      [disabled]="(canDelete$ | async) === false"
+      (click)="deletePhoto()">
       <mat-icon>delete</mat-icon>
       Delete permanently
     </button>
   </mat-menu>
-</ng-container>
+}

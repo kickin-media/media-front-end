@@ -1,10 +1,12 @@
 <h2 mat-dialog-title>{{ props.title }}</h2>
-<mat-dialog-content *ngIf="props.detail">{{ props.detail }}</mat-dialog-content>
+@if (props.detail) {
+  <mat-dialog-content>{{ props.detail }}</mat-dialog-content>
+}
 <mat-dialog-actions align="end">
   <button mat-button [class]="props.buttonClass" [mat-dialog-close]="false">
-    {{ props.buttonNames ? props.buttonNames[0] : "CANCEL" }}
+    {{ props.buttonNames ? props.buttonNames[0] : 'CANCEL' }}
   </button>
   <button mat-flat-button [class]="props.buttonClass" [mat-dialog-close]="true">
-    {{ props.buttonNames ? props.buttonNames[1] : "OK" }}
+    {{ props.buttonNames ? props.buttonNames[1] : 'OK' }}
   </button>
 </mat-dialog-actions>
