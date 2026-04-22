@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { map, switchMap } from 'rxjs';
 import { readAndCompressImage } from 'browser-image-resizer';
 import { fromPromise } from 'rxjs/internal/observable/innerFrom';
+import { ConfigService } from './config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,7 @@ import { fromPromise } from 'rxjs/internal/observable/innerFrom';
 export class ShareService {
   protected http = inject(HttpClient);
   protected snackbar = inject(MatSnackBar);
+  protected config = inject(ConfigService);
 
   shareAlbum(album: Album | AlbumDetailed) {
     let albumUrl = window.location.origin + `/album/${album.id}/${slugify(album.name)}`;
@@ -23,7 +25,7 @@ export class ShareService {
     if ('share' in navigator) {
       // If the user has `share` available in the navigator, then use the Share API
       navigator.share({
-        title: 'Kick-In Media -- ' + album.name,
+        title: `${this.config.config.title} -- ${album.name}`,
         url: albumUrl,
       });
     } else if ('clipboard' in navigator) {
@@ -49,7 +51,7 @@ export class ShareService {
       file$.subscribe({
         next: blob => {
           navigator.share({
-            title: 'Kick-In Media -- ' + album.name,
+            title: `${this.config.config.title} -- ${album.name}`,
             files: [
               new File([blob], album.name + ' -- ' + photo.author.name + ' -- ' + photo.id + '.jpg', {
                 type: 'image/jpeg',
