@@ -21,7 +21,7 @@
       height: 4.75rem;
 
       position: absolute;
-      top: -.5rem;
+      top: -0.5rem;
       left: 50%;
       z-index: -1;
       transform: translateX(-50%);
@@ -41,13 +41,14 @@
 h1 {
   margin: 0;
 
-  skeleton-line {
+  app-skeleton-line {
     width: 20ch;
   }
 }
 
 .breadcrumb {
-  a, span {
+  a,
+  span {
     color: #777;
     font-size: 0.875rem;
     font-variant: small-caps;
@@ -65,8 +66,8 @@ h1 {
     margin: 0 0.25rem;
   }
 
-  skeleton-line {
-    width: 10ch
+  app-skeleton-line {
+    width: 10ch;
   }
 }
 

@@ -1,24 +1,23 @@
-import { Component, Inject } from '@angular/core';
-import { AlbumCreate, AlbumDetailed, AlbumUpdate, PhotoEvent } from "../../../../util/types";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
-import { AlbumService } from "../../../../services/api/album.service";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { MatButtonModule } from "@angular/material/button";
-import { MatInputModule } from "@angular/material/input";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { EventService } from "../../../../services/api/event.service";
-import { MatSelectModule } from "@angular/material/select";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
-import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatDatetimepickerModule } from "@mat-datetimepicker/core";
-import { MatMomentDatetimeModule } from "@mat-datetimepicker/moment";
-import { MatIconModule } from "@angular/material/icon";
-import { combineLatest, share, switchMap } from "rxjs";
-import { serializeDate } from "../../../../util/date";
+import { Component, inject } from '@angular/core';
+import { AlbumCreate, AlbumDetailed, AlbumUpdate, PhotoEvent } from '../../../../util/types';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { AlbumService } from '../../../../services/api/album.service';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { EventService } from '../../../../services/api/event.service';
+import { MatSelectModule } from '@angular/material/select';
+import { AsyncPipe } from '@angular/common';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatetimepickerModule } from '@mat-datetimepicker/core';
+import { MatMomentDatetimeModule } from '@mat-datetimepicker/moment';
+import { MatIconModule } from '@angular/material/icon';
+import { combineLatest, share, switchMap } from 'rxjs';
+import { serializeDate } from '../../../../util/date';
 
 @Component({
   selector: 'app-album-dialog',
-  standalone: true,
   imports: [
     MatButtonModule,
     MatDialogModule,
@@ -28,16 +27,18 @@ import { serializeDate } from "../../../../util/date";
     MatIconModule,
     MatSelectModule,
     AsyncPipe,
-    NgForOf,
     MatCheckboxModule,
     MatMomentDatetimeModule,
     MatDatetimepickerModule,
-    NgIf,
   ],
   templateUrl: './album-dialog.component.html',
-  styleUrl: './album-dialog.component.scss'
+  styleUrl: './album-dialog.component.scss',
 })
 export class AlbumDialogComponent {
+  protected dialogRef = inject<MatDialogRef<AlbumDialogComponent>>(MatDialogRef);
+  data = inject<AlbumDialogProps>(MAT_DIALOG_DATA);
+  protected albumService = inject(AlbumService);
+  protected eventService = inject(EventService);
 
   protected nameField = new FormControl<string | null>(null);
   protected eventField = new FormControl<string | null>(null);
@@ -46,12 +47,9 @@ export class AlbumDialogComponent {
   protected secretField = new FormControl<boolean>(false);
   protected scheduledReleaseField = new FormControl<Date | null>(null);
 
-  constructor(
-    protected dialogRef: MatDialogRef<AlbumDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: AlbumDialogProps,
-    protected albumService: AlbumService,
-    protected eventService: EventService,
-  ) {
+  constructor() {
+    const data = this.data;
+
     if (data.event) {
       this.eventField.setValue(data.event.id);
       this.eventField.disable();
@@ -88,7 +86,7 @@ export class AlbumDialogComponent {
     return secret !== null;
   }
 
-  submit(exit: boolean = true) {
+  submit(exit = true) {
     if (!this.canSubmit()) return;
 
     const releaseDate = this.scheduledReleaseField.value;
@@ -103,36 +101,29 @@ export class AlbumDialogComponent {
     };
 
     const saveAction$ = (
-      this.data.album
-        ? this.albumService.update(this.data.album.id, data)
-        : this.albumService.create(data)
+      this.data.album ? this.albumService.update(this.data.album.id, data) : this.albumService.create(data)
     ).pipe(share());
 
     const secretAction$ = saveAction$.pipe(
-      switchMap(album => this.albumService.setSecretStatus(
-        album.id,
-        this.secretField.value ?? false,
-      )),
+      switchMap(album => this.albumService.setSecretStatus(album.id, this.secretField.value ?? false))
     );
 
-    combineLatest([saveAction$, secretAction$])
-      .subscribe(([album, _]) => {
-        if (exit) {
-          this.dialogRef.close(album);
-        } else {
-          // Reset the form so the user may create another album
-          this.nameField.reset();
+    combineLatest([saveAction$, secretAction$]).subscribe(([album, _]) => {
+      if (exit) {
+        this.dialogRef.close(album);
+      } else {
+        // Reset the form so the user may create another album
+        this.nameField.reset();
 
-          this.secretField.setValue(false);
-          this.scheduledReleaseField.reset();
+        this.secretField.setValue(false);
+        this.scheduledReleaseField.reset();
 
-          if (!this.data.event) {
-            this.eventField.reset();
-          }
+        if (!this.data.event) {
+          this.eventField.reset();
         }
-      });
+      }
+    });
   }
-
 }
 
 export interface AlbumDialogProps {

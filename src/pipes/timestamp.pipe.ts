@@ -5,17 +5,17 @@ const MINUTE = 60 * SECOND;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 const WEEK = DAY * 7;
-const MONTH = 365 * DAY / 12;
+const MONTH = (365 * DAY) / 12;
 const YEAR = 365 * DAY;
 
-export const parseDate: (date: Date | string | null | undefined) => Date | null = (date) => {
+export const parseDate: (date: Date | string | null | undefined) => Date | null = date => {
   if (!date) return null;
   if (typeof date !== 'string') return date;
 
   return new Date(date);
 };
 
-export const relativeDate: (date: Date) => string = (date) => {
+export const relativeDate: (date: Date) => string = date => {
   const diff = new Date().getTime() - date.getTime();
 
   if (diff < 0) return 'in the future';
@@ -37,24 +37,31 @@ export const renderDate: (date: Date, includeDay?: boolean) => string = (date, i
   const day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][date.getDay()];
   const dom = date.getDate();
   const month = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ][date.getMonth()];
   const year = date.getFullYear();
 
-  return includeDay
-    ? `${day} ${month} ${dom} ${year}`
-    : `${month} ${dom} ${year}`;
-}
+  return includeDay ? `${day} ${month} ${dom} ${year}` : `${month} ${dom} ${year}`;
+};
 
 @Pipe({
   name: 'relativeDate',
-  standalone: true
+  standalone: true,
 })
 export class TimestampPipe implements PipeTransform {
-
-  transform(value: string | Date): string {
+  transform(value?: string | Date): string {
+    if (!value) return '';
     return relativeDate(parseDate(value)!);
   }
-
 }

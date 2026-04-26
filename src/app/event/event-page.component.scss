@@ -43,7 +43,7 @@ div.album-list {
     font-variant: small-caps;
   }
 
-  album {
+  app-album {
     width: calc((100% - 3rem) / 4);
   }
 
@@ -52,21 +52,21 @@ div.album-list {
 
   // 3 albums: 3 * 15rem + 2 * 1rem = 47rem = 752px
   @media (max-width: 912px) {
-    album {
+    app-album {
       width: calc((100% - 2rem) / 3);
     }
   }
 
   // 2 albums: 2 * 15rem + 1 * 1rem = 31rem = 496px
   @media (max-width: 656px) {
-    album {
+    app-album {
       width: calc((100% - 1rem) / 2);
     }
   }
 
   // 1 albums: 1 * 15rem + 0 * 1rem = 15rem = 240px
   @media (max-width: 400px) {
-    album {
+    app-album {
       width: 100%;
     }
   }
