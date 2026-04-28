@@ -8,7 +8,6 @@ module.exports = tseslint.config(
   {
     files: ["**/*.ts"],
     ignores: [
-      "**/back-end.d.ts",
       "src/shared/back-end/**/*",
     ],
     extends: [

@@ -7,7 +7,6 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "api-spec": "openapi-typescript https://api.dev.kick-in.media/openapi.json -o src/util/back-end.d.ts",
     "generate-api": "./scripts/generate-api.sh",
     "lint": "ng lint"
   },
