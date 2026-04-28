@@ -1,28 +1,28 @@
-import { components } from "./back-end";
+import * as openapi from '../shared/back-end';
 
 // Albums
-export type Album = components["schemas"]["AlbumReadList"];
-export type AlbumDetailed = components["schemas"]["AlbumReadSingle"];
-export type AlbumCreate = components["schemas"]["AlbumCreate"];
-export type AlbumUpdate = components["schemas"]["AlbumUpdate"];
+export type Album = openapi.AlbumReadList;
+export type AlbumDetailed = openapi.AlbumReadSingle;
+export type AlbumCreate = openapi.AlbumCreate;
+export type AlbumUpdate = AlbumCreate;
 
 // Author
-export type Author = components["schemas"]["AuthorReadSingle"];
-export type AuthorCreate = components["schemas"]["AuthorCreate"];
+export type Author = openapi.AuthorReadSingle;
+export type AuthorCreate = openapi.AuthorCreate;
 
 // Events
-export type PhotoEvent = components["schemas"]["EventReadList"];
-export type EventDetailed = components["schemas"]["EventReadSingle"];
-export type EventCreate = components["schemas"]["EventCreate"];
+export type PhotoEvent = openapi.EventReadList;
+export type EventDetailed = openapi.EventReadSingle;
+export type EventCreate = openapi.EventCreate;
 export type EventUpdate = EventCreate;
 
 // Photos
-export type Photo = components["schemas"]["PhotoReadSingleStub"];
-export type PhotoDetailed = components["schemas"]["PhotoReadSingle"];
-export type PhotoUpload = components["schemas"]["PhotoUploadResponse"];
+export type Photo = openapi.PhotoReadSingleStub;
+export type PhotoDetailed = openapi.PhotoReadSingle;
+export type PhotoUpload = openapi.PhotoUploadResponse;
 
 // Tags
-export type Tag = components["schemas"]["TagReadList"];
+export type Tag = components['schemas']['TagReadList'];
 
 // S3
-export type S3PreSignedUrl = components["schemas"]["PhotoUploadPreSignedUrl"];
+export type S3PreSignedUrl = openapi.PhotoUploadPreSignedUrl;
