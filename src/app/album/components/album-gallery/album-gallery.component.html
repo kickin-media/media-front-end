@@ -7,9 +7,9 @@
 
 @for (photo of photos(); track photo) {
   <a
-    [routerLink]="selectMode() ? undefined : getPhotoUrl(photo)"
+    [routerLink]="selectedPhotosStore.selectionMode() ? undefined : getPhotoUrl(photo)"
     (click)="onClickPhoto(photo, $event)"
-    [ngClass]="{ selected: selectMode() && select().isSelected(photo.id) }"
+    [ngClass]="{ selected: selectedPhotosStore.selectionMode() && selectedPhotosStore.entityMap()[photo.id]?.selected }"
     style="--w: 100; --h: 100">
     <!--suppress AngularNgOptimizedImage -->
     <img [src]="photo.img_urls.small" (load)="onImageLoad($event)" alt="" loading="lazy" />

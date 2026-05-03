@@ -11,6 +11,7 @@ import { CookiesDialogComponent } from '../components/cookies-dialog/cookies-dia
 
 @Component({
   selector: 'app-root',
+
   imports: [RouterOutlet, MatButtonModule, MatIconModule, MatToolbarModule, RouterLink, AsyncPipe],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

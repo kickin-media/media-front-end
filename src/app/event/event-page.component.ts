@@ -21,6 +21,7 @@ import {
 } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AccountService } from '../../services/account.service';
+import { TagsStore } from '../../shared/stores/tags.store';
 
 @Component({
   selector: 'app-event-page',
@@ -50,9 +51,10 @@ export class EventPageComponent {
 
   protected canDelete$: Observable<boolean>;
 
+  protected tagsStore = inject(TagsStore);
+
   constructor() {
     const configService = this.configService;
-
     this.breadcrumb$ = this.eventService.event.data$.pipe(
       map(event => {
         return [

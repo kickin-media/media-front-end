@@ -21,5 +21,8 @@ export type Photo = openapi.PhotoReadSingleStub;
 export type PhotoDetailed = openapi.PhotoReadSingle;
 export type PhotoUpload = openapi.PhotoUploadResponse;
 
+// Tags
+export type Tag = components['schemas']['TagReadList'];
+
 // S3
 export type S3PreSignedUrl = openapi.PhotoUploadPreSignedUrl;

@@ -33,6 +33,26 @@
   </mat-menu>
 </app-title-section>
 
+@let tags = tagsStore.tags();
+@if (tags !== null && tags.length > 0) {
+  <div class="tags">
+    <div class="tags-title">
+      <mat-icon>dynamic_feed</mat-icon>
+      <h3>Dynamic albums</h3>
+    </div>
+
+    @for (tag of tags; track tag) {
+      <a mat-stroked-button class="tag secondary-button">
+        <mat-icon>photo_library</mat-icon>
+        <span class="tag-name">{{ tag.tag_description }}</span>
+        @if (tag.supports_value) {
+          <mat-icon iconPositionEnd>more_horiz</mat-icon>
+        }
+      </a>
+    }
+  </div>
+}
+
 @if (albums$ | async; as albums) {
   <div class="album-list">
     @for (index of getAlbumGroupIndices(albums); track index) {

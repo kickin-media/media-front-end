@@ -11,7 +11,7 @@
   @let breadcrumValue = breadcrumb();
   @if (breadcrumValue) {
     <div class="breadcrumb">
-      @for (crumb of breadcrumValue; track crumb; let idx = $index) {
+      @for (crumb of breadcrumValue; track $index; let idx = $index) {
         <a [routerLink]="crumb.url"
           >{{ crumb.title }}
           @if (!crumb.title) {
