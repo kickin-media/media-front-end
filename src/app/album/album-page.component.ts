@@ -1,27 +1,11 @@
-import { Component, signal, inject } from '@angular/core';
-import { AsyncPipe } from '@angular/common';
+import { Component, signal, inject, effect } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Breadcrumb, TitleSectionComponent } from '../../components/title-section/title-section.component';
 import { AlbumService } from '../../services/api/album.service';
-import {
-  combineLatest,
-  concatAll,
-  EMPTY,
-  expand,
-  filter,
-  first,
-  map,
-  Observable,
-  of,
-  pairwise,
-  shareReplay,
-  startWith,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { combineLatest, filter, first, map, Observable, of, pairwise, shareReplay, startWith, switchMap } from 'rxjs';
 import { AlbumDialogComponent, AlbumDialogProps } from './components/album-dialog/album-dialog.component';
 import { Album, AlbumDetailed, Photo } from '../../util/types';
 import { MatDialog } from '@angular/material/dialog';
@@ -40,7 +24,6 @@ import {
 import { ShareService } from '../../services/share.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { SelectionModel } from '@angular/cdk/collections';
 import { ButtonGroupComponent } from '../../components/button-group/button-group.component';
 import { PhotoService } from '../../services/api/photo.service';
 import { AlbumSelectionDialogComponent } from './components/album-selection-dialog/album-selection-dialog.component';
@@ -48,6 +31,9 @@ import { UploadDialogComponent } from '../upload/upload.component';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDividerModule } from '@angular/material/divider';
 import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
+import { AlbumStore } from '../../shared/stores/album.store';
+import { SelectedPhotosStore } from './stores/selected-photos.store';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-album-page',
@@ -78,15 +64,21 @@ export class AlbumPageComponent {
   protected photoService = inject(PhotoService);
   protected shareService = inject(ShareService);
 
+  protected albumStore = inject(AlbumStore);
+  protected selectedPhotosStore = inject(SelectedPhotosStore);
+
   protected photoSortField = new FormControl<'taken' | 'upload'>('taken');
-  protected selected: SelectionModel<Photo['id']> = new SelectionModel<Photo['id']>(true);
-  protected selectMode = signal(false);
   protected isReprocessing = signal(false);
 
   protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
   protected photos$: Observable<Photo[] | null>;
 
   constructor() {
+    effect(() => {
+      const album = this.albumStore.album();
+      console.log(album);
+    });
+
     const activatedRoute = inject(ActivatedRoute);
     const accountService = this.accountService;
     const albumService = this.albumService;
@@ -113,8 +105,8 @@ export class AlbumPageComponent {
     // Filter photo's by author ID if in select mode
     photos$ = combineLatest([
       photos$,
-      toObservable(this.selectMode).pipe(startWith(false)),
-      this.selected.changed.pipe(startWith(null)),
+      toObservable(this.selectedPhotosStore.selectionMode).pipe(startWith(false)),
+      toObservable(this.selectedPhotosStore.selected).pipe(startWith(null)),
       accountService.user$,
       accountService.canManageOther$,
     ]).pipe(
@@ -245,68 +237,30 @@ export class AlbumPageComponent {
     componentRef.instance.onOpen(close, photoId, this.photos$);
   }
 
-  stopSelect() {
-    this.selectMode.set(false);
-    this.selected.clear();
-  }
-
   selectAll() {
     this.photos$.pipe(first()).subscribe(photos => {
       if (photos === null) return;
-      if (this.selected === null) return;
 
-      this.selected.setSelection(...photos.map(photo => photo.id));
+      const photoIds = photos.map(photo => photo.id);
+      this.selectedPhotosStore.selectAll(photoIds);
     });
   }
 
   addSelectedToOther() {
-    const selected = this.selected;
-    if (selected === null) return;
+    if (!this.selectedPhotosStore.selectionMode()) return;
 
     const dialogRef = this.dialog.open(AlbumSelectionDialogComponent);
     const onClose = dialogRef.afterClosed() as Observable<Album | null>;
-
-    combineLatest([onClose, this.photos$])
-      .pipe(
-        // Filter invalid states
-        filter(([album, photos]) => album !== null && photos !== null),
-        map(input => input as [Album, Photo[]]),
-
-        // Only listen for the first (valid) trigger
-        first(),
-
-        // Filter only the selected photos
-        map(([album, photos]) => [album, photos.filter(photo => selected.isSelected(photo.id))] as [Album, Photo[]]),
-
-        // Trigger an "event" per selected photo
-        map(([album, photos]) => [null, album, photos] as [null, Album, Photo[]]),
-        expand(([_, album, photos]) => {
-          if (photos.length === 0) return EMPTY;
-          return of([photos[0], album, photos.slice(1)] as [Photo, Album, Photo[]]);
-        }),
-        filter(([photo, _1, _2]) => photo !== null),
-        map(([photo, album, _]) => [photo, album] as [Photo, Album]),
-
-        // And trigger re-processing per photo
-        map(([photo, album]) => {
-          return this.photoService
-            .fetchPhoto(photo.id)
-            .pipe(
-              switchMap(photo =>
-                this.photoService.setPhotoAlbums(photo.id, [...photo.albums.map(album => album.id), album.id])
-              )
-            );
-        }),
-        concatAll()
-      )
-      .subscribe();
+    onClose.subscribe(album => {
+      if (!album) return;
+      this.selectedPhotosStore.addToOtherAlbum(album);
+    });
   }
 
   reprocessSelected() {
-    const selected = this.selected;
-    if (selected === null) return;
+    if (!this.selectedPhotosStore.selectionMode()) return;
 
-    const selectCount = selected.selected.length;
+    const selectCount = this.selectedPhotosStore.selected().length;
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: `Are you sure you want to re-process ${selectCount} photos?`,
@@ -315,45 +269,16 @@ export class AlbumPageComponent {
     });
 
     const onClose = dialogRef.afterClosed() as Observable<boolean>;
-    combineLatest([onClose, this.photos$])
-      .pipe(
-        // Filter invalid states
-        filter(([confirmed, photos]) => confirmed && photos !== null),
-        map(([_, photos]) => photos as Photo[]),
-
-        // Only listen for the first (valid) trigger
-        first(),
-
-        // Show loading spinner
-        tap(() => this.isReprocessing.set(true)),
-
-        // Filter only the selected photos
-        map(photos => photos.filter(photo => selected.isSelected(photo.id))),
-
-        // Trigger an "event" per selected photo
-        map(photos => [null, photos] as [null, Photo[]]),
-        expand(([_, photos]) => {
-          if (photos.length === 0) return EMPTY;
-          return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
-        }),
-        filter(([photo, _]) => photo !== null),
-        map(([photo, _]) => photo),
-
-        // And trigger re-processing per photo
-        map(photo => this.photoService.reprocess(photo.id)),
-        concatAll()
-      )
-      .subscribe({
-        complete: () => this.isReprocessing.set(false),
-        error: () => this.isReprocessing.set(false),
-      });
+    onClose.subscribe(confirmed => {
+      if (!confirmed) return;
+      this.selectedPhotosStore.reprocess(null);
+    });
   }
 
   removeSelected() {
-    const selected = this.selected;
-    if (selected === null) return;
+    if (!this.selectedPhotosStore.selectionMode()) return;
 
-    const selectCount = selected.selected.length;
+    const selectCount = this.selectedPhotosStore.selected().length;
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: `Are you sure you want to REMOVE ${selectCount} photos FROM this album?`,
@@ -363,61 +288,20 @@ export class AlbumPageComponent {
     });
 
     const onClose = dialogRef.afterClosed() as Observable<boolean>;
-    const photos = combineLatest([onClose, this.photos$]).pipe(
-      // Filter invalid states
-      filter(([confirmed, photos]) => confirmed && photos !== null),
-      map(([_, photos]) => photos as Photo[]),
+    onClose.subscribe(confirmed => {
+      if (!confirmed) return;
 
-      // Only listen for the first (valid) trigger
-      first(),
+      const album = this.albumStore.album();
+      if (!album) return;
 
-      // Filter only the selected photos
-      map(photos => photos.filter(photo => selected.isSelected(photo.id))),
-
-      // Trigger an "event" per selected photo
-      map(photos => [null, photos] as [null, Photo[]]),
-      expand(([_, photos]) => {
-        if (photos.length === 0) return EMPTY;
-        return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
-      }),
-      filter(([photo, _]) => photo !== null),
-      map(([photo, _]) => photo),
-
-      // Get the current albums of the photo
-      map(photo => this.photoService.fetchPhoto(photo['id']))
-    );
-
-    combineLatest([
-      photos,
-      this.albumService.id$.pipe(
-        filter(id => id !== null),
-        map(id => id as string),
-        first()
-      ),
-    ])
-      .pipe(
-        map(([photo$, albumId]) =>
-          photo$.pipe(
-            map(photo => {
-              const albums = photo.albums.filter(album => album.id !== albumId);
-              const albumIds = albums.map(album => album.id);
-
-              if (albums.length > 0) return this.photoService.setPhotoAlbums(photo['id'], albumIds);
-              else return this.photoService.delete(photo['id']);
-            })
-          )
-        ),
-        concatAll(),
-        concatAll()
-      )
-      .subscribe();
+      this.selectedPhotosStore.removeFromAlbum(album);
+    });
   }
 
   deleteSelected() {
-    const selected = this.selected;
-    if (selected === null) return;
+    if (!this.selectedPhotosStore.selectionMode()) return;
 
-    const selectCount = selected.selected.length;
+    const selectCount = this.selectedPhotosStore.selected().length;
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: {
         title: `Are you sure you want to permanently delete ${selectCount} photos?`,
@@ -426,31 +310,9 @@ export class AlbumPageComponent {
     });
 
     const onClose = dialogRef.afterClosed() as Observable<boolean>;
-    combineLatest([onClose, this.photos$])
-      .pipe(
-        // Filter invalid states
-        filter(([confirmed, photos]) => confirmed && photos !== null),
-        map(([_, photos]) => photos as Photo[]),
-
-        // Only listen for the first (valid) trigger
-        first(),
-
-        // Filter only the selected photos
-        map(photos => photos.filter(photo => selected.isSelected(photo.id))),
-
-        // Trigger an "event" per selected photo
-        map(photos => [null, photos] as [null, Photo[]]),
-        expand(([_, photos]) => {
-          if (photos.length === 0) return EMPTY;
-          return of([photos[0], photos.slice(1)] as [Photo, Photo[]]);
-        }),
-        filter(([photo, _]) => photo !== null),
-        map(([photo, _]) => photo),
-
-        // And call DELETE per photo
-        map(photo => this.photoService.delete(photo.id)),
-        concatAll()
-      )
-      .subscribe();
+    onClose.subscribe(confirmed => {
+      if (!confirmed) return;
+      this.selectedPhotosStore.deletePermanently(null);
+    });
   }
 }

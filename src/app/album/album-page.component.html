@@ -1,3 +1,5 @@
+@let selectMode = selectedPhotosStore.selectionMode();
+
 <app-title-section
   [breadcrumb]="breadcrumb$ | async"
   [title]="(albumService.album.data$ | async)?.name"
@@ -14,12 +16,12 @@
   </ng-container>
 
   @if (albumService.album.data$ | async; as album) {
-    @if (!selectMode()) {
+    @if (!selectMode) {
       <button mat-icon-button (click)="shareService.shareAlbum(album)" matTooltip="Share album">
         <mat-icon>share</mat-icon>
       </button>
     }
-    @if (!selectMode()) {
+    @if (!selectMode) {
       <mat-button-toggle-group [formControl]="photoSortField" [hideSingleSelectionIndicator]="true">
         <mat-button-toggle matTooltip="Sort by time taken" value="taken">
           <mat-icon>photo_camera</mat-icon>
@@ -29,10 +31,10 @@
         </mat-button-toggle>
       </mat-button-toggle-group>
     }
-    @if (!selectMode()) {
+    @if (!selectMode) {
       <app-button-group>
         @if ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async)) {
-          <button mat-stroked-button (click)="selectMode.set(true)">
+          <button mat-stroked-button (click)="selectedPhotosStore.setMode(true)">
             <mat-icon>check_box_outline_blank</mat-icon>
             SELECT
           </button>
@@ -46,18 +48,18 @@
       </app-button-group>
     } @else {
       <app-button-group>
-        <button mat-stroked-button (click)="stopSelect()">
+        <button mat-stroked-button (click)="selectedPhotosStore.setMode(false)">
           <mat-icon>check_box</mat-icon>
           SELECT
         </button>
-        @if (selected!.selected.length === 0) {
+        @if (!selectedPhotosStore.hasSelected()) {
           <button mat-stroked-button (click)="selectAll()">
             <mat-icon>clear_all</mat-icon>
             ALL
           </button>
         }
-        @if (selected!.selected.length > 0) {
-          <button mat-stroked-button (click)="selected.clear()">
+        @if (!selectedPhotosStore.hasSelected()) {
+          <button mat-stroked-button (click)="selectedPhotosStore.clear()">
             <mat-icon>clear_all</mat-icon>
             CLEAR
           </button>
@@ -67,26 +69,26 @@
         </button>
       </app-button-group>
       <mat-menu #photoMenu="matMenu" xPosition="before">
-        <button mat-menu-item (click)="addSelectedToOther()" [disabled]="selected!.selected.length === 0">
+        <button mat-menu-item (click)="addSelectedToOther()" [disabled]="selectedPhotosStore.hasSelected()">
           <mat-icon>library_add</mat-icon>
           Add to other albums
         </button>
-        <button mat-menu-item (click)="reprocessSelected()" [disabled]="selected!.selected.length === 0">
+        <button mat-menu-item (click)="reprocessSelected()" [disabled]="selectedPhotosStore.hasSelected()">
           <mat-icon>autorenew</mat-icon> Re-process
           <span class="hint">Re-generates photos and watermarks</span>
         </button>
         <mat-divider />
-        <button mat-menu-item (click)="removeSelected()" [disabled]="selected!.selected.length === 0">
+        <button mat-menu-item (click)="removeSelected()" [disabled]="selectedPhotosStore.hasSelected()">
           <mat-icon>remove</mat-icon> Remove from album
           <span class="hint">Removes selected photos from THIS album</span>
         </button>
-        <button mat-menu-item (click)="deleteSelected()" [disabled]="selected!.selected.length === 0">
+        <button mat-menu-item (click)="deleteSelected()" [disabled]="selectedPhotosStore.hasSelected()">
           <mat-icon>delete</mat-icon> Delete
           <span class="hint">Permanently deletes the selected photos from ALL albums</span>
         </button>
       </mat-menu>
     }
-    @if (!selectMode() && (accountService.canManageAlbums$ | async)) {
+    @if (!selectMode && (accountService.canManageAlbums$ | async)) {
       <button mat-icon-button [matMenuTriggerFor]="albumMenu">
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -105,11 +107,7 @@
       <b>This is a hidden album!</b> Be careful when sharing it with others...
     </p>
   }
-  <app-album-gallery
-    [album]="albumService.album.data$ | async"
-    [photos]="photos$ | async"
-    [select]="selected"
-    [selectMode]="selectMode()" />
+  <app-album-gallery [album]="albumService.album.data$ | async" [photos]="photos$ | async" />
 }
 
 @if (isReprocessing()) {

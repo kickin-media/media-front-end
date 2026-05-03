@@ -1,10 +1,10 @@
 import { Component, HostBinding, OnChanges, SimpleChanges, inject, input } from '@angular/core';
-import { SelectionModel } from '@angular/cdk/collections';
 import { AlbumDetailed, Photo } from '../../../../util/types';
 import { NgClass } from '@angular/common';
 import slugify from 'slugify';
 import { Router, RouterLink, UrlTree } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
+import { SelectedPhotosStore } from '../../stores/selected-photos.store';
 
 @Component({
   selector: 'app-album-gallery',
@@ -17,8 +17,8 @@ export class AlbumGalleryComponent implements OnChanges {
 
   readonly album = input.required<AlbumDetailed | null>();
   readonly photos = input.required<Photo[] | null>();
-  readonly select = input.required<SelectionModel<Photo['id']>>();
-  readonly selectMode = input.required<boolean>();
+
+  protected selectedPhotosStore = inject(SelectedPhotosStore);
 
   @HostBinding('class.select-mode') selectModeStyle = false;
 
@@ -42,8 +42,7 @@ export class AlbumGalleryComponent implements OnChanges {
     e.stopImmediatePropagation();
     e.stopPropagation();
 
-    const select = this.select();
-    if (select) select.toggle(photo.id);
+    this.selectedPhotosStore.toggle(photo.id);
   }
 
   onImageLoad(event: Event) {
