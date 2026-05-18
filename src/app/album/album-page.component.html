@@ -1,11 +1,11 @@
+@let album = albumStore.album();
 @let selectMode = selectedPhotosStore.selectionMode();
 
 <app-title-section
-  [breadcrumb]="breadcrumb$ | async"
-  [title]="(albumService.album.data$ | async)?.name"
+  [breadcrumb]="breadcrumb()"
+  [title]="album?.name"
   [sticky]="true">
   <ng-container ngProjectAs="title-before">
-    @let album = albumService.album.data$ | async;
     @let cover = album ? album.cover_photo : null;
 
     @if (cover) {
@@ -15,18 +15,22 @@
     }
   </ng-container>
 
-  @if (albumService.album.data$ | async; as album) {
+  @if (album) {
     @if (!selectMode) {
       <button mat-icon-button (click)="shareService.shareAlbum(album)" matTooltip="Share album">
         <mat-icon>share</mat-icon>
       </button>
     }
     @if (!selectMode) {
-      <mat-button-toggle-group [formControl]="photoSortField" [hideSingleSelectionIndicator]="true">
+      <mat-button-toggle-group
+        [hideSingleSelectionIndicator]="true"
+        [value]="photoGalleryStore.sortBy()"
+        (change)="photoGalleryStore.setSort($event.value)"
+      >
         <mat-button-toggle matTooltip="Sort by time taken" value="taken">
           <mat-icon>photo_camera</mat-icon>
         </mat-button-toggle>
-        <mat-button-toggle matTooltip="Sort by time uploaded" value="upload">
+        <mat-button-toggle matTooltip="Sort by time uploaded" value="uploaded">
           <mat-icon>cloud</mat-icon>
         </mat-button-toggle>
       </mat-button-toggle-group>
@@ -100,21 +104,12 @@
   }
 </app-title-section>
 
-@if (albumService.album.data$ | async; as album) {
+@if (album !== null) {
   @if (album.hidden_secret) {
     <p class="note">
       <mat-icon>warning</mat-icon>
       <b>This is a hidden album!</b> Be careful when sharing it with others...
     </p>
   }
-  <app-album-gallery [album]="albumService.album.data$ | async" [photos]="photos$ | async" />
-}
-
-@if (isReprocessing()) {
-  <div class="loading-overlay">
-    <div class="spinner-container">
-      <mat-spinner></mat-spinner>
-      <p>Reprocessing photos...</p>
-    </div>
-  </div>
+  <app-album-gallery [album]="album" [photos]="photoGalleryStore.photos()" />
 }

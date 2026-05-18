@@ -20,7 +20,6 @@ export const AlbumStore = signalStore(
   withMethods((store, albumsService = inject(AlbumsService)) => ({
     loadAlbum: rxMethod<{ id: string; secret: string | null }>(
       pipe(
-        tap(() => console.log('YEEEEEET')),
         tap(({ id }) => patchState(store, upsertEntity({ id, loading: true } as AlbumItem))),
         switchMap(({ id, secret }) => albumsService.getAlbumAlbumAlbumIdGet(id, secret ?? undefined)),
         tap(album => patchState(store, upsertEntity({ id: album.id, album, loading: false } as AlbumItem)))

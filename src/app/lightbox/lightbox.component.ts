@@ -1,4 +1,4 @@
-import { Component, HostListener, inject } from '@angular/core';
+import {Component, computed, effect, HostListener, inject, Signal, signal} from '@angular/core';
 
 import { PhotoService } from '../../services/api/photo.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -18,6 +18,9 @@ import { ShareService } from '../../services/share.service';
 import { Router } from '@angular/router';
 import slugify from 'slugify';
 import { AccountService } from '../../services/account.service';
+import {PhotoGalleryStore} from "../album/stores/photo-gallery.store";
+import {AlbumStore} from "../../shared/stores/album.store";
+import {PhotoReadSingleStub} from "../../shared/back-end";
 
 @Component({
   selector: 'app-lightbox',
@@ -46,58 +49,55 @@ export class LightboxComponent {
   protected photoService = inject(PhotoService);
   protected shareService = inject(ShareService);
 
-  protected album: AlbumDetailed | null = null;
+  protected readonly albumStore = inject(AlbumStore);
+  protected readonly photoGalleryStore = inject(PhotoGalleryStore);
 
-  protected photos: Photo[] | null = null;
-  protected photo: Photo | PhotoDetailed | null = null;
-  protected index = 0;
+  protected index = signal<number>(0);
+  protected readonly photo: Signal<PhotoReadSingleStub | null>;
 
   protected closeOverlay: (() => void) | null = null;
 
   constructor() {
-    const albumService = this.albumService;
-    const photoService = this.photoService;
-
-    albumService.album.data$.pipe(filter(album => album !== null)).subscribe(album => {
-      this.album = album;
-    });
-
-    photoService.photo.data$.pipe(filter(photo => photo !== null)).subscribe(photo => {
-      this.photo = photo;
-    });
-
     this.close = this.close.bind(this);
+
+    this.photo = computed(() => {
+      const photos = this.photoGalleryStore.photos();
+      const index = this.index();
+
+      if (photos.length === 0 || index >= photos.length) return null;
+      return photos[index];
+    });
+
+    effect(() => {
+      const album = this.albumStore.album();
+      if (!album) return;
+
+      const photo = this.photo();
+      if (!photo) return;
+
+      // Update the current photo in the photo service
+      this.photoService.setCurrentPhoto(photo.id);
+
+      // Update the URL to reflect the current photo
+      const newUrl = this.router.createUrlTree([`/album/${album.id}/${slugify(album.name)}`], {
+        queryParams: { lightbox: photo.id },
+        queryParamsHandling: 'merge',
+      });
+      history.replaceState({}, '', newUrl.toString());
+    });
   }
 
-  onOpen(close: () => void, initialPhotoId: string, photos$: Observable<Photo[] | null>) {
+  onOpen(close: () => void, initialPhotoId: string) {
     this.closeOverlay = close;
     this.photoService.setCurrentPhoto(initialPhotoId);
 
-    // Listen to the first result of the `photos$` observable and save it
-    photos$
-      .pipe(
-        filter(photos => photos !== null),
-        first()
-      )
-      .subscribe(photos => {
-        this.photos = photos;
-        this.index = photos.map(photo => photo.id).indexOf(initialPhotoId);
-      });
+    const photos = this.photoGalleryStore.photos();
+    const photoIds = photos.map(photo => photo.id);
+    this.index.set(photoIds.indexOf(initialPhotoId));
   }
 
   go(direction: -1 | 1) {
-    if (!this.photos) return;
-    if (!this.album) return;
-
-    this.index += direction;
-    this.photo = this.photos[this.index];
-    this.photoService.setCurrentPhoto(this.photo.id);
-
-    const newUrl = this.router.createUrlTree([`/album/${this.album.id}/${slugify(this.album.name)}`], {
-      queryParams: { lightbox: this.photo.id },
-      queryParamsHandling: 'merge',
-    });
-    history.replaceState({}, '', newUrl.toString());
+    this.index.update(value => value + direction);
   }
 
   @HostListener('document:keydown.escape')
@@ -108,13 +108,14 @@ export class LightboxComponent {
 
   @HostListener('document:keydown.arrowleft')
   goBack() {
-    if (this.index <= 0) return;
+    if (this.index() <= 0) return;
     this.go(-1);
   }
 
   @HostListener('document:keydown.arrowright')
   goNext() {
-    if (!this.photos || this.index + 1 >= this.photos.length) return;
+    const photos = this.photoGalleryStore.photos();
+    if (!photos || this.index() + 1 >= photos.length) return;
     this.go(1);
   }
 

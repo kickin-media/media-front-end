@@ -35,13 +35,17 @@ export const SelectedPhotosStore = signalStore(
     hasSelected: computed(() => store.selected().length > 0),
   })),
   // Selection management
-  withMethods(store => ({
+  withMethods((store, albumStore = inject(AlbumStore)) => ({
     clear(): void {
       patchState(store, removeAllEntities());
     },
 
-    selectAll(photoIds: string[]): void {
-      patchState(store, upsertEntities(photoIds.map(photoId => ({ id: photoId, selected: true }) as Item)));
+    selectAll(): void {
+      const album = albumStore.album();
+      if (!album) return;
+
+      const photos = album.photos;
+      patchState(store, upsertEntities(photos.map(photo => ({ id: photo.id, selected: true }) as Item)));
     },
 
     set(id: string, selected: boolean): void {
@@ -156,5 +160,5 @@ export const SelectedPhotosStore = signalStore(
         store.setMode(false);
       });
     },
-  })
+  }),
 );

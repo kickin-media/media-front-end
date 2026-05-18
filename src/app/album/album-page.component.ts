@@ -1,13 +1,13 @@
-import { Component, signal, inject, effect } from '@angular/core';
+import {Component, inject, Signal, computed} from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Breadcrumb, TitleSectionComponent } from '../../components/title-section/title-section.component';
 import { AlbumService } from '../../services/api/album.service';
-import { combineLatest, filter, first, map, Observable, of, pairwise, shareReplay, startWith, switchMap } from 'rxjs';
+import { filter, first, map, Observable, of, pairwise, shareReplay, startWith, switchMap } from 'rxjs';
 import { AlbumDialogComponent, AlbumDialogProps } from './components/album-dialog/album-dialog.component';
-import { Album, AlbumDetailed, Photo } from '../../util/types';
+import { Album, AlbumDetailed } from '../../util/types';
 import { MatDialog } from '@angular/material/dialog';
 import { AlbumGalleryComponent } from './components/album-gallery/album-gallery.component';
 import slugify from 'slugify';
@@ -23,17 +23,16 @@ import {
 } from '../../components/confirmation-dialog/confirmation-dialog.component';
 import { ShareService } from '../../services/share.service';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonGroupComponent } from '../../components/button-group/button-group.component';
-import { PhotoService } from '../../services/api/photo.service';
 import { AlbumSelectionDialogComponent } from './components/album-selection-dialog/album-selection-dialog.component';
 import { UploadDialogComponent } from '../upload/upload.component';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDividerModule } from '@angular/material/divider';
 import { SkeletonComponent } from '../../components/skeleton/skeleton.component';
 import { AlbumStore } from '../../shared/stores/album.store';
 import { SelectedPhotosStore } from './stores/selected-photos.store';
 import { AsyncPipe } from '@angular/common';
+import {PhotoGalleryStore} from "./stores/photo-gallery.store";
 
 @Component({
   selector: 'app-album-page',
@@ -61,91 +60,31 @@ export class AlbumPageComponent {
   protected overlay = inject(Overlay);
   protected accountService = inject(AccountService);
   protected albumService = inject(AlbumService);
-  protected photoService = inject(PhotoService);
   protected shareService = inject(ShareService);
 
-  protected albumStore = inject(AlbumStore);
-  protected selectedPhotosStore = inject(SelectedPhotosStore);
+  protected readonly albumStore = inject(AlbumStore);
+  protected readonly photoGalleryStore = inject(PhotoGalleryStore);
+  protected readonly selectedPhotosStore = inject(SelectedPhotosStore);
 
-  protected photoSortField = new FormControl<'taken' | 'upload'>('taken');
-  protected isReprocessing = signal(false);
-
-  protected breadcrumb$: Observable<Breadcrumb[] | undefined>;
-  protected photos$: Observable<Photo[] | null>;
+  protected readonly breadcrumb: Signal<Breadcrumb[] | undefined>;
 
   constructor() {
-    effect(() => {
-      const album = this.albumStore.album();
-      console.log(album);
-    });
-
     const activatedRoute = inject(ActivatedRoute);
-    const accountService = this.accountService;
-    const albumService = this.albumService;
 
-    this.breadcrumb$ = this.albumService.album.data$.pipe(
-      map(album => {
-        return [
-          { title: 'Events', url: '/event' },
-          {
-            title: album?.event.name,
-            url: album ? `/event/${album.event_id}/${slugify(album.event.name)}` : undefined,
-          },
-          {
-            title: album?.name,
-            url: album ? `/album/${album.id}/${slugify(album.name)}` : undefined,
-          },
-        ];
-      })
-    );
-
-    // Extract photos from album
-    let photos$ = albumService.album.data$.pipe(map(album => (album ? album.photos : null)));
-
-    // Filter photo's by author ID if in select mode
-    photos$ = combineLatest([
-      photos$,
-      toObservable(this.selectedPhotosStore.selectionMode).pipe(startWith(false)),
-      toObservable(this.selectedPhotosStore.selected).pipe(startWith(null)),
-      accountService.user$,
-      accountService.canManageOther$,
-    ]).pipe(
-      map(([photos, selectMode, _, user, canManageOther]) => {
-        if (photos === null) return null;
-        if (!selectMode) return photos;
-
-        // Check permissions to return the correct set of photos in selection mode
-        if (!user) return photos;
-        if (canManageOther) return photos;
-
-        // Otherwise, only return the subset of photos created by the current user
-        const userId = user.sub;
-        return photos.filter(photo => photo.author.id === userId);
-      })
-    );
-
-    // Sort the photos by the preferred sorting method...
-    this.photos$ = combineLatest([photos$, this.photoSortField.valueChanges.pipe(startWith(null))]).pipe(
-      map(([photos, sort]) => {
-        if (photos === null) return null;
-
-        const field = sort === 'upload' ? 'uploaded_at' : 'timestamp';
-        return photos.sort((a, b) => {
-          // Ensure the selected field is defined
-          if (!a[field]) return -1;
-          if (!b[field]) return 1;
-
-          // Convert to date objects
-          const aa = new Date(a[field]);
-          const bb = new Date(b[field]);
-
-          // Sort newest to oldest for "upload"-sort, but oldest to newest for "taken"-sort
-          if (sort === 'upload') return bb.getTime() - aa.getTime();
-          else return aa.getTime() - bb.getTime();
-        });
-      }),
-      shareReplay(1)
-    );
+    this.breadcrumb = computed(() => {
+      const album = this.albumStore.album();
+      return [
+        { title: 'Events', url: '/event' },
+        {
+          title: album?.event.name,
+          url: album ? `/event/${album.event_id}/${slugify(album.event.name)}` : undefined,
+        },
+        {
+          title: album?.name,
+          url: album ? `/album/${album.id}/${slugify(album.name)}` : undefined,
+        },
+      ];
+    });
 
     // Open lightbox whenever the `lightbox` query param appears in the URL
     activatedRoute.queryParamMap
@@ -234,16 +173,11 @@ export class AlbumPageComponent {
     };
 
     // Initialize the lightbox
-    componentRef.instance.onOpen(close, photoId, this.photos$);
+    componentRef.instance.onOpen(close, photoId);
   }
 
   selectAll() {
-    this.photos$.pipe(first()).subscribe(photos => {
-      if (photos === null) return;
-
-      const photoIds = photos.map(photo => photo.id);
-      this.selectedPhotosStore.selectAll(photoIds);
-    });
+    this.selectedPhotosStore.selectAll();
   }
 
   addSelectedToOther() {
