@@ -1,10 +1,7 @@
 @let album = albumStore.album();
 @let selectMode = selectedPhotosStore.selectionMode();
 
-<app-title-section
-  [breadcrumb]="breadcrumb()"
-  [title]="album?.name"
-  [sticky]="true">
+<app-title-section [breadcrumb]="breadcrumb()" [title]="album?.name" [sticky]="true">
   <ng-container ngProjectAs="title-before">
     @let cover = album ? album.cover_photo : null;
 
@@ -25,8 +22,7 @@
       <mat-button-toggle-group
         [hideSingleSelectionIndicator]="true"
         [value]="photoGalleryStore.sortBy()"
-        (change)="photoGalleryStore.setSort($event.value)"
-      >
+        (change)="photoGalleryStore.setSort($event.value)">
         <mat-button-toggle matTooltip="Sort by time taken" value="taken">
           <mat-icon>photo_camera</mat-icon>
         </mat-button-toggle>
@@ -73,20 +69,20 @@
         </button>
       </app-button-group>
       <mat-menu #photoMenu="matMenu" xPosition="before">
-        <button mat-menu-item (click)="addSelectedToOther()" [disabled]="selectedPhotosStore.hasSelected()">
+        <button mat-menu-item (click)="addSelectedToOther()" [disabled]="!selectedPhotosStore.hasSelected()">
           <mat-icon>library_add</mat-icon>
           Add to other albums
         </button>
-        <button mat-menu-item (click)="reprocessSelected()" [disabled]="selectedPhotosStore.hasSelected()">
+        <button mat-menu-item (click)="reprocessSelected()" [disabled]="!selectedPhotosStore.hasSelected()">
           <mat-icon>autorenew</mat-icon> Re-process
           <span class="hint">Re-generates photos and watermarks</span>
         </button>
         <mat-divider />
-        <button mat-menu-item (click)="removeSelected()" [disabled]="selectedPhotosStore.hasSelected()">
+        <button mat-menu-item (click)="removeSelected()" [disabled]="!selectedPhotosStore.hasSelected()">
           <mat-icon>remove</mat-icon> Remove from album
           <span class="hint">Removes selected photos from THIS album</span>
         </button>
-        <button mat-menu-item (click)="deleteSelected()" [disabled]="selectedPhotosStore.hasSelected()">
+        <button mat-menu-item (click)="deleteSelected()" [disabled]="!selectedPhotosStore.hasSelected()">
           <mat-icon>delete</mat-icon> Delete
           <span class="hint">Permanently deletes the selected photos from ALL albums</span>
         </button>
