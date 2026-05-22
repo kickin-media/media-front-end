@@ -4,8 +4,7 @@ import { AlbumStore } from '../../../shared/stores/album.store';
 import { computed, effect, inject } from '@angular/core';
 import { concatAll, EMPTY, expand, filter, map, of, pipe, switchMap } from 'rxjs';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { AlbumReadList } from '../../../shared/back-end';
-import { PhotoService } from '../../../services/api/photo.service';
+import { AlbumReadList, PhotoService } from '../../../shared/back-end';
 
 interface Item {
   id: string;
@@ -78,10 +77,13 @@ export const SelectedPhotosStore = signalStore(
         // Then fetch and update the photo's albums
         map(([photoId, album]) => {
           return photoService
-            .fetchPhoto(photoId)
+            .getPhotoPhotoPhotoIdGet(photoId)
             .pipe(
               switchMap(photo =>
-                photoService.setPhotoAlbums(photo.id, [...photo.albums.map(album => album.id), album.id])
+                photoService.replaceAlbumsPhotoPhotoIdAlbumsPut(photo.id, [
+                  ...photo.albums.map(album => album.id),
+                  album.id,
+                ])
               )
             );
         }),
@@ -101,7 +103,7 @@ export const SelectedPhotosStore = signalStore(
         map(([photo, _]) => photo as string),
 
         // And trigger re-processing per photo
-        map(photoId => photoService.reprocess(photoId)),
+        map(photoId => photoService.reprocessPhotoPhotoPhotoIdReprocessPost(photoId)),
         concatAll()
       )
     ),
@@ -121,10 +123,10 @@ export const SelectedPhotosStore = signalStore(
         map(([photoId, album]) => {
           const albumId = album.id;
 
-          return photoService.fetchPhoto(photoId).pipe(
+          return photoService.getPhotoPhotoPhotoIdGet(photoId).pipe(
             switchMap(photo => {
               const newAlbumIds = photo.albums.filter(album => album.id != albumId).map(album => album.id);
-              return photoService.setPhotoAlbums(photo.id, newAlbumIds);
+              return photoService.replaceAlbumsPhotoPhotoIdAlbumsPut(photo.id, newAlbumIds);
             })
           );
         }),
@@ -144,7 +146,7 @@ export const SelectedPhotosStore = signalStore(
         map(([photo, _]) => photo),
 
         // And call DELETE per photo
-        map(photoId => photoService.delete(photoId)),
+        map(photoId => photoService.deletePhotoPhotoPhotoIdDelete(photoId)),
         concatAll()
       )
     ),
@@ -160,5 +162,5 @@ export const SelectedPhotosStore = signalStore(
         store.setMode(false);
       });
     },
-  }),
+  })
 );

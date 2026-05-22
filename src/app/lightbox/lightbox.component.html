@@ -1,10 +1,14 @@
 @let album = albumStore.album();
-@let currentPhoto = photo();
+@let currentPhoto = lightboxPhotoStore.photo();
 @let photos = photoGalleryStore.photos();
 
 <mat-toolbar>
   <!-- Quick peek photo info -->
-  @if (currentPhoto && currentPhoto.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))) {
+  @if (
+    currentPhoto &&
+    currentPhoto.views &&
+    ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))
+  ) {
     <mat-chip>
       <mat-icon matChipAvatar>trending_up</mat-icon>
       {{ currentPhoto.views }} views
@@ -57,13 +61,13 @@
 
 <div class="content">
   <!-- Go through photo album... -->
-  @if (photos && index() > 0) {
-    <button mat-icon-button class="previous" (click)="go(-1)">
+  @if (lightboxPhotoStore.canGoBack()) {
+    <button mat-icon-button class="previous" (click)="goBack()">
       <mat-icon>chevron_left</mat-icon>
     </button>
   }
-  @if (photos && index() < photos.length - 1) {
-    <button mat-icon-button class="next" (click)="go(1)">
+  @if (lightboxPhotoStore.canGoForward()) {
+    <button mat-icon-button class="next" (click)="goNext()">
       <mat-icon>chevron_right</mat-icon>
     </button>
   }
@@ -74,13 +78,14 @@
     <img [src]="getPhotoSrc(currentPhoto)" alt="" class="current mat-elevation-z8" loading="eager" />
   }
 
+  @let currentIndex = lightboxPhotoStore.index();
   <!-- Preload previous and next images -->
   <!--suppress AngularNgOptimizedImage -->
-  @if (photos && index() >= 1) {
-    <img [src]="getPhotoSrc(photos[index() - 1])" alt="" class="preview" loading="eager" />
+  @if (photos && currentIndex >= 1) {
+    <img [src]="getPhotoSrc(photos[currentIndex - 1])" alt="" class="preview" loading="eager" />
   }
   <!--suppress AngularNgOptimizedImage -->
-  @if (photos && index() < photos.length - 1) {
-    <img [src]="getPhotoSrc(photos[index() + 1])" alt="" class="preview" loading="eager" />
+  @if (photos && currentIndex < photos.length - 1) {
+    <img [src]="getPhotoSrc(photos[currentIndex + 1])" alt="" class="preview" loading="eager" />
   }
 </div>
