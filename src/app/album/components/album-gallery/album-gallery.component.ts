@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnChanges, SimpleChanges, inject, input } from '@angular/core';
+import { Component, computed, effect, HostBinding, inject, input, Signal } from '@angular/core';
 import { AlbumDetailed, Photo } from '../../../../util/types';
 import { NgClass } from '@angular/common';
 import slugify from 'slugify';
@@ -12,29 +12,28 @@ import { SelectedPhotosStore } from '../../stores/selected-photos.store';
   templateUrl: './album-gallery.component.html',
   styleUrl: './album-gallery.component.scss',
 })
-export class AlbumGalleryComponent implements OnChanges {
+export class AlbumGalleryComponent {
   protected router = inject(Router);
+  protected selectedPhotosStore = inject(SelectedPhotosStore);
 
   readonly album = input.required<AlbumDetailed | null>();
   readonly photos = input.required<Photo[] | null>();
 
-  protected selectedPhotosStore = inject(SelectedPhotosStore);
+  protected readonly processingCount: Signal<number>;
 
   @HostBinding('class.select-mode') selectModeStyle = false;
 
-  processingCount = 0;
+  constructor() {
+    this.processingCount = computed(() => {
+      const photos = this.photos();
+      if (!photos) return 0;
+      return photos.filter(photo => !photo.upload_processed).length;
+    });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['photos']) {
-      const photos: Photo[] | null = changes['photos'].currentValue;
-      if (photos && photos.length > 0) {
-        this.processingCount = photos.filter(photo => !photo.upload_processed).length;
-      }
-    }
-
-    if (changes['selectMode']) {
-      this.selectModeStyle = changes['selectMode'].currentValue;
-    }
+    // Update the gallery styling in selection mode
+    effect(() => {
+      this.selectModeStyle = this.selectedPhotosStore.selectionMode();
+    });
   }
 
   onClickPhoto(photo: Photo, e: MouseEvent) {
