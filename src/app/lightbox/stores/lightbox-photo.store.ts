@@ -4,6 +4,7 @@ import { computed, effect, inject } from '@angular/core';
 import { PhotoReadSingle, PhotoService } from '../../../shared/back-end';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
+import { AccountService } from '../../../services/account.service';
 
 interface LightboxState {
   index: number;
@@ -57,9 +58,13 @@ export const LightboxPhotoStore = signalStore(
         tap(detailedPhoto => patchState(store, { _detail: detailedPhoto }))
       )
     ),
+
+    _increaseViewcount: rxMethod<string>(
+      pipe(switchMap(photoId => photoService.increaseViewcountPhotoPhotoIdViewPut(photoId)))
+    ),
   })),
 
-  withHooks(store => ({
+  withHooks((store, accountService = inject(AccountService)) => ({
     onInit() {
       effect(() => {
         const index = store.index();
@@ -67,6 +72,10 @@ export const LightboxPhotoStore = signalStore(
 
         // Trigger automatic fetch of detailed information
         store._loadDetailedPhoto(photo.id);
+
+        // Also increase the viewcount if the user is logged out
+        const user = accountService.user();
+        if (!user) store._increaseViewcount(photo.id);
       });
     },
   })),
