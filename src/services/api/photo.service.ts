@@ -108,10 +108,6 @@ export class PhotoService extends BaseService {
     return this.http.delete<void>(`/photo/${photoId}`).pipe(tap(() => this.snackbar.open('Photo deleted.')));
   }
 
-  increaseViewCount(photoId: Photo['id']): Observable<void> {
-    return this.http.put<void>(`/photo/${photoId}/view`, '');
-  }
-
   setPhotoAlbums(photoId: Photo['id'], albumIds: Album['id'][]): Observable<Photo> {
     return this.http.put<Photo>(`/photo/${photoId}/albums`, albumIds);
   }
