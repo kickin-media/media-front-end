@@ -1,34 +1,42 @@
+@let album = albumStore.album();
+@let currentPhoto = lightboxPhotoStore.photo();
+@let photos = photoGalleryStore.photos();
+
 <mat-toolbar>
   <!-- Quick peek photo info -->
-  @if (photo && photo.views && ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))) {
+  @if (
+    currentPhoto &&
+    currentPhoto.views &&
+    ((accountService.canUpload$ | async) || (accountService.canManageOther$ | async))
+  ) {
     <mat-chip>
       <mat-icon matChipAvatar>trending_up</mat-icon>
-      {{ photo.views }} views
+      {{ currentPhoto.views }} views
     </mat-chip>
   }
 
-  @if (photo | exif: 'focal_length'; as value) {
+  @if (currentPhoto | exif: 'focal_length'; as value) {
     <mat-chip matTooltip="Focal length">
       <mat-icon matChipAvatar>terrain</mat-icon>
       {{ value | number }}mm
     </mat-chip>
   }
 
-  @if (photo | exif: 'aperture_value'; as value) {
+  @if (currentPhoto | exif: 'aperture_value'; as value) {
     <mat-chip matTooltip="Aperture">
       <mat-icon matChipAvatar>camera</mat-icon>
       f/{{ value | number: '1.1-1' }}
     </mat-chip>
   }
 
-  @if (photo | exifShutterSpeed; as value) {
+  @if (currentPhoto | exifShutterSpeed; as value) {
     <mat-chip matTooltip="Shutter speed">
       <mat-icon matChipAvatar>shutter_speed</mat-icon>
       {{ value }}
     </mat-chip>
   }
 
-  @if (photo | exif: 'photographic_sensitivity'; as value) {
+  @if (currentPhoto | exif: 'photographic_sensitivity'; as value) {
     <mat-chip matTooltip="ISO">
       <mat-icon matChipAvatar>exposure</mat-icon>
       {{ value | number }}
@@ -37,13 +45,13 @@
 
   <!-- Menus -->
   <!--<button mat-icon-button matTooltip="View EXIF data"><mat-icon>info</mat-icon></button>-->
-  @if (album && photo) {
-    <button mat-icon-button matTooltip="Share photo" (click)="shareService.sharePhoto(album, photo)">
+  @if (album && currentPhoto) {
+    <button mat-icon-button matTooltip="Share photo" (click)="shareService.sharePhoto(album, currentPhoto)">
       <mat-icon>share</mat-icon>
     </button>
   }
-  <app-lightbox-download-menu [album]="album" [photo]="photo" />
-  <app-lightbox-photo-options [album]="album" [photo]="photo" [closeViewer]="close" />
+  <app-lightbox-download-menu [album]="album" [photo]="currentPhoto" />
+  <app-lightbox-photo-options [album]="album" [photo]="currentPhoto" [closeViewer]="close" />
 
   <!-- Close the photo viewer -->
   <button mat-icon-button (click)="close()" matTooltip="[ESC] Close photo viewer">
@@ -53,30 +61,31 @@
 
 <div class="content">
   <!-- Go through photo album... -->
-  @if (photos && index > 0) {
-    <button mat-icon-button class="previous" (click)="go(-1)">
+  @if (lightboxPhotoStore.canGoBack()) {
+    <button mat-icon-button class="previous" (click)="goBack()">
       <mat-icon>chevron_left</mat-icon>
     </button>
   }
-  @if (photos && index < photos.length - 1) {
-    <button mat-icon-button class="next" (click)="go(1)">
+  @if (lightboxPhotoStore.canGoForward()) {
+    <button mat-icon-button class="next" (click)="goNext()">
       <mat-icon>chevron_right</mat-icon>
     </button>
   }
 
   <!-- Current image -->
   <!--suppress AngularNgOptimizedImage -->
-  @if (photo) {
-    <img [src]="getPhotoSrc(photo)" alt="" class="current mat-elevation-z8" loading="eager" />
+  @if (currentPhoto) {
+    <img [src]="getPhotoSrc(currentPhoto)" alt="" class="current mat-elevation-z8" loading="eager" />
   }
 
+  @let currentIndex = lightboxPhotoStore.index();
   <!-- Preload previous and next images -->
   <!--suppress AngularNgOptimizedImage -->
-  @if (photos && index >= 1) {
-    <img [src]="getPhotoSrc(photos[index - 1])" alt="" class="preview" loading="eager" />
+  @if (photos && currentIndex >= 1) {
+    <img [src]="getPhotoSrc(photos[currentIndex - 1])" alt="" class="preview" loading="eager" />
   }
   <!--suppress AngularNgOptimizedImage -->
-  @if (photos && index < photos.length - 1) {
-    <img [src]="getPhotoSrc(photos[index + 1])" alt="" class="preview" loading="eager" />
+  @if (photos && currentIndex < photos.length - 1) {
+    <img [src]="getPhotoSrc(photos[currentIndex + 1])" alt="" class="preview" loading="eager" />
   }
 </div>

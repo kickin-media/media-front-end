@@ -1,9 +1,7 @@
-import { Component, HostListener, inject } from '@angular/core';
+import { Component, effect, HostListener, inject } from '@angular/core';
 
-import { PhotoService } from '../../services/api/photo.service';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { filter, first, Observable } from 'rxjs';
-import { AlbumDetailed, Photo, PhotoDetailed } from '../../util/types';
+import { Photo } from '../../util/types';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -13,11 +11,13 @@ import { ImageQualityService } from '../../services/image-quality.service';
 import { LightboxPhotoOptionsComponent } from './components/lightbox-photo-options/lightbox-photo-options.component';
 import { LightboxDownloadMenuComponent } from './components/lightbox-download-menu/lightbox-download-menu.component';
 import { ExifPipe, ExifShutterSpeedPipe } from '../../pipes/exif.pipe';
-import { AlbumService } from '../../services/api/album.service';
 import { ShareService } from '../../services/share.service';
 import { Router } from '@angular/router';
 import slugify from 'slugify';
 import { AccountService } from '../../services/account.service';
+import { PhotoGalleryStore } from '../album/stores/photo-gallery.store';
+import { AlbumStore } from '../../shared/stores/album.store';
+import { LightboxPhotoStore } from './stores/lightbox-photo.store';
 
 @Component({
   selector: 'app-lightbox',
@@ -41,63 +41,37 @@ import { AccountService } from '../../services/account.service';
 export class LightboxComponent {
   protected router = inject(Router);
   protected accountService = inject(AccountService);
-  protected albumService = inject(AlbumService);
   protected imageQualityService = inject(ImageQualityService);
-  protected photoService = inject(PhotoService);
   protected shareService = inject(ShareService);
 
-  protected album: AlbumDetailed | null = null;
-
-  protected photos: Photo[] | null = null;
-  protected photo: Photo | PhotoDetailed | null = null;
-  protected index = 0;
+  protected readonly albumStore = inject(AlbumStore);
+  protected readonly lightboxPhotoStore = inject(LightboxPhotoStore);
+  protected readonly photoGalleryStore = inject(PhotoGalleryStore);
 
   protected closeOverlay: (() => void) | null = null;
 
   constructor() {
-    const albumService = this.albumService;
-    const photoService = this.photoService;
-
-    albumService.album.data$.pipe(filter(album => album !== null)).subscribe(album => {
-      this.album = album;
-    });
-
-    photoService.photo.data$.pipe(filter(photo => photo !== null)).subscribe(photo => {
-      this.photo = photo;
-    });
-
     this.close = this.close.bind(this);
-  }
 
-  onOpen(close: () => void, initialPhotoId: string, photos$: Observable<Photo[] | null>) {
-    this.closeOverlay = close;
-    this.photoService.setCurrentPhoto(initialPhotoId);
+    effect(() => {
+      const album = this.albumStore.album();
+      if (!album) return;
 
-    // Listen to the first result of the `photos$` observable and save it
-    photos$
-      .pipe(
-        filter(photos => photos !== null),
-        first()
-      )
-      .subscribe(photos => {
-        this.photos = photos;
-        this.index = photos.map(photo => photo.id).indexOf(initialPhotoId);
+      const photo = this.lightboxPhotoStore.photo();
+      if (!photo) return;
+
+      // Update the URL to reflect the current photo
+      const newUrl = this.router.createUrlTree([`/album/${album.id}/${slugify(album.name)}`], {
+        queryParams: { lightbox: photo.id },
+        queryParamsHandling: 'merge',
       });
+      history.replaceState({}, '', newUrl.toString());
+    });
   }
 
-  go(direction: -1 | 1) {
-    if (!this.photos) return;
-    if (!this.album) return;
-
-    this.index += direction;
-    this.photo = this.photos[this.index];
-    this.photoService.setCurrentPhoto(this.photo.id);
-
-    const newUrl = this.router.createUrlTree([`/album/${this.album.id}/${slugify(this.album.name)}`], {
-      queryParams: { lightbox: this.photo.id },
-      queryParamsHandling: 'merge',
-    });
-    history.replaceState({}, '', newUrl.toString());
+  onOpen(close: () => void, initialPhotoId: string) {
+    this.closeOverlay = close;
+    this.lightboxPhotoStore.setCurrentPhoto(initialPhotoId);
   }
 
   @HostListener('document:keydown.escape')
@@ -108,14 +82,12 @@ export class LightboxComponent {
 
   @HostListener('document:keydown.arrowleft')
   goBack() {
-    if (this.index <= 0) return;
-    this.go(-1);
+    this.lightboxPhotoStore.back();
   }
 
   @HostListener('document:keydown.arrowright')
   goNext() {
-    if (!this.photos || this.index + 1 >= this.photos.length) return;
-    this.go(1);
+    this.lightboxPhotoStore.next();
   }
 
   protected getPhotoSrc(photo: Photo): string | null {

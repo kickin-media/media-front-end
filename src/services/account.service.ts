@@ -1,8 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
+import { Injectable, inject, Signal } from '@angular/core';
+import { AuthService, User } from '@auth0/auth0-angular';
 import { catchError, first, map, Observable, of, shareReplay, switchMap } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseService } from './base.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,8 @@ export class AccountService extends BaseService {
   protected auth = inject(AuthService);
 
   readonly scopes$: Observable<string[]>;
-  readonly user$: AuthService['user$'];
+  readonly user$: Observable<User | null | undefined>;
+  readonly user: Signal<User | null | undefined>;
 
   readonly canDownloadOther$: Observable<boolean>;
   readonly canManageAlbums$: Observable<boolean>;
@@ -27,6 +29,7 @@ export class AccountService extends BaseService {
     const auth = this.auth;
 
     this.user$ = auth.user$.pipe(catchError(() => of(null)));
+    this.user = toSignal(this.user$);
 
     // Extract the scopes
     this.scopes$ = auth.isAuthenticated$.pipe(

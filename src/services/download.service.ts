@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Photo } from '../util/types';
 import { map, Observable, of, switchMap } from 'rxjs';
-import { PhotoService } from './api/photo.service';
+import { PhotoService } from '../shared/back-end';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +20,9 @@ export class DownloadService {
 
   downloadOriginal(photo: Photo, filename: string) {
     this.photoService
-      .fetchPhotoOriginalUrl(photo.id)
+      .getOriginalPhotoPhotoPhotoIdOriginalGet(photo.id)
       .pipe(
+        map(result => result.download_url),
         switchMap(url => this.http.get(url, { responseType: 'blob' })),
         switchMap(file => this.download(file, filename))
       )

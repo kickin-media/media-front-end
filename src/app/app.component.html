@@ -12,7 +12,7 @@
     <span class="spacing"></span>
 
     <div class="menu">
-      @for (link of menuLinks; track link) {
+      @for (link of menuLinks; track link.url) {
         <a [routerLink]="link.url" mat-button>
           {{ link.title.toUpperCase() }}
         </a>

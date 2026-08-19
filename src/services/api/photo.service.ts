@@ -1,15 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BaseService, FetchedObject } from '../base.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {
   BehaviorSubject,
   catchError,
-  combineLatest,
   concatAll,
   EMPTY,
   expand,
-  first,
   map,
   Observable,
   of,
@@ -106,32 +104,8 @@ export class PhotoService extends BaseService {
     );
   }
 
-  setCurrentPhoto(photoId: Photo['id'] | null) {
-    this.idSubject$.next(photoId);
-    if (photoId) {
-      // Only update the view count if this is not an authenticated user
-      combineLatest([this.accountService.canManageAlbums$, this.accountService.canUpload$])
-        .pipe(
-          first(),
-          switchMap(([canManage, canUpload]) => {
-            if (canManage || canUpload) return of(true);
-            return this.increaseViewCount(photoId);
-          })
-        )
-        .subscribe();
-    }
-  }
-
   delete(photoId: Photo['id']): Observable<void> {
     return this.http.delete<void>(`/photo/${photoId}`).pipe(tap(() => this.snackbar.open('Photo deleted.')));
-  }
-
-  increaseViewCount(photoId: Photo['id']): Observable<void> {
-    return this.http.put<void>(`/photo/${photoId}/view`, '');
-  }
-
-  reprocess(photoId: Photo['id']): Observable<void> {
-    return this.http.post<void>(`/photo/${photoId}/reprocess`, '');
   }
 
   setPhotoAlbums(photoId: Photo['id'], albumIds: Album['id'][]): Observable<Photo> {
@@ -140,10 +114,6 @@ export class PhotoService extends BaseService {
 
   fetchPhoto(photoId: Photo['id']): Observable<PhotoDetailed> {
     return this.http.get<PhotoDetailed>(`/photo/${photoId}`);
-  }
-
-  public fetchPhotoOriginalUrl(photoId: Photo['id']): Observable<string> {
-    return this.http.get<{ download_url: string }>(`/photo/${photoId}/original`).pipe(map(res => res.download_url));
   }
 }
 
