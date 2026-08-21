@@ -139,9 +139,9 @@ export class AlbumPageComponent {
 
         const field = sort === 'upload' ? 'uploaded_at' : 'timestamp';
         return photos.sort((a, b) => {
-          // Ensure the selected field is defined
-          if (!a[field]) return -1;
-          if (!b[field]) return 1;
+          // Ensure the selected field is defined; otherwise photos go at the end...
+          if (!a[field]) return 1;
+          if (!b[field]) return -1;
 
           // Convert to date objects
           const aa = new Date(a[field]);
