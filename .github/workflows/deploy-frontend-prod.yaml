@@ -34,7 +34,7 @@ jobs:
 
       - name: Configure AWS Credentials
         id: configure-aws-credentials
-        uses: aws-actions/configure-aws-credentials@v6.2.3
+        uses: aws-actions/configure-aws-credentials@v6.3.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
