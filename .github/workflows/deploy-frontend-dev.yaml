@@ -29,6 +29,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v7
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 12.21.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
       - name: Configure AWS Credentials
         id: configure-aws-credentials
         uses: aws-actions/configure-aws-credentials@v6.2.3
@@ -39,8 +50,8 @@ jobs:
 
       - name: Build front-end
         run: |
-          npm install
-          npm run ng -- build ${{ vars.NPM_NAME }}
+          pnpm install --frozen-lockfile
+          pnpm exec ng build ${{ vars.NPM_NAME }}
 
       - name: Deploy front-end to S3
         run: |
