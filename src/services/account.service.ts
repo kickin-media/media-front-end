@@ -33,7 +33,7 @@ export class AccountService extends BaseService {
       switchMap(authenticated => {
         if (!authenticated) return of([]);
         return auth.getAccessTokenSilently({ detailedResponse: true }).pipe(
-          map(res => res.scope),
+          map(res => (res ? res.scope : '')),
           map(scope => (scope ? scope.split(' ') : [])),
           // Logout if the session is invalid
           catchError(() => auth.logout({ openUrl: false }).pipe(map(() => [])))
