@@ -15,19 +15,19 @@ Each application is a different deployment of the same tool with customized bran
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server (runs kick-in app on port 3000)
-npm start
+pnpm start
 
 # Build library
-npm run build
+pnpm run build
 
 # Run tests
-npm test
+pnpm test
 
 # Generate backend API types from OpenAPI spec
-npm run api-spec
+pnpm run generate-api
 ```
 
 ### Working with Specific Applications
@@ -93,7 +93,7 @@ All API services extend BaseService and use the reactive route tracking pattern.
 
 ### Backend Integration
 
-- Backend types and interfaces are auto-generated from OpenAPI spec: `npm run generate-api`
+- Backend types and interfaces are auto-generated from OpenAPI spec: `pnpm run generate-api`
 - Generated code is stored in `src/shared/back-end/`
   - DO NOT MANUALLY OVERRIDE THESE FILES!
 - API host routing is handled by `src/util/api.interceptor.ts` using the `apiHosts` config
